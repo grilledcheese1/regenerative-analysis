@@ -5,10 +5,10 @@ import RouteMap from "@/components/RouteMap";
 import Timeline from "@/components/Timeline";
 import { AxisCards, CoachTip, ComparePanel, SavingsCard, ScoreHero, Terminal } from "@/components/Panels";
 import { env } from "@/lib/env";
-import { buildDemoRoute } from "@/lib/mock/route";
 import { SURFACES, type Condition, type DriverProfileName } from "@/lib/model/config";
 import { analyzeTrip, estimateSavings, type MissedEvent } from "@/lib/model/score";
 import { simulateTrip } from "@/lib/model/simulate";
+import { ROUTES, stopCoords } from "@/lib/routes";
 import { buildSegments, CAUSE_LABEL } from "@/lib/segments";
 
 type Theme = "dark" | "bright";
@@ -16,11 +16,6 @@ type Theme = "dark" | "bright";
 const DRIVERS: DriverProfileName[] = ["smooth", "mixed", "aggressive"];
 const CONDITIONS = Object.keys(SURFACES) as Condition[];
 const END = Number.MAX_SAFE_INTEGER;
-const route = buildDemoRoute();
-const stops = route.stopsM.map((s) => {
-  const p = route.points[Math.min(route.points.length - 1, Math.round(s / route.stepM))];
-  return [p.lon, p.lat] as [number, number];
-});
 
 // Theme lives in localStorage; read it as an external store so SSR renders dark without a mismatch.
 const themeListeners = new Set<() => void>();
@@ -44,6 +39,9 @@ function subscribeTheme(l: () => void) {
 
 export default function Dashboard() {
   const theme = useSyncExternalStore(subscribeTheme, readTheme, () => "dark" as Theme);
+  const [routeId, setRouteId] = useState(ROUTES[0].id);
+  const route = ROUTES.find((r) => r.id === routeId) ?? ROUTES[0];
+  const stops = useMemo(() => stopCoords(route), [route]);
   const [driver, setDriver] = useState<DriverProfileName>("mixed");
   const [condition, setCondition] = useState<Condition>("dry");
   const [rawCursor, setCursor] = useState(END);
@@ -77,7 +75,7 @@ export default function Dashboard() {
       aggressive: analyzeTrip(aggressive),
       conventional: analyzeTrip(conventional),
     };
-  }, [driver, condition]);
+  }, [route, driver, condition]);
 
   const { trip, a } = sims;
   const last = trip.samples.length - 1;
@@ -113,6 +111,13 @@ export default function Dashboard() {
         </div>
         <span className="tag">Simulated data</span>
         <div className="controls">
+          <select value={routeId} onChange={(e) => rescore(() => setRouteId(e.target.value))} aria-label="Route">
+            {ROUTES.map((r) => (
+              <option key={r.id} value={r.id}>
+                {r.kind} · {(r.points[r.points.length - 1].s / 1000).toFixed(1)} km
+              </option>
+            ))}
+          </select>
           <div className="segmented" role="group" aria-label="Driver profile">
             {DRIVERS.map((d) => (
               <button key={d} className={d === driver ? "on" : ""} onClick={() => rescore(() => setDriver(d))}>
@@ -143,6 +148,7 @@ export default function Dashboard() {
           <div className="grid-map">
             <div className="card map-wrap">
               <RouteMap
+                routeId={route.id}
                 theme={theme}
                 segments={segments}
                 stops={stops}
@@ -221,7 +227,8 @@ export default function Dashboard() {
           />
           <p className="muted" style={{ fontSize: "0.75rem", marginTop: "1rem" }}>
             All physics constants, surface friction values and fuel conversions are approximate teaching numbers, not
-            official Toyota specs. Route and elevation are synthetic placeholders.
+            official Toyota specs. Roads and speed limits from Mapbox Directions, elevation from Open-Meteo, signals and
+            stop signs from OpenStreetMap; the car itself is simulated.
           </p>
         </section>
       </main>

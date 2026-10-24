@@ -9,6 +9,7 @@ import { GRADE_VAR, type Segment } from "@/lib/segments";
 import RouteSvg from "./RouteSvg";
 
 interface RouteMapProps {
+  routeId: string;
   theme?: "dark" | "bright";
   segments: Segment[];
   stops: [number, number][];
@@ -47,8 +48,16 @@ function pointData(points: [number, number][], props: object[] = []): GeoJSON.Fe
   };
 }
 
+function routeBounds(segments: Segment[]) {
+  const b = new mapboxgl.LngLatBounds();
+  segments.forEach((s) => s.coords.forEach((c) => b.extend(c)));
+  return b;
+}
+
+const FIT = { padding: 60, pitch: 55, bearing: -20 };
+
 export default function RouteMap(props: RouteMapProps) {
-  const { theme = "dark", segments, stops, missed, car, onSelectMissed } = props;
+  const { routeId, theme = "dark", segments, stops, missed, car, onSelectMissed } = props;
   const container = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const [ready, setReady] = useState(false);
@@ -61,14 +70,11 @@ export default function RouteMap(props: RouteMapProps) {
     if (!container.current || !env.mapboxToken) return;
     mapboxgl.accessToken = env.mapboxToken;
 
-    const first = latest.current.segments[0].coords[0];
     const map = new mapboxgl.Map({
       container: container.current,
       style: STYLES[theme],
-      center: first,
-      zoom: 13,
-      pitch: 60,
-      bearing: -20,
+      bounds: routeBounds(latest.current.segments),
+      fitBoundsOptions: FIT,
     });
     mapRef.current = map;
 
@@ -173,6 +179,13 @@ export default function RouteMap(props: RouteMapProps) {
     if (!ready || !map) return;
     (map.getSource("car") as mapboxgl.GeoJSONSource).setData(pointData([car]));
   }, [ready, car]);
+
+  // Re-frame the camera when the route changes (not when the trip is re-scored).
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!ready || !map) return;
+    map.fitBounds(routeBounds(latest.current.segments), { ...FIT, duration: 1200 });
+  }, [ready, routeId]);
 
   if (!env.mapboxToken) {
     return (
