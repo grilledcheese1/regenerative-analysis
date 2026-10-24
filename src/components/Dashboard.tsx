@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import RouteMap from "@/components/RouteMap";
+import TripMapClient from "@/components/map/TripMapClient";
 import Timeline from "@/components/Timeline";
 import { AxisCards, CoachTip, ComparePanel, SavingsCard, ScoreHero, Terminal } from "@/components/Panels";
 import { env } from "@/lib/env";
@@ -9,6 +10,7 @@ import { buildDemoRoute } from "@/lib/mock/route";
 import { SURFACES, type Condition, type DriverProfileName } from "@/lib/model/config";
 import { analyzeTrip, estimateSavings, type MissedEvent } from "@/lib/model/score";
 import { simulateTrip } from "@/lib/model/simulate";
+import { toContractTrip } from "@/lib/trip/adapt";
 import { buildSegments, CAUSE_LABEL } from "@/lib/segments";
 
 type Theme = "dark" | "bright";
@@ -82,6 +84,7 @@ export default function Dashboard() {
   const { trip, a } = sims;
   const last = trip.samples.length - 1;
   const segments = useMemo(() => buildSegments(trip.samples), [trip]);
+  const contractTrip = useMemo(() => toContractTrip(trip, a, gasPrice), [trip, a, gasPrice]);
   const cursor = Math.min(rawCursor, last);
 
   useEffect(() => {
@@ -142,14 +145,18 @@ export default function Dashboard() {
           </div>
           <div className="grid-map">
             <div className="card map-wrap">
-              <RouteMap
-                theme={theme}
-                segments={segments}
-                stops={stops}
-                missed={visibleMissed}
-                car={[cur.lon, cur.lat]}
-                onSelectMissed={setSelected}
-              />
+              {env.mapboxToken ? (
+                <TripMapClient trip={contractTrip} theme={theme} currentIndex={cursor} />
+              ) : (
+                <RouteMap
+                  theme={theme}
+                  segments={segments}
+                  stops={stops}
+                  missed={visibleMissed}
+                  car={[cur.lon, cur.lat]}
+                  onSelectMissed={setSelected}
+                />
+              )}
               <div className="legend">
                 <span><i style={{ background: "var(--seg-good)" }} />captured</span>
                 <span><i style={{ background: "var(--seg-mid)" }} />partial</span>

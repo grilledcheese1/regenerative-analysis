@@ -605,3 +605,11 @@ select,
     flex-wrap: wrap;
   }
 }
+
+/* Stream 3 map embedded in the dashboard card */
+.map-wrap .trip-map {
+  height: 460px;
+  min-height: 0;
+  border: 0;
+  border-radius: 0;
+}

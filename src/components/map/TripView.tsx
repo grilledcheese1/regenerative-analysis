@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import type { Trip } from "@/lib/trip/types";
 import type { MapTheme } from "./config";
 import ReplayControls from "./ReplayControls";
-import TripCharts from "./TripCharts";
+import TripCharts from "@/components/charts/TripCharts";
 import TripMapClient from "./TripMapClient";
 import { useTripReplay } from "./useTripReplay";
 

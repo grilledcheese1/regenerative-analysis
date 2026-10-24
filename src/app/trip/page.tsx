@@ -1,4 +1,4 @@
-import TripView from "@/components/trip/TripView";
+import TripView from "@/components/map/TripView";
 import sample from "../../../data/trips/sample.json";
 import type { Trip } from "@/lib/trip/types";
 

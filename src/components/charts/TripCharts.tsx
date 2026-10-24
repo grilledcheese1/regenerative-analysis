@@ -14,7 +14,7 @@ import {
   YAxis,
 } from "recharts";
 import type { Trip } from "@/lib/trip/types";
-import { TRIP_CONFIG } from "./config";
+import { TRIP_CONFIG } from "@/components/map/config";
 
 export interface TripChartsProps {
   trip: Trip | null | undefined;
