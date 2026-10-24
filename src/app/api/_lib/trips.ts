@@ -10,6 +10,7 @@ import { analyzeTrip, type TripAnalysis } from "@/lib/model/score";
 import { simulateTrip, type SimTrip } from "@/lib/model/simulate";
 import { toContractTrip } from "@/lib/trip/adapt";
 import type { Condition, Driver, Trip, TripHeader } from "@/lib/trip/types";
+import type { RouteListItem, SuggestedCondition } from "./types";
 
 export const DRIVERS: Driver[] = ["smooth", "aggressive", "mixed"];
 export const CONDITIONS: Condition[] = ["dry", "wet", "snow", "mud"];
@@ -21,10 +22,11 @@ export type CachedRoute = DemoRoute & {
   routeId: string;
   terrain: string;
   weather: { temperatureC: number; precipitationLast24hMm: number; snowfallLast24hCm: number };
+  suggestedCondition: SuggestedCondition;
   source: string;
 };
 
-export async function listRoutes(): Promise<{ routeId: string; name: string; terrain: string; distanceM: number }[]> {
+export async function listRoutes(): Promise<Omit<RouteListItem, "miles" | "label">[]> {
   return JSON.parse(await readFile(path.join(ROUTES_DIR, "index.json"), "utf8"));
 }
 
