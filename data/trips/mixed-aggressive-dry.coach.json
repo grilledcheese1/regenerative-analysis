@@ -1,0 +1,5 @@
+{
+  "tip": "A lot of braking energy was lost to heat. The biggest loss was 14 late braking events: start easing off the pedal earlier and brake more gently, so the motor can take the load.",
+  "basedOn": "score 42.6, 14 late braking events, 3 low grip events, 1 full battery event, dry road",
+  "source": "fallback"
+}

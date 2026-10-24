@@ -1,0 +1,5 @@
+{
+  "tip": "A lot of braking energy was lost to heat. The biggest loss was 15 full battery events: expect less regen when the battery is nearly full, and use the extra coasting time to slow down gradually.",
+  "basedOn": "score 48.5, 8 late braking events, 15 full battery events, 1 low grip event, dry road",
+  "source": "fallback"
+}
