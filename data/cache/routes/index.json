@@ -3,18 +3,33 @@
     "routeId": "hill",
     "name": "Westlake Hills to Downtown (Austin, TX)",
     "terrain": "hilly",
-    "distanceM": 7860
+    "distanceM": 7860,
+    "stops": 10,
+    "suggestedCondition": {
+      "condition": "dry",
+      "reason": "No rain in the last 24 hours and 29°C"
+    }
   },
   {
     "routeId": "flat",
     "name": "East Austin loop (Austin, TX)",
     "terrain": "flat",
-    "distanceM": 5330
+    "distanceM": 5330,
+    "stops": 10,
+    "suggestedCondition": {
+      "condition": "dry",
+      "reason": "No rain in the last 24 hours and 28.6°C"
+    }
   },
   {
     "routeId": "mixed",
     "name": "South Lamar to the Capitol (Austin, TX)",
     "terrain": "mixed",
-    "distanceM": 7700
+    "distanceM": 7700,
+    "stops": 16,
+    "suggestedCondition": {
+      "condition": "dry",
+      "reason": "No rain in the last 24 hours and 29.3°C"
+    }
   }
 ]

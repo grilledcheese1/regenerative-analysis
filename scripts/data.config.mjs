@@ -43,6 +43,9 @@ export const DATA_CONFIG = {
   pavedSurfaces: ["asphalt", "concrete", "paved", "paving_stones", "concrete:plates", "sett"],
   gravelSurfaces: ["gravel", "fine_gravel", "compacted", "unpaved"],
   dirtSurfaces: ["dirt", "ground", "earth", "mud", "sand", "grass"],
+  // Suggested road condition from today's real weather
+  wetAfterRainMm: 1, // this much rain in the last 24 h suggests "wet"
+  snowAfterSnowCm: 0.5, // this much snow in the last 24 h, or a temperature below freezing, suggests "snow"
   elevationBatchSize: 100, // Open-Meteo accepts up to 100 points per request
   requestDelayMs: 1100, // pause between calls to the free public APIs
 };

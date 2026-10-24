@@ -1,60 +1,62 @@
-# Stream 2: Data and API
+# Stream 2: Data and API (Ariana)
 
 All driving data is **simulated**; physics and savings numbers are **estimates**.
-Routes, elevation and weather are real. Merged from two implementations: the pipeline and generated trips below
-(`scripts/*.ts`), and Ariana's PR #2 (`/api/routes`, the `?route=&condition=` compare shortcut, and the original
-OSRM-based route fetcher `scripts/fetch-routes.mjs`).
 
-## Pipeline (run in order, each step caches to `data/cache/` and skips when the file exists; `--refresh` redoes it)
+## Real routes
 
-```
-node --env-file=.env.local scripts/fetch-directions.ts   # Mapbox Directions: road geometry, speed limits
-node --env-file=.env.local scripts/fetch-elevation.ts    # USGS 3DEP lidar elevation (--source=mapbox|openmeteo also supported)
-node --env-file=.env.local scripts/fetch-overpass.ts     # OSM: traffic signals, stop signs, drivable ways, surfaces
-node --env-file=.env.local scripts/fetch-weather.ts      # Open-Meteo: temperature, rain and snow in the last 24 h
-node scripts/build-routepoints.ts                        # 10 m RoutePoint[] + sanity checks
-node --env-file=.env.local scripts/generate-trips.ts [--coach]   # 72 trips (+ coach tips), uses src/lib/physics
-node scripts/validate-trips.ts                           # field checks + score table
-```
+`node scripts/fetch-routes.mjs` builds three real Austin routes from cached API responses in `data/cache/`
+(add `--fresh` to download again). Routes and tunable numbers live in `scripts/data.config.mjs`.
 
-Routes live in `scripts/routes.config.ts`. Every route is checked to sit on drivable OSM roads, to match the
-Directions geometry, and to have realistic grades (bridges and tunnels are interpolated, not read from the ground).
+| Id | Route | Length | Stops driven |
+|---|---|---|---|
+| `hill` | Westlake Hills to Downtown | 7.9 km | 10 |
+| `flat` | East Austin loop | 5.3 km | 10 |
+| `mixed` | South Lamar to the Capitol | 7.7 km | 16 |
 
-| Id | Route | Length | Relief | Stops |
-|---|---|---|---|---|
-| `hilly` | Mount Bonnell to Bridle Path | 4.6 km | 56 m | 7 |
-| `flat` | Congress Ave: Oltorf to UT Tower | 6.3 km | 45 m | 39 |
-| `mixed` | Bee Cave Rd to Barton Springs Rd | 5.9 km | 95 m | 12 |
+Sources: OSRM routing (Mapbox Directions when `NEXT_PUBLIC_MAPBOX_TOKEN` is set), Open-Meteo elevation and
+weather, OpenStreetMap roads, speed limits, surfaces, traffic signals and stop signs. The car catches a red at
+every 2nd signal and always stops at stop signs.
 
-## API
+Output: `data/cache/routes/<id>.json`, already in the simulator's `DemoRoute` shape
+(`name`, `stepM`, `points[{ s, lat, lon, elevationM, limitMs }]`, `stopsM`) plus `surface`, `roadClass` and
+`street` on each point, and `weather`, `suggestedCondition`, `allStops` and `source` on the route.
+`suggestedCondition` picks dry, wet or snow from today's real weather, with a reason to show in the UI.
 
-Trip ids: `<route>-<driver>-<condition>`, plus `-noregen` for the conventional car. Reads local files only.
+## API (matches AGENTS.md section 4)
+
+Trips are simulated on request with Stream 1's `simulateTrip` + `analyzeTrip` + `toContractTrip`, so physics
+changes show up immediately. Trip ids: `<route>-<driver>-<condition>`, plus `-noregen` for the conventional car.
+
+**Open http://localhost:3000/api** for a clickable guide to everything below. Response types for
+autocomplete: `import type { TripStory } from "@/app/api/_lib/types"`.
 
 | Call | Returns |
 |---|---|
-| `GET /api/routes` | `{ routeId, name, terrain, distanceM, reliefM, stops }[]` |
-| `GET /api/routes/hilly` | `{ routeId, name, meta, points: RoutePoint[] }` |
+| `GET /api/routes` | name, miles, stops, a label like "Hilly · 4.9 mi · 10 stops", and today's suggested condition |
+| `GET /api/routes/hill` | the route as a `DemoRoute` |
 | `GET /api/trips` | `TripHeader[]` (filters: `?route=&driver=&condition=&regen=`) |
-| `GET /api/trips/hilly-smooth-dry` | `Trip` |
-| `GET /api/compare?ids=a,b,c` | `Trip[]` (2 to 4 ids) |
-| `GET /api/compare?route=hilly&condition=wet` | `Trip[]`: conventional, smooth, aggressive |
-| `GET /api/trips/hilly-smooth-dry/coach` | `{ tip, basedOn }` (saved file, then Claude if a key exists, then rules) |
+| `GET /api/trips/hill-smooth-dry` | `Trip` |
+| `GET /api/compare?ids=a,b,c` | `Trip[]` |
+| `GET /api/compare?route=hill&condition=wet` | `Trip[]`: conventional, smooth, aggressive |
+| `GET /api/trips/hill-smooth-dry/story` | plain-English sentences in miles and mph, stats, the 3 biggest missed moments with street names, and the best stretch |
+| `GET /api/trips/hill-smooth-dry/coach` | `{ tip, basedOn, source }` (Claude with a key, rules without); names the street where most regen was lost |
 
-The older `POST /api/coach` is unchanged.
+The existing `POST /api/coach` is unchanged.
 
 ## Data attributions the UI must show
 
 © OpenStreetMap contributors (ODbL); Open-Meteo.com (CC BY 4.0); © Mapbox; USGS 3DEP elevation.
 
-## Notes
+## For teammates
 
-- **Coach tips:** with no `ANTHROPIC_API_KEY`, the saved tips are rule-based (`"source": "fallback"`). After adding a key,
-  run `generate-trips.ts --coach --refresh` to regenerate them with Claude.
-- **Alternate routes:** `scripts/fetch-routes.mjs` + `scripts/data.config.mjs` (OSRM routing, Open-Meteo elevation) and
-  their caches (`data/cache/*.json`, `data/cache/routes/{hill,flat,mixed,index}.json`) are Ariana's original
-  implementation. They are not used by the API now. Her routes could be added as extra routes in `routes.config.ts`
-  (rename to avoid clashing with `flat` and `mixed`).
-- **Stream 1:** on real routes the smooth/aggressive score gap is small, and in mud and snow aggressive or mixed
-  can beat smooth (see `validate-trips.ts` warnings).
-- **Deploy:** the API reads `data/trips/` and `data/cache/routes/` at request time. If Vercel leaves them out, add
-  `outputFileTracingIncludes: { "/api/**/*": ["./data/trips/**/*", "./data/cache/routes/**/*"] }` to `next.config.ts`.
+- **Stream 4:** to use real roads in the dashboard, replace `buildDemoRoute()` with the JSON from
+  `fetch("/api/routes/hill")` (same shape). `/story` gives ready-made text for the analysis panel, and
+  `suggestedCondition` can preselect the condition toggle.
+- **Stream 3:** `biggestMisses` in `/story` has lat, lon and a sentence for each map marker pop-up.
+- **Stream 1:** on the real routes, the aggressive driver often scores higher than the smooth one
+  (hill dry: smooth 64, aggressive 67, mixed 73). The ceiling `η·(m·g·Δh + Σ½mv²)` uses each driver's own
+  approach speeds and ignores drag and rolling losses, so faster driving raises recovered energy more than the
+  ceiling. Worth a look before the "clearly different scores" check.
+- **Deploy:** the API reads `data/cache/routes/` at request time. If Vercel leaves it out, add
+  `outputFileTracingIncludes: { "/api/**/*": ["./data/cache/routes/**/*"] }` to `next.config.ts`
+  (shared file, so whoever owns it).
