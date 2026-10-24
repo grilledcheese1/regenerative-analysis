@@ -1,14 +1,72 @@
-:root {
+:root,
+:root[data-theme="dark"] {
   color-scheme: dark;
+  --bg: #0d1013;
+  --panel: #161a1f;
+  --border: #262c31;
+  --text: #eef0ee;
+  --text-2: #a9b1b4;
+  --muted: #6f787d;
+  --accent: #2fb3a4;
+  --accent-text: #4cc5b6;
+  --accent-contrast: #062521;
+  --seg-good: #22a08f;
+  --seg-mid: #c98500;
+  --seg-bad: #d5516d;
+  --grid: #2a343e;
+  --font-heading: "Iowan Old Style", Palatino, Georgia, serif;
+  --font-body: "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "SF Mono", ui-monospace, Menlo, monospace;
+}
+
+:root[data-theme="bright"] {
+  color-scheme: light;
+  --bg: #ffffff;
+  --panel: #f2f2f2;
+  --border: #d0d0d0;
+  --text: #1a1a1a;
+  --text-2: #4a4a4a;
+  --muted: #7a7a7a;
+  --accent: #eb0a1e;
+  --accent-text: #eb0a1e;
+  --accent-contrast: #ffffff;
+  --seg-good: #1f9d55;
+  --seg-mid: #c98500;
+  --seg-bad: #eb0a1e;
+  --grid: #d0d0d0;
+  --font-heading: Inter, "Segoe UI", system-ui, sans-serif;
+  --font-body: Inter, "Segoe UI", system-ui, sans-serif;
 }
 
 html,
 body {
   margin: 0;
   min-height: 100%;
-  background: #0b0f14;
-  color: #e6edf3;
-  font-family: system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent-text);
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1rem;
 }
 
 main {
