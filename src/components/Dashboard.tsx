@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import RouteMap from "@/components/RouteMap";
+import RouteSvg from "@/components/RouteSvg";
 import TripMapClient from "@/components/map/TripMapClient";
 import Timeline from "@/components/Timeline";
 import { AxisCards, CoachTip, ComparePanel, SavingsCard, ScoreHero, Terminal } from "@/components/Panels";
@@ -146,7 +147,12 @@ export default function Dashboard() {
           <div className="grid-map">
             <div className="card map-wrap">
               {env.mapboxToken ? (
-                <TripMapClient trip={contractTrip} theme={theme} currentIndex={cursor} />
+                <TripMapClient
+                  trip={contractTrip}
+                  theme={theme}
+                  currentIndex={cursor}
+                  fallback={<RouteSvg segments={segments} stops={stops} missed={visibleMissed} car={[cur.lon, cur.lat]} onSelectMissed={setSelected} />}
+                />
               ) : (
                 <RouteMap
                   theme={theme}

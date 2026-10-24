@@ -1,0 +1,5 @@
+{
+  "tip": "A lot of braking energy was lost to heat. You recovered 0.17 kWh and missed no regen opportunities, so keep braking early and gently. With a snow road, brake earlier than you would on dry pavement.",
+  "basedOn": "score 19.7, snow road",
+  "source": "fallback"
+}

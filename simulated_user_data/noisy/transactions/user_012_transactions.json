@@ -1,0 +1,415 @@
+{
+  "userId": "user_012",
+  "simulated": true,
+  "noiseLevel": "med",
+  "transactions": [
+    {
+      "txId": "user_012-tx-0001",
+      "date": "2026-01-01",
+      "merchant": "State Farm",
+      "mcc": 6300,
+      "category": "insurance",
+      "amountUsd": -132.11
+    },
+    {
+      "txId": "user_012-tx-0002",
+      "date": "2026-01-01",
+      "merchant": "Spotify",
+      "mcc": 5815,
+      "category": "non_driving",
+      "amountUsd": 76.7
+    },
+    {
+      "txId": "user_012-tx-0003",
+      "date": "2026-01-04",
+      "merchant": "Amazon",
+      "mcc": 5942,
+      "category": "non_driving",
+      "amountUsd": 93.68
+    },
+    {
+      "txId": "user_012-tx-0004",
+      "date": "2026-01-05",
+      "merchant": "Ally Auto",
+      "mcc": 6012,
+      "category": "loan_payment",
+      "amountUsd": 499
+    },
+    {
+      "txId": "user_012-tx-0005",
+      "date": "2026-01-06",
+      "merchant": "Sheetz",
+      "mcc": 5541,
+      "category": "fuel",
+      "amountUsd": 29.18,
+      "gallons": 9.71,
+      "pricePerGal": 3.005,
+      "listPricePerGal": 3.055,
+      "loyaltyDiscountPerGal": 0.05
+    },
+    {
+      "txId": "user_012-tx-0006",
+      "date": "2026-01-07",
+      "merchant": "Chipotle",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 22.16
+    },
+    {
+      "txId": "user_012-tx-0007",
+      "date": "2026-01-09",
+      "merchant": "ParkMobile",
+      "mcc": 7523,
+      "category": "parking",
+      "amountUsd": 15.68
+    },
+    {
+      "txId": "user_012-tx-0008",
+      "date": "2026-01-10",
+      "merchant": "Kroger",
+      "mcc": 5411,
+      "category": "non_driving",
+      "amountUsd": 45.12
+    },
+    {
+      "txId": "user_012-tx-0009",
+      "date": "2026-01-13",
+      "merchant": "Spotify",
+      "mcc": 5815,
+      "category": "non_driving",
+      "amountUsd": 43.14
+    },
+    {
+      "txId": "user_012-tx-0010",
+      "date": "2026-04-01",
+      "merchant": "Chevron",
+      "mcc": 5541,
+      "category": "fuel",
+      "amountUsd": 26.76,
+      "gallons": 8.94,
+      "pricePerGal": 2.993,
+      "listPricePerGal": 3.043,
+      "loyaltyDiscountPerGal": 0.05
+    },
+    {
+      "txId": "user_012-tx-0011",
+      "date": "2026-04-01",
+      "merchant": "State Farm",
+      "mcc": 6300,
+      "category": "insurance",
+      "amountUsd": 133.36
+    },
+    {
+      "txId": "user_012-tx-0012",
+      "date": "2026-04-01",
+      "merchant": "Amazon",
+      "mcc": 5942,
+      "category": "non_driving",
+      "amountUsd": 50.32
+    },
+    {
+      "txId": "user_012-tx-0013",
+      "date": "2026-04-04",
+      "merchant": "Chipotle",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 116.23
+    },
+    {
+      "txId": "user_012-tx-0014",
+      "date": "2026-04-05",
+      "merchant": "Ally Auto",
+      "mcc": 6012,
+      "category": "loan_payment",
+      "amountUsd": 499
+    },
+    {
+      "txId": "user_012-tx-0015",
+      "date": "2026-04-07",
+      "merchant": "Costco Gas",
+      "mcc": 5541,
+      "category": "fuel",
+      "amountUsd": 25.21,
+      "gallons": 9.05,
+      "pricePerGal": 2.786,
+      "listPricePerGal": 2.836,
+      "loyaltyDiscountPerGal": 0.05
+    },
+    {
+      "txId": "user_012-tx-0016",
+      "date": "2026-04-07",
+      "merchant": "TARGET",
+      "mcc": 5311,
+      "category": "non_driving",
+      "amountUsd": 90.24
+    },
+    {
+      "txId": "user_012-tx-0017",
+      "date": "2026-04-09",
+      "merchant": "ParkMobile",
+      "mcc": 7523,
+      "category": "parking",
+      "amountUsd": 11.72
+    },
+    {
+      "txId": "user_012-tx-0018",
+      "date": "2026-04-10",
+      "merchant": "Chipotle",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 33.85
+    },
+    {
+      "txId": "user_012-tx-0019",
+      "date": "2026-04-13",
+      "merchant": "Starbucks",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 50.92
+    },
+    {
+      "txId": "user_012-tx-0020",
+      "date": "2026-04-14",
+      "merchant": "7-Eleven Fuel",
+      "mcc": 5541,
+      "category": "fuel",
+      "amountUsd": 21.73,
+      "gallons": 7.01,
+      "pricePerGal": 3.1,
+      "listPricePerGal": 3.15,
+      "loyaltyDiscountPerGal": 0.05
+    },
+    {
+      "txId": "user_012-tx-0021",
+      "date": "2026-07-01",
+      "merchant": "State Farm",
+      "mcc": 6300,
+      "category": "insurance",
+      "amountUsd": 136.96
+    },
+    {
+      "txId": "user_012-tx-0022",
+      "date": "2026-07-01",
+      "merchant": "Target",
+      "mcc": 5311,
+      "category": "non_driving",
+      "amountUsd": 86.76
+    },
+    {
+      "txId": "user_012-tx-0023",
+      "date": "2026-07-02",
+      "merchant": "Uber",
+      "mcc": 4121,
+      "category": "rideshare",
+      "amountUsd": 25.93
+    },
+    {
+      "txId": "user_012-tx-0024",
+      "date": "2026-07-04",
+      "merchant": "Spotify",
+      "mcc": 5815,
+      "category": "non_driving",
+      "amountUsd": 16.18
+    },
+    {
+      "txId": "user_012-tx-0025",
+      "date": "2026-07-05",
+      "merchant": "Ally Auto",
+      "mcc": 6012,
+      "category": "loan_payment",
+      "amountUsd": 499
+    },
+    {
+      "txId": "user_012-tx-0026",
+      "date": "2026-07-06",
+      "merchant": "Costco Gas",
+      "mcc": 5541,
+      "category": "fuel",
+      "amountUsd": 20.41,
+      "gallons": 7.69,
+      "pricePerGal": 2.654,
+      "listPricePerGal": 2.704,
+      "loyaltyDiscountPerGal": 0.05
+    },
+    {
+      "txId": "user_012-tx-0027",
+      "date": "2026-07-07",
+      "merchant": "MISTER CAR WASH",
+      "mcc": 7542,
+      "category": "car_wash",
+      "amountUsd": 19.15
+    },
+    {
+      "txId": "user_012-tx-0028",
+      "date": "2026-07-07",
+      "merchant": "Chipotle",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 40.69
+    },
+    {
+      "txId": "user_012-tx-0029",
+      "date": "2026-07-10",
+      "merchant": "Costco Gas",
+      "mcc": 5541,
+      "category": "fuel",
+      "amountUsd": 28.31,
+      "gallons": 9.41,
+      "pricePerGal": 3.009,
+      "listPricePerGal": 3.009,
+      "loyaltyDiscountPerGal": 0
+    },
+    {
+      "txId": "user_012-tx-0030",
+      "date": "2026-07-10",
+      "merchant": "ParkMobile",
+      "mcc": 7523,
+      "category": "parking",
+      "amountUsd": 5.35
+    },
+    {
+      "txId": "user_012-tx-0030-dup",
+      "date": "2026-07-11",
+      "merchant": "ParkMobile",
+      "mcc": 7523,
+      "category": "parking",
+      "amountUsd": 5.35
+    },
+    {
+      "txId": "user_012-tx-0031",
+      "date": "2026-07-10",
+      "merchant": "Spotify",
+      "mcc": 5815,
+      "category": "non_driving",
+      "amountUsd": 61.73
+    },
+    {
+      "txId": "user_012-tx-0032",
+      "date": "2026-07-12",
+      "merchant": "E-ZPass",
+      "mcc": 4784,
+      "category": "tolls",
+      "amountUsd": 16.67
+    },
+    {
+      "txId": "user_012-tx-0033",
+      "date": "2026-07-13",
+      "merchant": "Target",
+      "mcc": 5311,
+      "category": "non_driving",
+      "amountUsd": 108.14
+    },
+    {
+      "txId": "user_012-tx-0034",
+      "date": "2026-10-01",
+      "merchant": "State Farm",
+      "mcc": 6300,
+      "category": "insurance",
+      "amountUsd": 133.4
+    },
+    {
+      "txId": "user_012-tx-0035",
+      "date": "2026-10-01",
+      "merchant": "Kroger",
+      "mcc": 5411,
+      "category": "non_driving",
+      "amountUsd": 31.06
+    },
+    {
+      "txId": "user_012-tx-0036",
+      "date": "2026-10-04",
+      "merchant": "Mister Car Wash",
+      "mcc": 7542,
+      "category": "car_wash",
+      "amountUsd": -22.43
+    },
+    {
+      "txId": "user_012-tx-0037",
+      "date": "2026-10-04",
+      "merchant": "Starbucks",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 91.94
+    },
+    {
+      "txId": "user_012-tx-0038",
+      "date": "2026-10-05",
+      "merchant": "Ally Auto",
+      "mcc": 6012,
+      "category": "loan_payment",
+      "amountUsd": 499
+    },
+    {
+      "txId": "user_012-tx-0039",
+      "date": "2026-10-06",
+      "merchant": "7-Eleven Fuel",
+      "mcc": 5541,
+      "category": "fuel",
+      "amountUsd": 24.37,
+      "gallons": 7.53,
+      "pricePerGal": 3.236,
+      "listPricePerGal": 3.236,
+      "loyaltyDiscountPerGal": 0
+    },
+    {
+      "txId": "user_012-tx-0040",
+      "date": "2026-10-06",
+      "merchant": "Target",
+      "mcc": 5942,
+      "category": "refund",
+      "amountUsd": -56.44
+    },
+    {
+      "txId": "user_012-tx-0041",
+      "date": "2026-10-07",
+      "merchant": "Spotify",
+      "mcc": 5815,
+      "category": "non_driving",
+      "amountUsd": 102.81
+    },
+    {
+      "txId": "user_012-tx-0042",
+      "date": "2026-10-08",
+      "merchant": "State DMV",
+      "mcc": 9399,
+      "category": "registration",
+      "amountUsd": 130
+    },
+    {
+      "txId": "user_012-tx-0043",
+      "date": "2026-10-10",
+      "merchant": "ParkMobile",
+      "mcc": 7523,
+      "category": "parking",
+      "amountUsd": 17.98
+    },
+    {
+      "txId": "user_012-tx-0044",
+      "date": "2026-10-10",
+      "merchant": "Spotify",
+      "mcc": 5815,
+      "category": "non_driving",
+      "amountUsd": 95.66
+    },
+    {
+      "txId": "user_012-tx-0045",
+      "date": "2026-10-13",
+      "merchant": "Spotify",
+      "mcc": 5815,
+      "category": "non_driving",
+      "amountUsd": 55.73
+    },
+    {
+      "txId": "user_012-tx-0046",
+      "date": "2026-10-14",
+      "merchant": "7-Eleven Fuel",
+      "mcc": 5541,
+      "category": "fuel",
+      "amountUsd": 28.83,
+      "gallons": 9.33,
+      "pricePerGal": 3.09,
+      "listPricePerGal": 3.14,
+      "loyaltyDiscountPerGal": 0.05
+    }
+  ]
+}

@@ -1,0 +1,375 @@
+{
+  "userId": "user_025",
+  "simulated": true,
+  "noiseLevel": "med",
+  "transactions": [
+    {
+      "txId": "user_025-tx-0001",
+      "date": "2026-01-01",
+      "merchant": "GEICO",
+      "mcc": 6300,
+      "category": "insurance",
+      "amountUsd": 153.93
+    },
+    {
+      "txId": "user_025-tx-0001-dup",
+      "date": "2026-01-01",
+      "merchant": "GEICO",
+      "mcc": 6300,
+      "category": "insurance",
+      "amountUsd": 153.93
+    },
+    {
+      "txId": "user_025-tx-0002",
+      "date": "2026-01-01",
+      "merchant": "Spotify",
+      "mcc": 5815,
+      "category": "non_driving",
+      "amountUsd": -33.06
+    },
+    {
+      "txId": "user_025-tx-0003",
+      "date": "2026-01-02",
+      "merchant": "Mister Car Wash",
+      "mcc": 7542,
+      "category": "car_wash",
+      "amountUsd": 22.17
+    },
+    {
+      "txId": "user_025-tx-0004",
+      "date": "2026-01-04",
+      "merchant": "Kroger",
+      "mcc": 5411,
+      "category": "non_driving",
+      "amountUsd": 80.63
+    },
+    {
+      "txId": "user_025-tx-0005",
+      "date": "2026-01-06",
+      "merchant": "QuikTrip",
+      "mcc": 5541,
+      "category": "fuel",
+      "amountUsd": 22.7,
+      "gallons": 7.26,
+      "pricePerGal": 3.127,
+      "listPricePerGal": 3.177,
+      "loyaltyDiscountPerGal": 0.05
+    },
+    {
+      "txId": "user_025-tx-0006",
+      "date": "2026-01-06",
+      "merchant": "Lyft",
+      "mcc": 4121,
+      "category": "rideshare",
+      "amountUsd": 17.9
+    },
+    {
+      "txId": "user_025-tx-0007",
+      "date": "2026-01-07",
+      "merchant": "Starbucks",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 92.17
+    },
+    {
+      "txId": "user_025-tx-0008",
+      "date": "2026-01-10",
+      "merchant": "Spotify",
+      "mcc": 5815,
+      "category": "non_driving",
+      "amountUsd": 27.05
+    },
+    {
+      "txId": "user_025-tx-0009",
+      "date": "2026-01-12",
+      "merchant": "Exxon",
+      "mcc": 5541,
+      "category": "fuel",
+      "amountUsd": 25.25,
+      "gallons": 8.06,
+      "pricePerGal": 3.133,
+      "listPricePerGal": 3.183,
+      "loyaltyDiscountPerGal": 0.05
+    },
+    {
+      "txId": "user_025-tx-0010",
+      "date": "2026-01-13",
+      "merchant": "Chipotle",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 71.56
+    },
+    {
+      "txId": "user_025-tx-0011",
+      "date": "2026-04-01",
+      "merchant": "GEICO",
+      "mcc": 6300,
+      "category": "insurance",
+      "amountUsd": 153.58
+    },
+    {
+      "txId": "user_025-tx-0012",
+      "date": "2026-04-01",
+      "merchant": "Amazon",
+      "mcc": 5942,
+      "category": "non_driving",
+      "amountUsd": 46.13
+    },
+    {
+      "txId": "user_025-tx-0013",
+      "date": "2026-04-04",
+      "merchant": "Target",
+      "mcc": 5311,
+      "category": "non_driving",
+      "amountUsd": 57.27
+    },
+    {
+      "txId": "user_025-tx-0014",
+      "date": "2026-04-06",
+      "merchant": "7-Eleven Fuel",
+      "mcc": 5541,
+      "category": "fuel",
+      "amountUsd": 31.21,
+      "gallons": 9.02,
+      "pricePerGal": 3.46,
+      "listPricePerGal": 3.46,
+      "loyaltyDiscountPerGal": 0
+    },
+    {
+      "txId": "user_025-tx-0015",
+      "date": "2026-04-07",
+      "merchant": "Amazon",
+      "mcc": 5942,
+      "category": "non_driving",
+      "amountUsd": 113.61
+    },
+    {
+      "txId": "user_025-tx-0016",
+      "date": "2026-04-10",
+      "merchant": "Kroger",
+      "mcc": 5411,
+      "category": "non_driving",
+      "amountUsd": 106.55
+    },
+    {
+      "txId": "user_025-tx-0017",
+      "date": "2026-04-11",
+      "merchant": "Shell",
+      "mcc": 5541,
+      "category": "fuel",
+      "amountUsd": 32.74,
+      "gallons": 9.92,
+      "pricePerGal": 3.3,
+      "listPricePerGal": 3.35,
+      "loyaltyDiscountPerGal": 0.05
+    },
+    {
+      "txId": "user_025-tx-0018",
+      "date": "2026-04-12",
+      "merchant": "Mister Car Wash",
+      "mcc": 7542,
+      "category": "car_wash",
+      "amountUsd": 13.45
+    },
+    {
+      "txId": "user_025-tx-0019",
+      "date": "2026-04-13",
+      "merchant": "Starbucks",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 102.05
+    },
+    {
+      "txId": "user_025-tx-0020",
+      "date": "2026-07-01",
+      "merchant": "GEICO",
+      "mcc": 6300,
+      "category": "insurance",
+      "amountUsd": 154.37
+    },
+    {
+      "txId": "user_025-tx-0021",
+      "date": "2026-07-01",
+      "merchant": "Target",
+      "mcc": 5311,
+      "category": "non_driving",
+      "amountUsd": 94.19
+    },
+    {
+      "txId": "user_025-tx-0022",
+      "date": "2026-07-04",
+      "merchant": "TARGET",
+      "mcc": 5311,
+      "category": "non_driving",
+      "amountUsd": 24.11
+    },
+    {
+      "txId": "user_025-tx-0023",
+      "date": "2026-07-05",
+      "merchant": "Uber",
+      "mcc": 4121,
+      "category": "rideshare",
+      "amountUsd": 58.52
+    },
+    {
+      "txId": "user_025-tx-0024",
+      "date": "2026-07-06",
+      "merchant": "BP",
+      "mcc": 5541,
+      "category": "fuel",
+      "amountUsd": 29.63,
+      "gallons": 9.29,
+      "pricePerGal": 3.189,
+      "listPricePerGal": 3.189,
+      "loyaltyDiscountPerGal": 0
+    },
+    {
+      "txId": "user_025-tx-0025",
+      "date": "2026-07-07",
+      "merchant": "Chipotle",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 105.38
+    },
+    {
+      "txId": "user_025-tx-0026",
+      "date": "2026-07-08",
+      "merchant": "Amazon",
+      "mcc": 5942,
+      "category": "refund",
+      "amountUsd": -32.91
+    },
+    {
+      "txId": "user_025-tx-0027",
+      "date": "2026-07-10",
+      "merchant": "Kroger",
+      "mcc": 5411,
+      "category": "non_driving",
+      "amountUsd": 78.65
+    },
+    {
+      "txId": "user_025-tx-0028",
+      "date": "2026-07-12",
+      "merchant": "Mister Car Wash",
+      "mcc": 7542,
+      "category": "car_wash",
+      "amountUsd": 12.95
+    },
+    {
+      "txId": "user_025-tx-0029",
+      "date": "2026-07-13",
+      "merchant": "Spotify",
+      "mcc": 5815,
+      "category": "non_driving",
+      "amountUsd": 107.76
+    },
+    {
+      "txId": "user_025-tx-0030",
+      "date": "2026-07-14",
+      "merchant": "QuikTrip",
+      "mcc": 5541,
+      "category": "fuel",
+      "amountUsd": 28.31,
+      "gallons": 8.58,
+      "pricePerGal": 3.3,
+      "listPricePerGal": 3.35,
+      "loyaltyDiscountPerGal": 0.05
+    },
+    {
+      "txId": "user_025-tx-0031",
+      "date": "2026-10-01",
+      "merchant": "GEICO",
+      "mcc": 6300,
+      "category": "insurance",
+      "amountUsd": 157.16
+    },
+    {
+      "txId": "user_025-tx-0032",
+      "date": "2026-10-01",
+      "merchant": "Spotify",
+      "mcc": 5815,
+      "category": "non_driving",
+      "amountUsd": 32.13
+    },
+    {
+      "txId": "user_025-tx-0033",
+      "date": "2026-10-02",
+      "merchant": "MISTER CAR WASH",
+      "mcc": 7542,
+      "category": "car_wash",
+      "amountUsd": null
+    },
+    {
+      "txId": "user_025-tx-0034",
+      "date": "2026-10-04",
+      "merchant": "Spotify",
+      "mcc": 5815,
+      "category": "non_driving",
+      "amountUsd": 20.91
+    },
+    {
+      "txId": "user_025-tx-0035",
+      "date": "2026-10-05",
+      "merchant": "Shell",
+      "mcc": 5541,
+      "category": "fuel",
+      "amountUsd": 30.73,
+      "gallons": 9.18,
+      "pricePerGal": 3.348,
+      "listPricePerGal": 3.348,
+      "loyaltyDiscountPerGal": 0
+    },
+    {
+      "txId": "user_025-tx-0036",
+      "date": "2026-10-07",
+      "merchant": "Starbucks",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 28.36
+    },
+    {
+      "txId": "user_025-tx-0037",
+      "date": "2026-10-10",
+      "merchant": "Toyota Service",
+      "mcc": 7538,
+      "category": "maintenance",
+      "amountUsd": 287.88
+    },
+    {
+      "txId": "user_025-tx-0038",
+      "date": "2026-10-10",
+      "merchant": "CHIPOTLE",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 24.15
+    },
+    {
+      "txId": "user_025-tx-0039",
+      "date": "2026-10-12",
+      "merchant": "E-ZPass",
+      "mcc": 4784,
+      "category": "tolls",
+      "amountUsd": 22.91
+    },
+    {
+      "txId": "user_025-tx-0040",
+      "date": "2026-10-13",
+      "merchant": "Target",
+      "mcc": 5311,
+      "category": "non_driving",
+      "amountUsd": 67.85
+    },
+    {
+      "txId": "user_025-tx-0041",
+      "date": "2026-10-14",
+      "merchant": "BP",
+      "mcc": 5541,
+      "category": "fuel",
+      "amountUsd": 36.17,
+      "gallons": 10.55,
+      "pricePerGal": 3.428,
+      "listPricePerGal": 3.478,
+      "loyaltyDiscountPerGal": 0.05
+    }
+  ]
+}

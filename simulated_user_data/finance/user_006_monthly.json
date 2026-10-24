@@ -1,0 +1,64 @@
+{
+  "userId": "user_006",
+  "simulated": true,
+  "annualFixedCosts": {
+    "insuranceUsdPerYear": 2421,
+    "registrationUsdPerYear": 45,
+    "maintenanceUsdPerYear": 640,
+    "loanPaymentUsdPerYear": 0
+  },
+  "months": [
+    {
+      "month": "2026-01",
+      "regionId": "pittsburgh_pa",
+      "tripsInSample": 27,
+      "sampledDays": 14,
+      "modeledEnergyCostUsd": 127.81,
+      "cardEnergySpendUsd": 113.24,
+      "budgetUsd": 108,
+      "varianceVsBudgetUsd": 19.81,
+      "avgGasPriceUsdPerGal": 3.157,
+      "priceSpike": false,
+      "fixedMonthlyUsd": 258.83
+    },
+    {
+      "month": "2026-04",
+      "regionId": "pittsburgh_pa",
+      "tripsInSample": 28,
+      "sampledDays": 14,
+      "modeledEnergyCostUsd": 150.75,
+      "cardEnergySpendUsd": 127.26,
+      "budgetUsd": 108,
+      "varianceVsBudgetUsd": 42.75,
+      "avgGasPriceUsdPerGal": 3.319,
+      "priceSpike": false,
+      "fixedMonthlyUsd": 258.83
+    },
+    {
+      "month": "2026-07",
+      "regionId": "pittsburgh_pa",
+      "tripsInSample": 32,
+      "sampledDays": 14,
+      "modeledEnergyCostUsd": 140.45,
+      "cardEnergySpendUsd": 197.67,
+      "budgetUsd": 108,
+      "varianceVsBudgetUsd": 32.45,
+      "avgGasPriceUsdPerGal": 3.431,
+      "priceSpike": false,
+      "fixedMonthlyUsd": 258.83
+    },
+    {
+      "month": "2026-10",
+      "regionId": "pittsburgh_pa",
+      "tripsInSample": 28,
+      "sampledDays": 14,
+      "modeledEnergyCostUsd": 120.06,
+      "cardEnergySpendUsd": 107.08,
+      "budgetUsd": 108,
+      "varianceVsBudgetUsd": 12.06,
+      "avgGasPriceUsdPerGal": 3.305,
+      "priceSpike": false,
+      "fixedMonthlyUsd": 258.83
+    }
+  ]
+}

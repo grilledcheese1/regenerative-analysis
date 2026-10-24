@@ -1,0 +1,556 @@
+{
+  "_note": "SIMULATED / ESTIMATE climate and price approximations for generating plausible data. tempMeanC and pRain are indexed by month (Jan..Dec). terrain.gainPerKm is metres of climb per km driven. Incentive and registration numbers are PLACEHOLDERS, verify before showing to users.",
+  "regions": [
+    {
+      "id": "austin_tx",
+      "name": "Austin, TX",
+      "lat": 30.27,
+      "lon": -97.74,
+      "altitudeM": 150,
+      "terrain": {
+        "gainPerKmMean": 9,
+        "gainPerKmSd": 4
+      },
+      "gasUsdPerGal": 2.95,
+      "elecUsdPerKwh": 0.13,
+      "tempMeanC": [
+        10,
+        12,
+        16,
+        20,
+        24,
+        28,
+        30,
+        30,
+        26,
+        21,
+        15,
+        11
+      ],
+      "tempSdC": 4,
+      "pRain": [
+        0.18,
+        0.2,
+        0.2,
+        0.22,
+        0.28,
+        0.2,
+        0.14,
+        0.14,
+        0.2,
+        0.2,
+        0.18,
+        0.18
+      ],
+      "pSnow": 0.01,
+      "unpavedShare": 0.06,
+      "registration": {
+        "annualUsd": 75,
+        "evFeeUsd": 200
+      },
+      "insuranceFactor": 1.15,
+      "incentives": {
+        "stateEvUsd": 0,
+        "incomeCapUsd": null
+      },
+      "salesTaxRate": 0.06
+    },
+    {
+      "id": "denver_co",
+      "name": "Denver, CO",
+      "lat": 39.74,
+      "lon": -104.99,
+      "altitudeM": 1600,
+      "terrain": {
+        "gainPerKmMean": 7,
+        "gainPerKmSd": 4
+      },
+      "gasUsdPerGal": 3.05,
+      "elecUsdPerKwh": 0.14,
+      "tempMeanC": [
+        0,
+        2,
+        6,
+        10,
+        15,
+        21,
+        24,
+        23,
+        18,
+        11,
+        4,
+        0
+      ],
+      "tempSdC": 6,
+      "pRain": [
+        0.08,
+        0.1,
+        0.14,
+        0.18,
+        0.24,
+        0.18,
+        0.2,
+        0.2,
+        0.14,
+        0.1,
+        0.08,
+        0.08
+      ],
+      "pSnow": 0.35,
+      "unpavedShare": 0.05,
+      "registration": {
+        "annualUsd": 130,
+        "evFeeUsd": 50
+      },
+      "insuranceFactor": 1.05,
+      "incentives": {
+        "stateEvUsd": 750,
+        "incomeCapUsd": 100000
+      },
+      "salesTaxRate": 0.06
+    },
+    {
+      "id": "minneapolis_mn",
+      "name": "Minneapolis, MN",
+      "lat": 44.98,
+      "lon": -93.27,
+      "altitudeM": 260,
+      "terrain": {
+        "gainPerKmMean": 3,
+        "gainPerKmSd": 2
+      },
+      "gasUsdPerGal": 2.9,
+      "elecUsdPerKwh": 0.15,
+      "tempMeanC": [
+        -10,
+        -7,
+        -1,
+        7,
+        14,
+        20,
+        23,
+        21,
+        16,
+        8,
+        0,
+        -8
+      ],
+      "tempSdC": 6,
+      "pRain": [
+        0.1,
+        0.1,
+        0.18,
+        0.25,
+        0.3,
+        0.32,
+        0.3,
+        0.3,
+        0.28,
+        0.2,
+        0.16,
+        0.12
+      ],
+      "pSnow": 0.6,
+      "unpavedShare": 0.05,
+      "registration": {
+        "annualUsd": 120,
+        "evFeeUsd": 75
+      },
+      "insuranceFactor": 1.0,
+      "incentives": {
+        "stateEvUsd": 0,
+        "incomeCapUsd": null
+      },
+      "salesTaxRate": 0.06
+    },
+    {
+      "id": "seattle_wa",
+      "name": "Seattle, WA",
+      "lat": 47.61,
+      "lon": -122.33,
+      "altitudeM": 50,
+      "terrain": {
+        "gainPerKmMean": 12,
+        "gainPerKmSd": 5
+      },
+      "gasUsdPerGal": 4.4,
+      "elecUsdPerKwh": 0.12,
+      "tempMeanC": [
+        5,
+        6,
+        8,
+        10,
+        14,
+        17,
+        20,
+        20,
+        16,
+        11,
+        7,
+        5
+      ],
+      "tempSdC": 3,
+      "pRain": [
+        0.6,
+        0.5,
+        0.5,
+        0.4,
+        0.3,
+        0.25,
+        0.1,
+        0.12,
+        0.25,
+        0.45,
+        0.6,
+        0.62
+      ],
+      "pSnow": 0.04,
+      "unpavedShare": 0.04,
+      "registration": {
+        "annualUsd": 100,
+        "evFeeUsd": 150
+      },
+      "insuranceFactor": 1.0,
+      "incentives": {
+        "stateEvUsd": 0,
+        "incomeCapUsd": null
+      },
+      "salesTaxRate": 0.06
+    },
+    {
+      "id": "phoenix_az",
+      "name": "Phoenix, AZ",
+      "lat": 33.45,
+      "lon": -112.07,
+      "altitudeM": 340,
+      "terrain": {
+        "gainPerKmMean": 3,
+        "gainPerKmSd": 2
+      },
+      "gasUsdPerGal": 3.6,
+      "elecUsdPerKwh": 0.15,
+      "tempMeanC": [
+        13,
+        15,
+        18,
+        22,
+        27,
+        32,
+        35,
+        34,
+        31,
+        24,
+        17,
+        12
+      ],
+      "tempSdC": 4,
+      "pRain": [
+        0.08,
+        0.08,
+        0.08,
+        0.04,
+        0.02,
+        0.02,
+        0.15,
+        0.18,
+        0.08,
+        0.06,
+        0.06,
+        0.08
+      ],
+      "pSnow": 0,
+      "unpavedShare": 0.03,
+      "registration": {
+        "annualUsd": 80,
+        "evFeeUsd": 0
+      },
+      "insuranceFactor": 1.2,
+      "incentives": {
+        "stateEvUsd": 0,
+        "incomeCapUsd": null
+      },
+      "salesTaxRate": 0.06
+    },
+    {
+      "id": "pittsburgh_pa",
+      "name": "Pittsburgh, PA",
+      "lat": 40.44,
+      "lon": -79.99,
+      "altitudeM": 370,
+      "terrain": {
+        "gainPerKmMean": 14,
+        "gainPerKmSd": 5
+      },
+      "gasUsdPerGal": 3.3,
+      "elecUsdPerKwh": 0.17,
+      "tempMeanC": [
+        -1,
+        0,
+        5,
+        11,
+        17,
+        21,
+        24,
+        23,
+        19,
+        12,
+        6,
+        1
+      ],
+      "tempSdC": 5,
+      "pRain": [
+        0.35,
+        0.32,
+        0.34,
+        0.34,
+        0.36,
+        0.34,
+        0.32,
+        0.28,
+        0.26,
+        0.26,
+        0.32,
+        0.36
+      ],
+      "pSnow": 0.4,
+      "unpavedShare": 0.07,
+      "registration": {
+        "annualUsd": 45,
+        "evFeeUsd": 200
+      },
+      "insuranceFactor": 1.1,
+      "incentives": {
+        "stateEvUsd": 0,
+        "incomeCapUsd": null
+      },
+      "salesTaxRate": 0.06
+    },
+    {
+      "id": "atlanta_ga",
+      "name": "Atlanta, GA",
+      "lat": 33.75,
+      "lon": -84.39,
+      "altitudeM": 320,
+      "terrain": {
+        "gainPerKmMean": 8,
+        "gainPerKmSd": 3
+      },
+      "gasUsdPerGal": 3.0,
+      "elecUsdPerKwh": 0.14,
+      "tempMeanC": [
+        6,
+        8,
+        12,
+        17,
+        21,
+        25,
+        27,
+        26,
+        23,
+        17,
+        11,
+        7
+      ],
+      "tempSdC": 4,
+      "pRain": [
+        0.32,
+        0.3,
+        0.3,
+        0.24,
+        0.26,
+        0.28,
+        0.34,
+        0.28,
+        0.2,
+        0.2,
+        0.26,
+        0.3
+      ],
+      "pSnow": 0.03,
+      "unpavedShare": 0.08,
+      "registration": {
+        "annualUsd": 20,
+        "evFeeUsd": 214
+      },
+      "insuranceFactor": 1.35,
+      "incentives": {
+        "stateEvUsd": 0,
+        "incomeCapUsd": null
+      },
+      "salesTaxRate": 0.06
+    },
+    {
+      "id": "san_francisco_ca",
+      "name": "San Francisco, CA",
+      "lat": 37.77,
+      "lon": -122.42,
+      "altitudeM": 20,
+      "terrain": {
+        "gainPerKmMean": 16,
+        "gainPerKmSd": 6
+      },
+      "gasUsdPerGal": 4.9,
+      "elecUsdPerKwh": 0.31,
+      "tempMeanC": [
+        10,
+        11,
+        12,
+        13,
+        14,
+        16,
+        17,
+        17,
+        17,
+        15,
+        12,
+        10
+      ],
+      "tempSdC": 2,
+      "pRain": [
+        0.4,
+        0.35,
+        0.3,
+        0.15,
+        0.08,
+        0.03,
+        0.01,
+        0.01,
+        0.05,
+        0.15,
+        0.3,
+        0.38
+      ],
+      "pSnow": 0,
+      "unpavedShare": 0.01,
+      "registration": {
+        "annualUsd": 90,
+        "evFeeUsd": 118
+      },
+      "insuranceFactor": 1.4,
+      "incentives": {
+        "stateEvUsd": 0,
+        "incomeCapUsd": null
+      },
+      "salesTaxRate": 0.06
+    },
+    {
+      "id": "boston_ma",
+      "name": "Boston, MA",
+      "lat": 42.36,
+      "lon": -71.06,
+      "altitudeM": 10,
+      "terrain": {
+        "gainPerKmMean": 8,
+        "gainPerKmSd": 4
+      },
+      "gasUsdPerGal": 3.4,
+      "elecUsdPerKwh": 0.3,
+      "tempMeanC": [
+        -1,
+        0,
+        4,
+        10,
+        16,
+        21,
+        24,
+        23,
+        19,
+        13,
+        7,
+        2
+      ],
+      "tempSdC": 5,
+      "pRain": [
+        0.3,
+        0.3,
+        0.32,
+        0.32,
+        0.34,
+        0.3,
+        0.28,
+        0.26,
+        0.26,
+        0.28,
+        0.3,
+        0.32
+      ],
+      "pSnow": 0.45,
+      "unpavedShare": 0.04,
+      "registration": {
+        "annualUsd": 60,
+        "evFeeUsd": 0
+      },
+      "insuranceFactor": 1.25,
+      "incentives": {
+        "stateEvUsd": 3500,
+        "incomeCapUsd": 80000
+      },
+      "salesTaxRate": 0.06
+    },
+    {
+      "id": "miami_fl",
+      "name": "Miami, FL",
+      "lat": 25.76,
+      "lon": -80.19,
+      "altitudeM": 2,
+      "terrain": {
+        "gainPerKmMean": 1,
+        "gainPerKmSd": 1
+      },
+      "gasUsdPerGal": 3.3,
+      "elecUsdPerKwh": 0.15,
+      "tempMeanC": [
+        20,
+        21,
+        22,
+        24,
+        26,
+        28,
+        29,
+        29,
+        28,
+        26,
+        23,
+        21
+      ],
+      "tempSdC": 2,
+      "pRain": [
+        0.2,
+        0.18,
+        0.2,
+        0.26,
+        0.4,
+        0.55,
+        0.5,
+        0.55,
+        0.55,
+        0.4,
+        0.25,
+        0.2
+      ],
+      "pSnow": 0,
+      "unpavedShare": 0.02,
+      "registration": {
+        "annualUsd": 45,
+        "evFeeUsd": 135
+      },
+      "insuranceFactor": 1.7,
+      "incentives": {
+        "stateEvUsd": 0,
+        "incomeCapUsd": null
+      },
+      "salesTaxRate": 0.06
+    }
+  ],
+  "publicFastChargeUsdPerKwh": 0.45,
+  "gridCo2KgPerKwh": 0.37,
+  "gasolineCo2KgPerGal": 8.887,
+  "gasolineKwhPerGal": 33.7,
+  "touRateMultipliers": {
+    "offPeak": 0.6,
+    "mid": 1.0,
+    "peak": 1.6
+  },
+  "workplaceChargeUsdPerKwh": 0.08,
+  "publicL2UsdPerKwh": 0.3
+}

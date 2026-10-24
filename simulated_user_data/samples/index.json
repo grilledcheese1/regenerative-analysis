@@ -1,0 +1,872 @@
+{
+  "simulated": true,
+  "note": "Files in samples/ are valid types/trip.ts Trip objects at 5 s resolution. compare/ holds the demo sets: hill, flat, mixed routes x driver x condition plus a conventional baseline. Route geometry and elevation are synthetic; lib/samples.mjs accepts a routeOverride with real points once Stream 2 caches exist.",
+  "userSamples": [
+    {
+      "file": "samples/user_001-0001.json",
+      "userId": "user_001",
+      "sourceTripId": "user_001-0001",
+      "vehicleId": "toyota_camry_hybrid_xse_awd_2025",
+      "purpose": "commute_am",
+      "condition": "mud"
+    },
+    {
+      "file": "samples/user_001-0076.json",
+      "userId": "user_001",
+      "sourceTripId": "user_001-0076",
+      "vehicleId": "toyota_camry_hybrid_xse_awd_2025",
+      "purpose": "leisure_long",
+      "condition": "dry"
+    },
+    {
+      "file": "samples/user_002-0001.json",
+      "userId": "user_002",
+      "sourceTripId": "user_002-0001",
+      "vehicleId": "toyota_sienna_hybrid_2025",
+      "purpose": "errand",
+      "condition": "mud"
+    },
+    {
+      "file": "samples/user_002-0036.json",
+      "userId": "user_002",
+      "sourceTripId": "user_002-0036",
+      "vehicleId": "toyota_sienna_hybrid_2025",
+      "purpose": "leisure_long",
+      "condition": "dry"
+    },
+    {
+      "file": "samples/user_003-0001.json",
+      "userId": "user_003",
+      "sourceTripId": "user_003-0001",
+      "vehicleId": "toyota_4runner_2025",
+      "purpose": "commute_am",
+      "condition": "snow"
+    },
+    {
+      "file": "samples/user_003-0086.json",
+      "userId": "user_003",
+      "sourceTripId": "user_003-0086",
+      "vehicleId": "toyota_4runner_2025",
+      "purpose": "leisure_long",
+      "condition": "dry"
+    },
+    {
+      "file": "samples/user_004-0001.json",
+      "userId": "user_004",
+      "sourceTripId": "user_004-0001",
+      "vehicleId": "toyota_4runner_2025",
+      "purpose": "commute_am",
+      "condition": "dry"
+    },
+    {
+      "file": "samples/user_004-0003.json",
+      "userId": "user_004",
+      "sourceTripId": "user_004-0003",
+      "vehicleId": "toyota_4runner_2025",
+      "purpose": "commute_am",
+      "condition": "wet"
+    },
+    {
+      "file": "samples/user_004-0007.json",
+      "userId": "user_004",
+      "sourceTripId": "user_004-0007",
+      "vehicleId": "toyota_4runner_2025",
+      "purpose": "leisure_long",
+      "condition": "wet"
+    },
+    {
+      "file": "samples/user_005-0007.json",
+      "userId": "user_005",
+      "sourceTripId": "user_005-0007",
+      "vehicleId": "toyota_camry_hybrid_xse_2025",
+      "purpose": "commute_am",
+      "condition": "wet"
+    },
+    {
+      "file": "samples/user_005-0005.json",
+      "userId": "user_005",
+      "sourceTripId": "user_005-0005",
+      "vehicleId": "toyota_camry_hybrid_xse_2025",
+      "purpose": "errand",
+      "condition": "wet"
+    },
+    {
+      "file": "samples/user_005-0017.json",
+      "userId": "user_005",
+      "sourceTripId": "user_005-0017",
+      "vehicleId": "toyota_camry_hybrid_xse_2025",
+      "purpose": "leisure_long",
+      "condition": "dry"
+    },
+    {
+      "file": "samples/user_006-0001.json",
+      "userId": "user_006",
+      "sourceTripId": "user_006-0001",
+      "vehicleId": "toyota_tundra_hybrid_2025",
+      "purpose": "commute_am",
+      "condition": "snow"
+    },
+    {
+      "file": "samples/user_006-0036.json",
+      "userId": "user_006",
+      "sourceTripId": "user_006-0036",
+      "vehicleId": "toyota_tundra_hybrid_2025",
+      "purpose": "leisure_long",
+      "condition": "mud"
+    },
+    {
+      "file": "samples/user_007-0005.json",
+      "userId": "user_007",
+      "sourceTripId": "user_007-0005",
+      "vehicleId": "toyota_crown_hybrid_2025",
+      "purpose": "commute_am",
+      "condition": "dry"
+    },
+    {
+      "file": "samples/user_007-0001.json",
+      "userId": "user_007",
+      "sourceTripId": "user_007-0001",
+      "vehicleId": "toyota_crown_hybrid_2025",
+      "purpose": "errand",
+      "condition": "wet"
+    },
+    {
+      "file": "samples/user_007-0056.json",
+      "userId": "user_007",
+      "sourceTripId": "user_007-0056",
+      "vehicleId": "toyota_crown_hybrid_2025",
+      "purpose": "leisure_long",
+      "condition": "wet"
+    },
+    {
+      "file": "samples/user_008-0001.json",
+      "userId": "user_008",
+      "sourceTripId": "user_008-0001",
+      "vehicleId": "toyota_tundra_2025",
+      "purpose": "commute_am",
+      "condition": "dry"
+    },
+    {
+      "file": "samples/user_008-0006.json",
+      "userId": "user_008",
+      "sourceTripId": "user_008-0006",
+      "vehicleId": "toyota_tundra_2025",
+      "purpose": "errand",
+      "condition": "wet"
+    },
+    {
+      "file": "samples/user_008-0091.json",
+      "userId": "user_008",
+      "sourceTripId": "user_008-0091",
+      "vehicleId": "toyota_tundra_2025",
+      "purpose": "leisure_long",
+      "condition": "dry"
+    },
+    {
+      "file": "samples/user_009-0003.json",
+      "userId": "user_009",
+      "sourceTripId": "user_009-0003",
+      "vehicleId": "toyota_camry_hybrid_2025",
+      "purpose": "errand",
+      "condition": "snow"
+    },
+    {
+      "file": "samples/user_009-0070.json",
+      "userId": "user_009",
+      "sourceTripId": "user_009-0070",
+      "vehicleId": "toyota_camry_hybrid_2025",
+      "purpose": "leisure_long",
+      "condition": "dry"
+    },
+    {
+      "file": "samples/user_010-0005.json",
+      "userId": "user_010",
+      "sourceTripId": "user_010-0005",
+      "vehicleId": "toyota_sienna_hybrid_2025",
+      "purpose": "commute_am",
+      "condition": "dry"
+    },
+    {
+      "file": "samples/user_010-0001.json",
+      "userId": "user_010",
+      "sourceTripId": "user_010-0001",
+      "vehicleId": "toyota_sienna_hybrid_2025",
+      "purpose": "errand",
+      "condition": "wet"
+    },
+    {
+      "file": "samples/user_010-0004.json",
+      "userId": "user_010",
+      "sourceTripId": "user_010-0004",
+      "vehicleId": "toyota_sienna_hybrid_2025",
+      "purpose": "leisure_long",
+      "condition": "dry"
+    },
+    {
+      "file": "samples/user_011-0007.json",
+      "userId": "user_011",
+      "sourceTripId": "user_011-0007",
+      "vehicleId": "hyundai_ioniq5_2025",
+      "purpose": "commute_am",
+      "condition": "mud"
+    },
+    {
+      "file": "samples/user_011-0002.json",
+      "userId": "user_011",
+      "sourceTripId": "user_011-0002",
+      "vehicleId": "hyundai_ioniq5_2025",
+      "purpose": "errand",
+      "condition": "mud"
+    },
+    {
+      "file": "samples/user_011-0066.json",
+      "userId": "user_011",
+      "sourceTripId": "user_011-0066",
+      "vehicleId": "hyundai_ioniq5_2025",
+      "purpose": "leisure_long",
+      "condition": "dry"
+    },
+    {
+      "file": "samples/user_012-0001.json",
+      "userId": "user_012",
+      "sourceTripId": "user_012-0001",
+      "vehicleId": "honda_civic_2025",
+      "purpose": "commute_am",
+      "condition": "dry"
+    },
+    {
+      "file": "samples/user_012-0044.json",
+      "userId": "user_012",
+      "sourceTripId": "user_012-0044",
+      "vehicleId": "honda_civic_2025",
+      "purpose": "errand",
+      "condition": "mud"
+    },
+    {
+      "file": "samples/user_012-0042.json",
+      "userId": "user_012",
+      "sourceTripId": "user_012-0042",
+      "vehicleId": "honda_civic_2025",
+      "purpose": "leisure_long",
+      "condition": "dry"
+    },
+    {
+      "file": "samples/user_013-0001.json",
+      "userId": "user_013",
+      "sourceTripId": "user_013-0001",
+      "vehicleId": "toyota_corolla_2025",
+      "purpose": "commute_am",
+      "condition": "dry"
+    },
+    {
+      "file": "samples/user_013-0003.json",
+      "userId": "user_013",
+      "sourceTripId": "user_013-0003",
+      "vehicleId": "toyota_corolla_2025",
+      "purpose": "commute_am",
+      "condition": "snow"
+    },
+    {
+      "file": "samples/user_013-0053.json",
+      "userId": "user_013",
+      "sourceTripId": "user_013-0053",
+      "vehicleId": "toyota_corolla_2025",
+      "purpose": "leisure_long",
+      "condition": "dry"
+    },
+    {
+      "file": "samples/user_014-0001.json",
+      "userId": "user_014",
+      "sourceTripId": "user_014-0001",
+      "vehicleId": "toyota_camry_hybrid_se_2025",
+      "purpose": "commute_am",
+      "condition": "dry"
+    },
+    {
+      "file": "samples/user_014-0005.json",
+      "userId": "user_014",
+      "sourceTripId": "user_014-0005",
+      "vehicleId": "toyota_camry_hybrid_se_2025",
+      "purpose": "errand",
+      "condition": "wet"
+    },
+    {
+      "file": "samples/user_014-0100.json",
+      "userId": "user_014",
+      "sourceTripId": "user_014-0100",
+      "vehicleId": "toyota_camry_hybrid_se_2025",
+      "purpose": "leisure_long",
+      "condition": "wet"
+    },
+    {
+      "file": "samples/user_015-0006.json",
+      "userId": "user_015",
+      "sourceTripId": "user_015-0006",
+      "vehicleId": "toyota_sienna_hybrid_2025",
+      "purpose": "commute_am",
+      "condition": "dry"
+    },
+    {
+      "file": "samples/user_015-0011.json",
+      "userId": "user_015",
+      "sourceTripId": "user_015-0011",
+      "vehicleId": "toyota_sienna_hybrid_2025",
+      "purpose": "commute_am",
+      "condition": "wet"
+    },
+    {
+      "file": "samples/user_015-0053.json",
+      "userId": "user_015",
+      "sourceTripId": "user_015-0053",
+      "vehicleId": "toyota_sienna_hybrid_2025",
+      "purpose": "leisure_long",
+      "condition": "wet"
+    },
+    {
+      "file": "samples/user_016-0005.json",
+      "userId": "user_016",
+      "sourceTripId": "user_016-0005",
+      "vehicleId": "toyota_rav4_prime_2025",
+      "purpose": "commute_am",
+      "condition": "dry"
+    },
+    {
+      "file": "samples/user_016-0004.json",
+      "userId": "user_016",
+      "sourceTripId": "user_016-0004",
+      "vehicleId": "toyota_rav4_prime_2025",
+      "purpose": "errand",
+      "condition": "wet"
+    },
+    {
+      "file": "samples/user_016-0040.json",
+      "userId": "user_016",
+      "sourceTripId": "user_016-0040",
+      "vehicleId": "toyota_rav4_prime_2025",
+      "purpose": "commute_am",
+      "condition": "dry"
+    },
+    {
+      "file": "samples/user_017-0001.json",
+      "userId": "user_017",
+      "sourceTripId": "user_017-0001",
+      "vehicleId": "toyota_corolla_cross_hybrid_2025",
+      "purpose": "commute_am",
+      "condition": "dry"
+    },
+    {
+      "file": "samples/user_017-0004.json",
+      "userId": "user_017",
+      "sourceTripId": "user_017-0004",
+      "vehicleId": "toyota_corolla_cross_hybrid_2025",
+      "purpose": "commute_am",
+      "condition": "snow"
+    },
+    {
+      "file": "samples/user_017-0041.json",
+      "userId": "user_017",
+      "sourceTripId": "user_017-0041",
+      "vehicleId": "toyota_corolla_cross_hybrid_2025",
+      "purpose": "commute_pm",
+      "condition": "mud"
+    },
+    {
+      "file": "samples/user_018-0005.json",
+      "userId": "user_018",
+      "sourceTripId": "user_018-0005",
+      "vehicleId": "toyota_camry_hybrid_xse_2025",
+      "purpose": "commute_am",
+      "condition": "dry"
+    },
+    {
+      "file": "samples/user_018-0008.json",
+      "userId": "user_018",
+      "sourceTripId": "user_018-0008",
+      "vehicleId": "toyota_camry_hybrid_xse_2025",
+      "purpose": "commute_am",
+      "condition": "wet"
+    },
+    {
+      "file": "samples/user_018-0093.json",
+      "userId": "user_018",
+      "sourceTripId": "user_018-0093",
+      "vehicleId": "toyota_camry_hybrid_xse_2025",
+      "purpose": "commute_am",
+      "condition": "dry"
+    },
+    {
+      "file": "samples/user_019-0001.json",
+      "userId": "user_019",
+      "sourceTripId": "user_019-0001",
+      "vehicleId": "toyota_camry_hybrid_se_2025",
+      "purpose": "commute_am",
+      "condition": "wet"
+    },
+    {
+      "file": "samples/user_019-0047.json",
+      "userId": "user_019",
+      "sourceTripId": "user_019-0047",
+      "vehicleId": "toyota_camry_hybrid_se_2025",
+      "purpose": "leisure_long",
+      "condition": "wet"
+    },
+    {
+      "file": "samples/user_020-0001.json",
+      "userId": "user_020",
+      "sourceTripId": "user_020-0001",
+      "vehicleId": "toyota_prius_prime_2025",
+      "purpose": "commute_am",
+      "condition": "dry"
+    },
+    {
+      "file": "samples/user_020-0006.json",
+      "userId": "user_020",
+      "sourceTripId": "user_020-0006",
+      "vehicleId": "toyota_prius_prime_2025",
+      "purpose": "errand",
+      "condition": "wet"
+    },
+    {
+      "file": "samples/user_020-0026.json",
+      "userId": "user_020",
+      "sourceTripId": "user_020-0026",
+      "vehicleId": "toyota_prius_prime_2025",
+      "purpose": "leisure_long",
+      "condition": "wet"
+    },
+    {
+      "file": "samples/user_021-0020.json",
+      "userId": "user_021",
+      "sourceTripId": "user_021-0020",
+      "vehicleId": "toyota_tacoma_2025",
+      "purpose": "errand",
+      "condition": "wet"
+    },
+    {
+      "file": "samples/user_021-0019.json",
+      "userId": "user_021",
+      "sourceTripId": "user_021-0019",
+      "vehicleId": "toyota_tacoma_2025",
+      "purpose": "leisure_long",
+      "condition": "dry"
+    },
+    {
+      "file": "samples/user_022-0001.json",
+      "userId": "user_022",
+      "sourceTripId": "user_022-0001",
+      "vehicleId": "chevy_silverado_2025",
+      "purpose": "commute_am",
+      "condition": "dry"
+    },
+    {
+      "file": "samples/user_022-0030.json",
+      "userId": "user_022",
+      "sourceTripId": "user_022-0030",
+      "vehicleId": "chevy_silverado_2025",
+      "purpose": "commute_am",
+      "condition": "wet"
+    },
+    {
+      "file": "samples/user_022-0095.json",
+      "userId": "user_022",
+      "sourceTripId": "user_022-0095",
+      "vehicleId": "chevy_silverado_2025",
+      "purpose": "leisure_long",
+      "condition": "dry"
+    },
+    {
+      "file": "samples/user_023-0001.json",
+      "userId": "user_023",
+      "sourceTripId": "user_023-0001",
+      "vehicleId": "toyota_tundra_hybrid_2025",
+      "purpose": "commute_am",
+      "condition": "dry"
+    },
+    {
+      "file": "samples/user_023-0030.json",
+      "userId": "user_023",
+      "sourceTripId": "user_023-0030",
+      "vehicleId": "toyota_tundra_hybrid_2025",
+      "purpose": "commute_am",
+      "condition": "wet"
+    },
+    {
+      "file": "samples/user_023-0035.json",
+      "userId": "user_023",
+      "sourceTripId": "user_023-0035",
+      "vehicleId": "toyota_tundra_hybrid_2025",
+      "purpose": "leisure_long",
+      "condition": "dry"
+    },
+    {
+      "file": "samples/user_024-0001.json",
+      "userId": "user_024",
+      "sourceTripId": "user_024-0001",
+      "vehicleId": "chevy_bolt_2025",
+      "purpose": "commute_am",
+      "condition": "mud"
+    },
+    {
+      "file": "samples/user_024-0063.json",
+      "userId": "user_024",
+      "sourceTripId": "user_024-0063",
+      "vehicleId": "chevy_bolt_2025",
+      "purpose": "commute_pm",
+      "condition": "dry"
+    },
+    {
+      "file": "samples/user_025-0001.json",
+      "userId": "user_025",
+      "sourceTripId": "user_025-0001",
+      "vehicleId": "toyota_camry_hybrid_xse_2025",
+      "purpose": "commute_am",
+      "condition": "snow"
+    },
+    {
+      "file": "samples/user_025-0051.json",
+      "userId": "user_025",
+      "sourceTripId": "user_025-0051",
+      "vehicleId": "toyota_camry_hybrid_xse_2025",
+      "purpose": "leisure_long",
+      "condition": "mud"
+    },
+    {
+      "file": "samples/user_026-0006.json",
+      "userId": "user_026",
+      "sourceTripId": "user_026-0006",
+      "vehicleId": "toyota_tundra_2025",
+      "purpose": "commute_am",
+      "condition": "dry"
+    },
+    {
+      "file": "samples/user_026-0003.json",
+      "userId": "user_026",
+      "sourceTripId": "user_026-0003",
+      "vehicleId": "toyota_tundra_2025",
+      "purpose": "errand",
+      "condition": "wet"
+    },
+    {
+      "file": "samples/user_026-0031.json",
+      "userId": "user_026",
+      "sourceTripId": "user_026-0031",
+      "vehicleId": "toyota_tundra_2025",
+      "purpose": "leisure_long",
+      "condition": "mud"
+    }
+  ],
+  "compare": [
+    {
+      "file": "samples/compare/hill-conventional-dry.json",
+      "route": "hill",
+      "driver": "conventional",
+      "condition": "dry",
+      "regenEnabled": false,
+      "score": 0
+    },
+    {
+      "file": "samples/compare/hill-smooth-dry.json",
+      "route": "hill",
+      "driver": "smooth",
+      "condition": "dry",
+      "regenEnabled": true,
+      "score": 99.5
+    },
+    {
+      "file": "samples/compare/hill-smooth-wet.json",
+      "route": "hill",
+      "driver": "smooth",
+      "condition": "wet",
+      "regenEnabled": true,
+      "score": 99.6
+    },
+    {
+      "file": "samples/compare/hill-smooth-snow.json",
+      "route": "hill",
+      "driver": "smooth",
+      "condition": "snow",
+      "regenEnabled": true,
+      "score": 93.5
+    },
+    {
+      "file": "samples/compare/hill-smooth-mud.json",
+      "route": "hill",
+      "driver": "smooth",
+      "condition": "mud",
+      "regenEnabled": true,
+      "score": 96.9
+    },
+    {
+      "file": "samples/compare/hill-mixed-dry.json",
+      "route": "hill",
+      "driver": "mixed",
+      "condition": "dry",
+      "regenEnabled": true,
+      "score": 90.9
+    },
+    {
+      "file": "samples/compare/hill-mixed-wet.json",
+      "route": "hill",
+      "driver": "mixed",
+      "condition": "wet",
+      "regenEnabled": true,
+      "score": 91.6
+    },
+    {
+      "file": "samples/compare/hill-mixed-snow.json",
+      "route": "hill",
+      "driver": "mixed",
+      "condition": "snow",
+      "regenEnabled": true,
+      "score": 76.3
+    },
+    {
+      "file": "samples/compare/hill-mixed-mud.json",
+      "route": "hill",
+      "driver": "mixed",
+      "condition": "mud",
+      "regenEnabled": true,
+      "score": 81.6
+    },
+    {
+      "file": "samples/compare/hill-aggressive-dry.json",
+      "route": "hill",
+      "driver": "aggressive",
+      "condition": "dry",
+      "regenEnabled": true,
+      "score": 72.8
+    },
+    {
+      "file": "samples/compare/hill-aggressive-wet.json",
+      "route": "hill",
+      "driver": "aggressive",
+      "condition": "wet",
+      "regenEnabled": true,
+      "score": 73
+    },
+    {
+      "file": "samples/compare/hill-aggressive-snow.json",
+      "route": "hill",
+      "driver": "aggressive",
+      "condition": "snow",
+      "regenEnabled": true,
+      "score": 58.3
+    },
+    {
+      "file": "samples/compare/hill-aggressive-mud.json",
+      "route": "hill",
+      "driver": "aggressive",
+      "condition": "mud",
+      "regenEnabled": true,
+      "score": 57.8
+    },
+    {
+      "file": "samples/compare/flat-conventional-dry.json",
+      "route": "flat",
+      "driver": "conventional",
+      "condition": "dry",
+      "regenEnabled": false,
+      "score": 0
+    },
+    {
+      "file": "samples/compare/flat-smooth-dry.json",
+      "route": "flat",
+      "driver": "smooth",
+      "condition": "dry",
+      "regenEnabled": true,
+      "score": 99.3
+    },
+    {
+      "file": "samples/compare/flat-smooth-wet.json",
+      "route": "flat",
+      "driver": "smooth",
+      "condition": "wet",
+      "regenEnabled": true,
+      "score": 99.4
+    },
+    {
+      "file": "samples/compare/flat-smooth-snow.json",
+      "route": "flat",
+      "driver": "smooth",
+      "condition": "snow",
+      "regenEnabled": true,
+      "score": 98.3
+    },
+    {
+      "file": "samples/compare/flat-smooth-mud.json",
+      "route": "flat",
+      "driver": "smooth",
+      "condition": "mud",
+      "regenEnabled": true,
+      "score": 99.2
+    },
+    {
+      "file": "samples/compare/flat-mixed-dry.json",
+      "route": "flat",
+      "driver": "mixed",
+      "condition": "dry",
+      "regenEnabled": true,
+      "score": 81.3
+    },
+    {
+      "file": "samples/compare/flat-mixed-wet.json",
+      "route": "flat",
+      "driver": "mixed",
+      "condition": "wet",
+      "regenEnabled": true,
+      "score": 83.7
+    },
+    {
+      "file": "samples/compare/flat-mixed-snow.json",
+      "route": "flat",
+      "driver": "mixed",
+      "condition": "snow",
+      "regenEnabled": true,
+      "score": 59.7
+    },
+    {
+      "file": "samples/compare/flat-mixed-mud.json",
+      "route": "flat",
+      "driver": "mixed",
+      "condition": "mud",
+      "regenEnabled": true,
+      "score": 68.3
+    },
+    {
+      "file": "samples/compare/flat-aggressive-dry.json",
+      "route": "flat",
+      "driver": "aggressive",
+      "condition": "dry",
+      "regenEnabled": true,
+      "score": 50.2
+    },
+    {
+      "file": "samples/compare/flat-aggressive-wet.json",
+      "route": "flat",
+      "driver": "aggressive",
+      "condition": "wet",
+      "regenEnabled": true,
+      "score": 51.1
+    },
+    {
+      "file": "samples/compare/flat-aggressive-snow.json",
+      "route": "flat",
+      "driver": "aggressive",
+      "condition": "snow",
+      "regenEnabled": true,
+      "score": 35.4
+    },
+    {
+      "file": "samples/compare/flat-aggressive-mud.json",
+      "route": "flat",
+      "driver": "aggressive",
+      "condition": "mud",
+      "regenEnabled": true,
+      "score": 39
+    },
+    {
+      "file": "samples/compare/mixed-conventional-dry.json",
+      "route": "mixed",
+      "driver": "conventional",
+      "condition": "dry",
+      "regenEnabled": false,
+      "score": 0
+    },
+    {
+      "file": "samples/compare/mixed-smooth-dry.json",
+      "route": "mixed",
+      "driver": "smooth",
+      "condition": "dry",
+      "regenEnabled": true,
+      "score": 98.5
+    },
+    {
+      "file": "samples/compare/mixed-smooth-wet.json",
+      "route": "mixed",
+      "driver": "smooth",
+      "condition": "wet",
+      "regenEnabled": true,
+      "score": 98.6
+    },
+    {
+      "file": "samples/compare/mixed-smooth-snow.json",
+      "route": "mixed",
+      "driver": "smooth",
+      "condition": "snow",
+      "regenEnabled": true,
+      "score": 91
+    },
+    {
+      "file": "samples/compare/mixed-smooth-mud.json",
+      "route": "mixed",
+      "driver": "smooth",
+      "condition": "mud",
+      "regenEnabled": true,
+      "score": 97.3
+    },
+    {
+      "file": "samples/compare/mixed-mixed-dry.json",
+      "route": "mixed",
+      "driver": "mixed",
+      "condition": "dry",
+      "regenEnabled": true,
+      "score": 74.9
+    },
+    {
+      "file": "samples/compare/mixed-mixed-wet.json",
+      "route": "mixed",
+      "driver": "mixed",
+      "condition": "wet",
+      "regenEnabled": true,
+      "score": 76.1
+    },
+    {
+      "file": "samples/compare/mixed-mixed-snow.json",
+      "route": "mixed",
+      "driver": "mixed",
+      "condition": "snow",
+      "regenEnabled": true,
+      "score": 55.1
+    },
+    {
+      "file": "samples/compare/mixed-mixed-mud.json",
+      "route": "mixed",
+      "driver": "mixed",
+      "condition": "mud",
+      "regenEnabled": true,
+      "score": 64.1
+    },
+    {
+      "file": "samples/compare/mixed-aggressive-dry.json",
+      "route": "mixed",
+      "driver": "aggressive",
+      "condition": "dry",
+      "regenEnabled": true,
+      "score": 51.5
+    },
+    {
+      "file": "samples/compare/mixed-aggressive-wet.json",
+      "route": "mixed",
+      "driver": "aggressive",
+      "condition": "wet",
+      "regenEnabled": true,
+      "score": 50.9
+    },
+    {
+      "file": "samples/compare/mixed-aggressive-snow.json",
+      "route": "mixed",
+      "driver": "aggressive",
+      "condition": "snow",
+      "regenEnabled": true,
+      "score": 35.8
+    },
+    {
+      "file": "samples/compare/mixed-aggressive-mud.json",
+      "route": "mixed",
+      "driver": "aggressive",
+      "condition": "mud",
+      "regenEnabled": true,
+      "score": 39.1
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "tip": "A lot of braking energy was lost to heat. The biggest loss was 13 late braking events: start easing off the pedal earlier and brake more gently, so the motor can take the load. With a mud road, brake earlier than you would on dry pavement.",
+  "basedOn": "score 40.6, 13 late braking events, 11 low grip events, mud road",
+  "source": "fallback"
+}

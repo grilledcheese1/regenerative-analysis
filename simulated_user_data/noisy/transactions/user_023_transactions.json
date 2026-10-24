@@ -1,0 +1,395 @@
+{
+  "userId": "user_023",
+  "simulated": true,
+  "noiseLevel": "med",
+  "transactions": [
+    {
+      "txId": "user_023-tx-0001",
+      "date": "2026-01-01",
+      "merchant": "GEICO",
+      "mcc": 6300,
+      "category": "insurance",
+      "amountUsd": 210.28
+    },
+    {
+      "txId": "user_023-tx-0002",
+      "date": "2026-01-01",
+      "merchant": "Kroger",
+      "mcc": 5411,
+      "category": "non_driving",
+      "amountUsd": 9.46
+    },
+    {
+      "txId": "user_023-tx-0003",
+      "date": "2026-01-02",
+      "merchant": "E-ZPass",
+      "mcc": 4784,
+      "category": "tolls",
+      "amountUsd": 35.14
+    },
+    {
+      "txId": "user_023-tx-0004",
+      "date": "2026-01-04",
+      "merchant": "ParkMobile",
+      "mcc": 7523,
+      "category": "parking",
+      "amountUsd": 8.12
+    },
+    {
+      "txId": "user_023-tx-0005",
+      "date": "2026-01-04",
+      "merchant": "Chipotle",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 64.06
+    },
+    {
+      "txId": "user_023-tx-0006",
+      "date": "2026-01-05",
+      "merchant": "Shell",
+      "mcc": 5541,
+      "category": "fuel",
+      "amountUsd": 47.38,
+      "gallons": 17.06,
+      "pricePerGal": 2.777,
+      "listPricePerGal": 2.827,
+      "loyaltyDiscountPerGal": 0.05
+    },
+    {
+      "txId": "user_023-tx-0007",
+      "date": "2026-01-07",
+      "merchant": "Kroger",
+      "mcc": 5411,
+      "category": "non_driving",
+      "amountUsd": 94.56
+    },
+    {
+      "txId": "user_023-tx-0008",
+      "date": "2026-01-09",
+      "merchant": "BP",
+      "mcc": 5541,
+      "category": "fuel",
+      "amountUsd": 37.98,
+      "gallons": 14.11,
+      "pricePerGal": 2.692,
+      "listPricePerGal": 2.742,
+      "loyaltyDiscountPerGal": 0.05
+    },
+    {
+      "txId": "user_023-tx-0009",
+      "date": "2026-01-10",
+      "merchant": "Amazon",
+      "mcc": 5942,
+      "category": "non_driving",
+      "amountUsd": 41.16
+    },
+    {
+      "txId": "user_023-tx-0010",
+      "date": "2026-01-12",
+      "merchant": "Uber",
+      "mcc": 4121,
+      "category": "rideshare",
+      "amountUsd": 55.77
+    },
+    {
+      "txId": "user_023-tx-0011",
+      "date": "2026-01-13",
+      "merchant": "Chipotle",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 105.36
+    },
+    {
+      "txId": "user_023-tx-0012",
+      "date": "2026-01-14",
+      "merchant": "7-Eleven Fuel",
+      "mcc": 5541,
+      "category": "fuel",
+      "amountUsd": 35.59,
+      "gallons": 12.88,
+      "pricePerGal": 2.763,
+      "listPricePerGal": 2.763,
+      "loyaltyDiscountPerGal": 0
+    },
+    {
+      "txId": "user_023-tx-0013",
+      "date": "2026-04-01",
+      "merchant": "GEICO",
+      "mcc": 6300,
+      "category": "non_driving",
+      "amountUsd": -212.43
+    },
+    {
+      "txId": "user_023-tx-0014",
+      "date": "2026-04-01",
+      "merchant": "Kroger",
+      "mcc": 5411,
+      "category": "non_driving",
+      "amountUsd": 23.78
+    },
+    {
+      "txId": "user_023-tx-0014-dup",
+      "date": "2026-04-02",
+      "merchant": "Kroger",
+      "mcc": 5411,
+      "category": "non_driving",
+      "amountUsd": 23.78
+    },
+    {
+      "txId": "user_023-tx-0015",
+      "date": "2026-04-03",
+      "merchant": "Costco Gas",
+      "mcc": 5541,
+      "category": "fuel",
+      "amountUsd": 30.44,
+      "gallons": 11.78,
+      "pricePerGal": 2.584,
+      "listPricePerGal": 2.634,
+      "loyaltyDiscountPerGal": 0.05
+    },
+    {
+      "txId": "user_023-tx-0016",
+      "date": "2026-04-04",
+      "merchant": "Target",
+      "mcc": 5311,
+      "category": "non_driving",
+      "amountUsd": 78.81
+    },
+    {
+      "txId": "user_023-tx-0017",
+      "date": "2026-04-07",
+      "merchant": "7-Eleven Fuel",
+      "mcc": 5541,
+      "category": "fuel",
+      "amountUsd": 37.61,
+      "gallons": 12.75,
+      "pricePerGal": 2.95,
+      "listPricePerGal": 2.95,
+      "loyaltyDiscountPerGal": 0
+    },
+    {
+      "txId": "user_023-tx-0018",
+      "date": "2026-04-07",
+      "merchant": "ParkMobile",
+      "mcc": 7523,
+      "category": "parking",
+      "amountUsd": 17.93
+    },
+    {
+      "txId": "user_023-tx-0019",
+      "date": "2026-04-07",
+      "merchant": "Starbucks",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 50.91
+    },
+    {
+      "txId": "user_023-tx-0020",
+      "date": "2026-04-10",
+      "merchant": "BP",
+      "mcc": 5541,
+      "category": "fuel",
+      "amountUsd": 46.83,
+      "gallons": 16.49,
+      "pricePerGal": 2.84,
+      "listPricePerGal": 2.89,
+      "loyaltyDiscountPerGal": 0.05
+    },
+    {
+      "txId": "user_023-tx-0021",
+      "date": "2026-04-10",
+      "merchant": "Chipotle",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 113.63
+    },
+    {
+      "txId": "user_023-tx-0022",
+      "date": "2026-04-13",
+      "merchant": "Target",
+      "mcc": 5311,
+      "category": "non_driving",
+      "amountUsd": 37.09
+    },
+    {
+      "txId": "user_023-tx-0023",
+      "date": "2026-07-01",
+      "merchant": "BP",
+      "mcc": 5541,
+      "category": "fuel",
+      "amountUsd": 36.82,
+      "gallons": 12.35,
+      "pricePerGal": 2.981,
+      "listPricePerGal": 2.981,
+      "loyaltyDiscountPerGal": 0
+    },
+    {
+      "txId": "user_023-tx-0024",
+      "date": "2026-07-01",
+      "merchant": "GEICO",
+      "mcc": 6300,
+      "category": "insurance",
+      "amountUsd": 211.09
+    },
+    {
+      "txId": "user_023-tx-0025",
+      "date": "2026-07-01",
+      "merchant": "Chipotle",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 94.06
+    },
+    {
+      "txId": "user_023-tx-0026",
+      "date": "2026-07-03",
+      "merchant": "Lyft",
+      "mcc": 4121,
+      "category": "rideshare",
+      "amountUsd": 36.93
+    },
+    {
+      "txId": "user_023-tx-0027",
+      "date": "2026-07-04",
+      "merchant": "Kroger",
+      "mcc": 5411,
+      "category": "non_driving",
+      "amountUsd": 62.8
+    },
+    {
+      "txId": "user_023-tx-0028",
+      "date": "2026-07-07",
+      "merchant": "7-Eleven Fuel",
+      "mcc": 5541,
+      "category": "fuel",
+      "amountUsd": 53.76,
+      "gallons": 18.61,
+      "pricePerGal": 2.889,
+      "listPricePerGal": 2.939,
+      "loyaltyDiscountPerGal": 0.05
+    },
+    {
+      "txId": "user_023-tx-0029",
+      "date": "2026-07-07",
+      "merchant": "Amazon",
+      "mcc": 5942,
+      "category": "non_driving",
+      "amountUsd": 68.45
+    },
+    {
+      "txId": "user_023-tx-0030",
+      "date": "2026-07-09",
+      "merchant": "Mister Car Wash",
+      "mcc": 7542,
+      "category": "car_wash",
+      "amountUsd": 13.83
+    },
+    {
+      "txId": "user_023-tx-0031",
+      "date": "2026-07-10",
+      "merchant": "Starbucks",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 26.66
+    },
+    {
+      "txId": "user_023-tx-0032",
+      "date": "2026-07-12",
+      "merchant": "Exxon",
+      "mcc": 5541,
+      "category": "fuel",
+      "amountUsd": 43.23,
+      "gallons": 14.75,
+      "pricePerGal": 2.931,
+      "listPricePerGal": 2.931,
+      "loyaltyDiscountPerGal": 0
+    },
+    {
+      "txId": "user_023-tx-0033",
+      "date": "2026-07-13",
+      "merchant": "AMAZON",
+      "mcc": 5942,
+      "category": "non_driving",
+      "amountUsd": null
+    },
+    {
+      "txId": "user_023-tx-0034",
+      "date": "2026-10-01",
+      "merchant": "GEICO",
+      "mcc": 6300,
+      "category": "insurance",
+      "amountUsd": 213.92
+    },
+    {
+      "txId": "user_023-tx-0035",
+      "date": "2026-10-01",
+      "merchant": "Spotify",
+      "mcc": 5815,
+      "category": "non_driving",
+      "amountUsd": 89.85
+    },
+    {
+      "txId": "user_023-tx-0036",
+      "date": "2026-10-02",
+      "merchant": "Costco Gas",
+      "mcc": 5541,
+      "category": "fuel",
+      "amountUsd": 40.42,
+      "gallons": 15.72,
+      "pricePerGal": 2.571,
+      "listPricePerGal": 2.621,
+      "loyaltyDiscountPerGal": 0.05
+    },
+    {
+      "txId": "user_023-tx-0037",
+      "date": "2026-10-04",
+      "merchant": "Target",
+      "mcc": 5942,
+      "category": "refund",
+      "amountUsd": -32.31
+    },
+    {
+      "txId": "user_023-tx-0038",
+      "date": "2026-10-04",
+      "merchant": "Chipotle",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 99.61
+    },
+    {
+      "txId": "user_023-tx-0039",
+      "date": "2026-10-07",
+      "merchant": "Spotify",
+      "mcc": 5815,
+      "category": "non_driving",
+      "amountUsd": 35.93
+    },
+    {
+      "txId": "user_023-tx-0040",
+      "date": "2026-10-08",
+      "merchant": "Exxon",
+      "mcc": 5541,
+      "category": "fuel",
+      "amountUsd": 51.18,
+      "gallons": 17.57,
+      "pricePerGal": 2.913,
+      "listPricePerGal": 2.913,
+      "loyaltyDiscountPerGal": 0
+    },
+    {
+      "txId": "user_023-tx-0041",
+      "date": "2026-10-10",
+      "merchant": "Spotify",
+      "mcc": 5815,
+      "category": "non_driving",
+      "amountUsd": null
+    },
+    {
+      "txId": "user_023-tx-0042",
+      "date": "2026-10-13",
+      "merchant": "Target",
+      "mcc": 5311,
+      "category": "non_driving",
+      "amountUsd": 63.45
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "userId": "user_007",
+  "simulated": true,
+  "annualFixedCosts": {
+    "insuranceUsdPerYear": 2937,
+    "registrationUsdPerYear": 20,
+    "maintenanceUsdPerYear": 520,
+    "loanPaymentUsdPerYear": 0
+  },
+  "months": [
+    {
+      "month": "2026-01",
+      "regionId": "atlanta_ga",
+      "tripsInSample": 22,
+      "sampledDays": 14,
+      "modeledEnergyCostUsd": 27.41,
+      "cardEnergySpendUsd": 0,
+      "budgetUsd": 229,
+      "varianceVsBudgetUsd": -201.59,
+      "avgGasPriceUsdPerGal": 2.895,
+      "priceSpike": false,
+      "fixedMonthlyUsd": 289.75
+    },
+    {
+      "month": "2026-04",
+      "regionId": "atlanta_ga",
+      "tripsInSample": 20,
+      "sampledDays": 14,
+      "modeledEnergyCostUsd": 23.91,
+      "cardEnergySpendUsd": 0,
+      "budgetUsd": 229,
+      "varianceVsBudgetUsd": -205.09,
+      "avgGasPriceUsdPerGal": 2.984,
+      "priceSpike": false,
+      "fixedMonthlyUsd": 289.75
+    },
+    {
+      "month": "2026-07",
+      "regionId": "atlanta_ga",
+      "tripsInSample": 25,
+      "sampledDays": 14,
+      "modeledEnergyCostUsd": 24.76,
+      "cardEnergySpendUsd": 68.2,
+      "budgetUsd": 229,
+      "varianceVsBudgetUsd": -204.24,
+      "avgGasPriceUsdPerGal": 3.092,
+      "priceSpike": false,
+      "fixedMonthlyUsd": 289.75
+    },
+    {
+      "month": "2026-10",
+      "regionId": "atlanta_ga",
+      "tripsInSample": 19,
+      "sampledDays": 14,
+      "modeledEnergyCostUsd": 8.81,
+      "cardEnergySpendUsd": 0,
+      "budgetUsd": 229,
+      "varianceVsBudgetUsd": -220.19,
+      "avgGasPriceUsdPerGal": 3.044,
+      "priceSpike": false,
+      "fixedMonthlyUsd": 289.75
+    }
+  ]
+}

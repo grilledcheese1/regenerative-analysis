@@ -1,0 +1,91 @@
+{
+  "userId": "user_014",
+  "alias": "Mateo (Seattle, WA)",
+  "simulated": true,
+  "archetype": "typical",
+  "regionId": "seattle_wa",
+  "home": {
+    "lat": 47.60018,
+    "lon": -122.35424
+  },
+  "work": {
+    "lat": 47.54805,
+    "lon": -122.27489
+  },
+  "commute": {
+    "oneWayKm": 26.6,
+    "workDaysPerWeek": 5,
+    "roadMix": {
+      "urban": 0.137,
+      "suburban": 0.477,
+      "highway": 0.387
+    }
+  },
+  "longTripRate": 0.15,
+  "vehicle": {
+    "vehicleId": "toyota_camry_hybrid_se_2025",
+    "modelYear": 2021,
+    "ageYears": 4,
+    "odometerKm": 106748,
+    "estimatedValueUsd": 20800,
+    "batteryHealth": 0.948
+  },
+  "driver": {
+    "style": "mixed",
+    "jitterDecelMs2": 0.05,
+    "usesCruiseControl": false,
+    "ecoMode": false,
+    "highwayCruiseMs": 31.6,
+    "speedLimitMs": 31.3
+  },
+  "load": {
+    "typicalExtraMassKg": 80,
+    "crrMult": 0.959,
+    "unpavedShare": 0.041,
+    "roofRack": false,
+    "towing": null
+  },
+  "tires": {
+    "type": "all_season",
+    "pressureDriftPct": 0
+  },
+  "charging": {
+    "access": "none",
+    "hasHomeCharger": false,
+    "mix": {
+      "publicDC": 1
+    },
+    "touPlan": false,
+    "offPeakShare": 0.94,
+    "plugInHabit": 0.2
+  },
+  "income": {
+    "band": "mid",
+    "householdUsd": 73784
+  },
+  "preferences": {
+    "bodyStyles": [
+      "sedan"
+    ],
+    "excludeMakes": [
+      "Kia"
+    ],
+    "budgetCapUsd": 55000,
+    "needsTowingKg": 0,
+    "minRangeKm": 0
+  },
+  "finance": {
+    "fuelBudgetUsdPerMonth": 291,
+    "priceSensitivity": 0.25,
+    "insurer": "State Farm",
+    "insuranceUserFactor": 1.03,
+    "registrationMonth": 9,
+    "loyalty": {
+      "program": "Fuel rewards",
+      "discountPerGal": 0.05
+    },
+    "loan": null
+  },
+  "annualDrift": 1.113,
+  "lifeEvents": []
+}

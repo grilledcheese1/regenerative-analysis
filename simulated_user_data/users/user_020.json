@@ -1,0 +1,100 @@
+{
+  "userId": "user_020",
+  "alias": "Diego (Miami, FL)",
+  "simulated": true,
+  "archetype": "typical",
+  "regionId": "miami_fl",
+  "home": {
+    "lat": 25.83094,
+    "lon": -80.11487
+  },
+  "work": {
+    "lat": 25.71609,
+    "lon": -80.21688
+  },
+  "commute": {
+    "oneWayKm": 11.6,
+    "workDaysPerWeek": 5,
+    "roadMix": {
+      "urban": 0.323,
+      "suburban": 0.316,
+      "highway": 0.36
+    }
+  },
+  "longTripRate": 0.59,
+  "vehicle": {
+    "vehicleId": "toyota_prius_prime_2025",
+    "modelYear": 2023,
+    "ageYears": 2,
+    "odometerKm": 60340,
+    "estimatedValueUsd": 23400,
+    "batteryHealth": 0.961
+  },
+  "driver": {
+    "style": "smooth",
+    "jitterDecelMs2": 0.02,
+    "usesCruiseControl": false,
+    "ecoMode": true,
+    "highwayCruiseMs": 30.4,
+    "speedLimitMs": 31.3
+  },
+  "load": {
+    "typicalExtraMassKg": 80,
+    "crrMult": 1.104,
+    "unpavedShare": 0.042,
+    "roofRack": false,
+    "towing": null
+  },
+  "tires": {
+    "type": "all_season",
+    "pressureDriftPct": 3
+  },
+  "charging": {
+    "access": "home",
+    "hasHomeCharger": true,
+    "mix": {
+      "home": 0.88,
+      "publicL2": 0.04,
+      "publicDC": 0.08
+    },
+    "touPlan": false,
+    "offPeakShare": 0.91,
+    "plugInHabit": 0.67
+  },
+  "income": {
+    "band": "low",
+    "householdUsd": 54939
+  },
+  "preferences": {
+    "bodyStyles": [
+      "hatchback"
+    ],
+    "excludeMakes": [
+      "Nissan"
+    ],
+    "budgetCapUsd": 40000,
+    "needsTowingKg": 0,
+    "minRangeKm": 0
+  },
+  "finance": {
+    "fuelBudgetUsdPerMonth": 288,
+    "priceSensitivity": 0.2,
+    "insurer": "GEICO",
+    "insuranceUserFactor": 0.86,
+    "registrationMonth": 2,
+    "loyalty": {
+      "program": "Card fuel rebate",
+      "discountPerGal": 0.07
+    },
+    "loan": {
+      "lender": "Capital One Auto",
+      "aprPct": 7.96,
+      "termMonths": 48,
+      "monthsRemaining": 18,
+      "monthlyPaymentUsd": 688,
+      "balanceUsd": 11642
+    }
+  },
+  "annualDrift": 0.93,
+  "lifeEvents": []
+}

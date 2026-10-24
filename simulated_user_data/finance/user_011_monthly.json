@@ -1,0 +1,64 @@
+{
+  "userId": "user_011",
+  "simulated": true,
+  "annualFixedCosts": {
+    "insuranceUsdPerYear": 2443,
+    "registrationUsdPerYear": 275,
+    "maintenanceUsdPerYear": 360,
+    "loanPaymentUsdPerYear": 8736
+  },
+  "months": [
+    {
+      "month": "2026-01",
+      "regionId": "austin_tx",
+      "tripsInSample": 30,
+      "sampledDays": 14,
+      "modeledEnergyCostUsd": 42.43,
+      "cardEnergySpendUsd": 0,
+      "budgetUsd": 99,
+      "varianceVsBudgetUsd": -56.57,
+      "avgGasPriceUsdPerGal": 2.854,
+      "priceSpike": false,
+      "fixedMonthlyUsd": 984.5
+    },
+    {
+      "month": "2026-04",
+      "regionId": "austin_tx",
+      "tripsInSample": 29,
+      "sampledDays": 14,
+      "modeledEnergyCostUsd": 38.01,
+      "cardEnergySpendUsd": 4.65,
+      "budgetUsd": 99,
+      "varianceVsBudgetUsd": -60.99,
+      "avgGasPriceUsdPerGal": 2.952,
+      "priceSpike": false,
+      "fixedMonthlyUsd": 984.5
+    },
+    {
+      "month": "2026-07",
+      "regionId": "austin_tx",
+      "tripsInSample": 26,
+      "sampledDays": 14,
+      "modeledEnergyCostUsd": 46.54,
+      "cardEnergySpendUsd": 20.53,
+      "budgetUsd": 99,
+      "varianceVsBudgetUsd": -52.46,
+      "avgGasPriceUsdPerGal": 3.068,
+      "priceSpike": false,
+      "fixedMonthlyUsd": 984.5
+    },
+    {
+      "month": "2026-10",
+      "regionId": "austin_tx",
+      "tripsInSample": 31,
+      "sampledDays": 14,
+      "modeledEnergyCostUsd": 41.52,
+      "cardEnergySpendUsd": 5.62,
+      "budgetUsd": 99,
+      "varianceVsBudgetUsd": -57.48,
+      "avgGasPriceUsdPerGal": 2.946,
+      "priceSpike": false,
+      "fixedMonthlyUsd": 984.5
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "tip": "A decent trip with room to improve. The biggest loss was 5 full battery events: expect less regen when the battery is nearly full, and use the extra coasting time to slow down gradually. With a wet road, brake earlier than you would on dry pavement.",
+  "basedOn": "score 51.4, 4 late braking events, 4 low grip events, 5 full battery events, wet road",
+  "source": "fallback"
+}

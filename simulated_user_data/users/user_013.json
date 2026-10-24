@@ -1,0 +1,92 @@
+{
+  "userId": "user_013",
+  "alias": "Lena (Minneapolis, MN)",
+  "simulated": true,
+  "archetype": "typical",
+  "regionId": "minneapolis_mn",
+  "home": {
+    "lat": 44.96484,
+    "lon": -93.28983
+  },
+  "work": {
+    "lat": 44.90556,
+    "lon": -93.21281
+  },
+  "commute": {
+    "oneWayKm": 12.8,
+    "workDaysPerWeek": 5,
+    "roadMix": {
+      "urban": 0.331,
+      "suburban": 0.408,
+      "highway": 0.261
+    }
+  },
+  "longTripRate": 0.57,
+  "vehicle": {
+    "vehicleId": "toyota_corolla_2025",
+    "modelYear": 2019,
+    "ageYears": 6,
+    "odometerKm": 140124,
+    "estimatedValueUsd": 12700,
+    "batteryHealth": null
+  },
+  "driver": {
+    "style": "mixed",
+    "jitterDecelMs2": 0.24,
+    "usesCruiseControl": true,
+    "ecoMode": true,
+    "highwayCruiseMs": 24.7,
+    "speedLimitMs": 31.3
+  },
+  "load": {
+    "typicalExtraMassKg": 240,
+    "crrMult": 1.041,
+    "unpavedShare": 0.057,
+    "roofRack": false,
+    "towing": null
+  },
+  "tires": {
+    "type": "winter_seasonal",
+    "pressureDriftPct": 6
+  },
+  "charging": {
+    "access": "workplace",
+    "hasHomeCharger": false,
+    "mix": {
+      "home": 0,
+      "workplace": 0.5,
+      "publicL2": 0.15,
+      "publicDC": 0.35
+    },
+    "touPlan": false,
+    "offPeakShare": 0.83,
+    "plugInHabit": 0.57
+  },
+  "income": {
+    "band": "high",
+    "householdUsd": 234567
+  },
+  "preferences": {
+    "bodyStyles": [
+      "sedan"
+    ],
+    "excludeMakes": [],
+    "budgetCapUsd": 44000,
+    "needsTowingKg": 0,
+    "minRangeKm": 0
+  },
+  "finance": {
+    "fuelBudgetUsdPerMonth": 209,
+    "priceSensitivity": 0.41,
+    "insurer": "Allstate",
+    "insuranceUserFactor": 0.93,
+    "registrationMonth": 5,
+    "loyalty": {
+      "program": "Fuel rewards",
+      "discountPerGal": 0.05
+    },
+    "loan": null
+  },
+  "annualDrift": 1.016,
+  "lifeEvents": []
+}
