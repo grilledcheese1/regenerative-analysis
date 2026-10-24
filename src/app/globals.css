@@ -733,6 +733,10 @@ select,
   align-items: center;
 }
 
+.map-wrap .legend {
+  z-index: 2;
+}
+
 /* ---------- Next Move shell ---------- */
 .modes {
   display: flex;

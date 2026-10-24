@@ -4,8 +4,9 @@ import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import type { ConditionsResponse, SurfaceDetail } from "@/app/api/_lib/types";
 import ConditionsCard, { CONDITION_ICON, SURFACE_STYLE, type ConditionChoice } from "@/components/ConditionsCard";
 import type { SurfaceSegment } from "@/components/RouteSvg";
-import RouteMap from "@/components/RouteMap";
 import RouteSvg from "@/components/RouteSvg";
+import FreeTripMapClient from "@/components/map/FreeTripMapClient";
+import { FREE_MAP_CONFIG } from "@/components/map/config";
 import TripMapClient from "@/components/map/TripMapClient";
 import Timeline from "@/components/Timeline";
 import { AxisCards, CoachTip, ComparePanel, SavingsCard, ScoreHero, Terminal } from "@/components/Panels";
@@ -79,6 +80,7 @@ export default function Dashboard() {
   const [detected, setDetected] = useState<ConditionsResponse | null>(null);
   const [locating, setLocating] = useState(true);
   const [colorBy, setColorBy] = useState<"regen" | "surface">("regen");
+  const [followCar, setFollowCar] = useState(true);
   const condition: Condition = choice === "auto" ? (detected?.condition ?? "dry") : choice;
   const [rawCursor, setCursor] = useState(END);
   const [playing, setPlaying] = useState(false);
@@ -161,6 +163,7 @@ export default function Dashboard() {
   }, [playing, last]);
 
   const cur = trip.samples[cursor];
+  const ahead = trip.samples[Math.min(last, cursor + FREE_MAP_CONFIG.camera.lookAheadSamples)];
   const savings = estimateSavings(a, gasPrice, tripsPerDay);
   const gapDollars = (sims.aggressive.fuelGallons - sims.smooth.fuelGallons) * gasPrice * tripsPerDay * 365;
 
@@ -214,16 +217,17 @@ export default function Dashboard() {
                   fallback={<RouteSvg segments={segments} stops={stops} missed={visibleMissed} car={[cur.lon, cur.lat]} onSelectMissed={setSelected} />}
                 />
               ) : (
-                <RouteMap
-                  routeId="demo"
-                  colorBy={colorBy}
-                  surfaces={surfaceSegments}
-                  weather={condition}
+                <FreeTripMapClient
                   theme={theme}
                   segments={segments}
+                  surfaces={surfaceSegments}
+                  colorBy={colorBy}
                   stops={stops}
                   missed={visibleMissed}
                   car={[cur.lon, cur.lat]}
+                  ahead={[ahead.lon, ahead.lat]}
+                  follow={playing && followCar}
+                  weather={condition}
                   onSelectMissed={setSelected}
                 />
               )}
@@ -261,6 +265,9 @@ export default function Dashboard() {
                   }}
                 >
                   {playing ? "❚❚ Pause" : "▶ Replay"}
+                </button>
+                <button className="btn" onClick={() => setFollowCar(!followCar)} aria-pressed={followCar}>
+                  {followCar ? "Follow car: on" : "Follow car: off"}
                 </button>
                 <input type="range" min={0} max={last} value={cursor} onChange={(e) => setCursor(+e.target.value)} aria-label="Replay position" />
                 <span className="mono muted readout" style={{ fontSize: "0.8rem", textAlign: "right" }}>
