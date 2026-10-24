@@ -22,6 +22,8 @@ export interface MissedEvent {
 
 export interface TripAnalysis extends TripScore {
   label: string;
+  availableKwh: number; // braking energy at the wheels the route hands the driver
+  keptShare: number; // share of it not burned as brake heat, 0..1
   tractionKwh: number;
   durationS: number;
   regenShare: number; // share of braking energy handled by regen, 0..1
@@ -48,14 +50,21 @@ export function analyzeTrip(trip: SimTrip): TripAnalysis {
   const frictionKwh = sumKwh(s.map((x) => x.frictionKw));
   const tractionKwh = sumKwh(s.map((x) => x.tractionKw));
 
-  const descentKwh = (eta * m * g * trip.descentM) / J_PER_KWH;
-  const stopKwh =
-    (eta * trip.stopSpeedsMs.reduce((acc, v) => acc + 0.5 * m * v * v, 0)) / J_PER_KWH;
-  const ceilingKwh = descentKwh + stopKwh;
-  const score = Math.round(pct(regenKwh, ceilingKwh));
+  // Energy the route makes available at the wheels: potential energy on descents plus
+  // kinetic energy at each stop. It can only go three ways: regen, coasting against drag
+  // and rolling resistance (useful work, no conversion loss), or friction brake heat.
+  // Only brake heat is waste, so the score is the share that wasn't burned. Scoring raw
+  // regen instead would rank fast, hard-braking drivers above smooth ones who coast.
+  const descentKwh = (m * g * trip.descentM) / J_PER_KWH;
+  const stopKwh = trip.stopSpeedsMs.reduce((acc, v) => acc + 0.5 * m * v * v, 0) / J_PER_KWH;
+  const availableKwh = descentKwh + stopKwh;
+  const ceilingKwh = eta * availableKwh;
+  const kept = (heat: number, avail: number) => (avail > 0 ? Math.max(0, 1 - heat / avail) : 1);
+  const keptShare = kept(frictionKwh, availableKwh);
+  const score = Math.round(100 * keptShare);
 
-  const descentRegen = sumKwh(s.filter((x) => x.gradePct < -1).map((x) => x.regenKw));
-  const stopRegen = sumKwh(s.filter((x) => x.gradePct >= -1).map((x) => x.regenKw));
+  const descentHeat = sumKwh(s.filter((x) => x.gradePct < -1).map((x) => x.frictionKw));
+  const stopHeat = sumKwh(s.filter((x) => x.gradePct >= -1).map((x) => x.frictionKw));
   const braking = s.filter((x) => x.accelMs2 < 0 && x.speedMs > 0.5);
   const smoothBrakes = braking.filter((x) => -x.accelMs2 <= SMOOTH_BRAKE_LIMIT_MS2);
   const moving = s.filter((x) => x.speedMs > 0.5);
@@ -65,16 +74,16 @@ export function analyzeTrip(trip: SimTrip): TripAnalysis {
     {
       key: "descent",
       label: "Descent capture",
-      value: Math.round(pct(descentRegen, descentKwh)),
-      formula: "regen on grades < -1% ÷ η·m·g·Δh_descent",
-      evidence: `${descentRegen.toFixed(3)} kWh of ${descentKwh.toFixed(3)} kWh over ${trip.descentM.toFixed(0)} m of descent`,
+      value: Math.round(100 * kept(descentHeat, descentKwh)),
+      formula: "1 − brake heat on grades < -1% ÷ m·g·Δh_descent",
+      evidence: `${descentHeat.toFixed(3)} kWh burned of ${descentKwh.toFixed(3)} kWh over ${trip.descentM.toFixed(0)} m of descent`,
     },
     {
       key: "stops",
       label: "Stop capture",
-      value: Math.round(pct(stopRegen, stopKwh)),
-      formula: "regen on flat/uphill ÷ η·Σ ½·m·v²_stop",
-      evidence: `${stopRegen.toFixed(3)} kWh of ${stopKwh.toFixed(3)} kWh across ${trip.stopSpeedsMs.length} stops (approach speeds ${trip.stopSpeedsMs.map((v) => (v * 2.237).toFixed(0)).join(", ")} mph)`,
+      value: Math.round(100 * kept(stopHeat, stopKwh)),
+      formula: "1 − brake heat on flat/uphill ÷ Σ ½·m·v²_stop",
+      evidence: `${stopHeat.toFixed(3)} kWh burned of ${stopKwh.toFixed(3)} kWh across ${trip.stopSpeedsMs.length} stops (approach speeds ${trip.stopSpeedsMs.map((v) => (v * 2.237).toFixed(0)).join(", ")} mph)`,
     },
     {
       key: "smooth",
@@ -114,6 +123,8 @@ export function analyzeTrip(trip: SimTrip): TripAnalysis {
   return {
     score,
     label: scoreLabel(score),
+    availableKwh,
+    keptShare,
     regenKwh,
     ceilingKwh,
     frictionKwh,

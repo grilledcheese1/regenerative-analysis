@@ -23,14 +23,15 @@ export function ScoreHero({ a }: { a: TripAnalysis }) {
       <div className="score-label">{a.label}</div>
       <div className="stat-row">
         <Stat label="Recovered" value={`${a.regenKwh.toFixed(3)} kWh`} />
-        <Stat label="Ceiling" value={`${a.ceilingKwh.toFixed(3)} kWh`} />
+        <Stat label="Available" value={`${a.availableKwh.toFixed(3)} kWh`} />
         <Stat label="Brake heat" value={`${a.frictionKwh.toFixed(3)} kWh`} />
         <Stat label="Missed events" value={String(a.missedCount)} />
         <Stat label="Regen share" value={`${(a.regenShare * 100).toFixed(0)}%`} />
         <Stat label="Duration" value={fmtT(a.durationS)} />
       </div>
       <span className="muted" style={{ fontSize: "0.75rem" }}>
-        Score = 100 · E_regen ÷ η(m·g·Δh_descent + Σ ½·m·v²_stop)
+        Score = 100 · (1 − E_brake_heat ÷ (m·g·Δh_descent + Σ ½·m·v²_stop)). Regen and coasting both count as
+        kept; only friction brake heat is lost.
       </span>
     </div>
   );
@@ -227,7 +228,9 @@ export function ComparePanel({ cols }: { cols: { name: string; a: TripAnalysis; 
     { label: "Efficiency score", values: cols.map((c) => c.a.score), fmt: (n) => n.toFixed(0), better: "high" },
   ];
   const [conv, smooth, aggr] = cols.map((c) => c.a);
-  const extraPct = aggr.regenKwh > 0 ? ((smooth.regenKwh - aggr.regenKwh) / aggr.regenKwh) * 100 : 0;
+  const lessPct = (s: number, ag: number) => (ag > 0 ? ((ag - s) / ag) * 100 : 0);
+  const heatPct = lessPct(smooth.frictionKwh, aggr.frictionKwh);
+  const fuelPct = lessPct(smooth.fuelGallons, aggr.fuelGallons);
 
   return (
     <div className="card">
@@ -256,9 +259,9 @@ export function ComparePanel({ cols }: { cols: { name: string; a: TripAnalysis; 
       </div>
       <p className="pitch">
         Same road, same trip: regen recovers <strong>{smooth.regenKwh.toFixed(2)} kWh</strong> that a conventional car
-        throws away as {conv.frictionKwh.toFixed(2)} kWh of brake heat, and smooth driving captures{" "}
-        <strong>{extraPct >= 0 ? `${extraPct.toFixed(0)}% more` : `${(-extraPct).toFixed(0)}% less`}</strong> than aggressive driving while burning{" "}
-        {(((aggr.fuelGallons - smooth.fuelGallons) / aggr.fuelGallons) * 100).toFixed(0)}% less fuel.
+        throws away as {conv.frictionKwh.toFixed(2)} kWh of brake heat, and smooth driving wastes{" "}
+        <strong>{heatPct.toFixed(0)}% less</strong> energy as brake heat than aggressive driving while burning{" "}
+        <strong>{fuelPct.toFixed(0)}% less fuel</strong>.
       </p>
     </div>
   );
