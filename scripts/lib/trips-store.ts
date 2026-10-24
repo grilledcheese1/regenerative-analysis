@@ -58,3 +58,47 @@ export function listHeaders(): TripHeader[] {
   cache = { mtime, headers };
   return headers;
 }
+
+export interface RouteSummary {
+  routeId: string;
+  name: string;
+  terrain: string;
+  distanceM: number;
+  reliefM: number;
+  stops: number;
+}
+
+const TERRAIN: Record<string, string> = { hilly: "hilly", flat: "flat", mixed: "mixed" };
+
+/** Routes that have generated route points (data/cache/routes/<id>.routepoints.json). */
+export function listRoutes(): RouteSummary[] {
+  const d = path.join(process.cwd(), "data", "cache", "routes");
+  if (!existsSync(d)) return [];
+  const out: RouteSummary[] = [];
+  for (const name of readdirSync(d)) {
+    if (!name.endsWith(".routepoints.json")) continue;
+    try {
+      const r = JSON.parse(readFileSync(path.join(d, name), "utf8")) as {
+        routeId: string;
+        name: string;
+        meta: { lengthM: number; reliefM: number; stops: number };
+      };
+      out.push({ routeId: r.routeId, name: r.name, terrain: TERRAIN[r.routeId] ?? "mixed", distanceM: r.meta.lengthM, reliefM: r.meta.reliefM, stops: r.meta.stops });
+    } catch {
+      // skip unreadable files
+    }
+  }
+  return out.sort((a, b) => a.routeId.localeCompare(b.routeId));
+}
+
+/** One route with its points and metadata, or null. */
+export function readRoute(id: string): unknown | null {
+  if (!isValidId(id)) return null;
+  const file = path.join(process.cwd(), "data", "cache", "routes", `${id}.routepoints.json`);
+  if (!existsSync(file)) return null;
+  try {
+    return JSON.parse(readFileSync(file, "utf8"));
+  } catch {
+    return null;
+  }
+}
