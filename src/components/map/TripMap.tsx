@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import mapboxgl from "mapbox-gl";
 import type * as GeoJSON from "geojson";
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -17,6 +17,8 @@ export interface TripMapProps {
   /** Pan the camera along with the replay marker. */
   follow?: boolean;
   className?: string;
+  /** Rendered instead of the map when WebGL is unavailable (blocked, no GPU, hardware acceleration off). */
+  fallback?: ReactNode;
 }
 
 function routeBounds(trip: Trip): mapboxgl.LngLatBounds | null {
@@ -66,7 +68,9 @@ export default function TripMap({
   currentIndex = 0,
   follow = false,
   className,
+  fallback,
 }: TripMapProps) {
+  const [webglFailed, setWebglFailed] = useState(false);
   const container = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const styleReady = useRef(false); // true between `style.load` and the next setStyle
@@ -82,14 +86,22 @@ export default function TripMap({
     if (!container.current || !env.mapboxToken) return;
     mapboxgl.accessToken = env.mapboxToken;
 
-    const map = new mapboxgl.Map({
-      container: container.current,
-      style: TRIP_CONFIG.styles[latest.current.theme],
-      center: TRIP_CONFIG.fallbackCenter,
-      zoom: TRIP_CONFIG.fallbackZoom,
-      pitch: TRIP_CONFIG.camera.pitch,
-      bearing: TRIP_CONFIG.camera.bearing,
-    });
+    let map: mapboxgl.Map;
+    try {
+      map = new mapboxgl.Map({
+        container: container.current,
+        style: TRIP_CONFIG.styles[latest.current.theme],
+        center: TRIP_CONFIG.fallbackCenter,
+        zoom: TRIP_CONFIG.fallbackZoom,
+        pitch: TRIP_CONFIG.camera.pitch,
+        bearing: TRIP_CONFIG.camera.bearing,
+      });
+    } catch (err) {
+      console.error("Map could not start:", err);
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- reacting to a failed external init
+      setWebglFailed(true);
+      return;
+    }
     map.addControl(new mapboxgl.NavigationControl({ visualizePitch: true }), "top-right");
     mapRef.current = map;
 
@@ -162,6 +174,19 @@ export default function TripMap({
       });
     }
   }, [trip, currentIndex, follow]);
+
+  if (webglFailed) {
+    return (
+      <div className={className}>
+        {fallback ?? (
+          <div className="card" role="alert">
+            <span className="label">Map</span>
+            <p>The map needs WebGL, which this browser has disabled or can&apos;t start. Enable hardware acceleration and reload.</p>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   if (!env.mapboxToken) {
     return (

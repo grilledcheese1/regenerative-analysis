@@ -22,7 +22,6 @@ export const TRIP_CONFIG = {
   stopSpeedMs: 0.5,
   line: { width: 5, glowWidth: 14, glowBlur: 8, glowOpacity: 0.55 },
   markers: { missedRadius: 7, stopRadius: 4, currentRadius: 8 },
-  replay: { stepMs: 140 }, // time per sample while playing
   units: { mph: 2.23694, feet: 3.28084 },
   themeColors: {
     dark: { building: "#2a3138", hillshade: "#000000", contour: "#a9b1b4", marker: "#eef0ee" },

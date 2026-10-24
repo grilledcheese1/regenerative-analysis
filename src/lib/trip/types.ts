@@ -18,6 +18,9 @@ export interface TripSample {
   missed: MissedCause | null;
 }
 
+/** Contract name for a trip sample. */
+export type Sample = TripSample;
+
 export interface TripHeader {
   tripId: string;
   driver: Driver;
