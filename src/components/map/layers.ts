@@ -6,6 +6,7 @@ import { TRIP_CONFIG, type MapTheme } from "./config";
 
 export const IDS = {
   dem: "trip-dem",
+  demHillshade: "trip-dem-hillshade",
   hillshade: "trip-hillshade",
   contourSrc: "trip-contours",
   contour: "trip-contour-lines",
@@ -132,7 +133,7 @@ export function addTripLayers(
   removeIfPresent(
     map,
     [IDS.current, IDS.stops, IDS.missed, IDS.route, IDS.glow, IDS.buildings, IDS.contour, IDS.hillshade],
-    [IDS.currentSrc, IDS.stopsSrc, IDS.missedSrc, IDS.routeSrc, IDS.contourSrc, IDS.dem],
+    [IDS.currentSrc, IDS.stopsSrc, IDS.missedSrc, IDS.routeSrc, IDS.contourSrc, IDS.demHillshade, IDS.dem],
   );
 
   const colors = TRIP_CONFIG.themeColors[theme];
@@ -146,11 +147,18 @@ export function addTripLayers(
     maxzoom: 14,
   });
   map.setTerrain({ source: IDS.dem, exaggeration: TRIP_CONFIG.terrain.exaggeration });
+  // Mapbox forbids using the terrain DEM source as a layer source too, so hillshade gets its own copy.
+  map.addSource(IDS.demHillshade, {
+    type: "raster-dem",
+    url: "mapbox://mapbox.mapbox-terrain-dem-v1",
+    tileSize: 512,
+    maxzoom: 14,
+  });
   map.addLayer(
     {
       id: IDS.hillshade,
       type: "hillshade",
-      source: IDS.dem,
+      source: IDS.demHillshade,
       paint: {
         "hillshade-exaggeration": TRIP_CONFIG.hillshade.exaggeration,
         "hillshade-shadow-color": colors.hillshade,

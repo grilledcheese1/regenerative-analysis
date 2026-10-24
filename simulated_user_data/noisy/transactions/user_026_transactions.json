@@ -1,0 +1,395 @@
+{
+  "userId": "user_026",
+  "simulated": true,
+  "noiseLevel": "med",
+  "transactions": [
+    {
+      "txId": "user_026-tx-0001",
+      "date": "2026-01-01",
+      "merchant": "Progressive",
+      "mcc": 6300,
+      "category": "insurance",
+      "amountUsd": 181.83
+    },
+    {
+      "txId": "user_026-tx-0002",
+      "date": "2026-01-01",
+      "merchant": "Target",
+      "mcc": 5311,
+      "category": "non_driving",
+      "amountUsd": 24.59
+    },
+    {
+      "txId": "user_026-tx-0003",
+      "date": "2026-01-02",
+      "merchant": "E-ZPass",
+      "mcc": 4784,
+      "category": "tolls",
+      "amountUsd": 15.99
+    },
+    {
+      "txId": "user_026-tx-0004",
+      "date": "2026-01-04",
+      "merchant": "Mister Car Wash",
+      "mcc": 7542,
+      "category": "car_wash",
+      "amountUsd": 24.59
+    },
+    {
+      "txId": "user_026-tx-0005",
+      "date": "2026-01-04",
+      "merchant": "Starbucks",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 49.58
+    },
+    {
+      "txId": "user_026-tx-0005-dup",
+      "date": "2026-01-04",
+      "merchant": "Starbucks",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 49.58
+    },
+    {
+      "txId": "user_026-tx-0006",
+      "date": "2026-01-05",
+      "merchant": "Chase Auto",
+      "mcc": 6012,
+      "category": "loan_payment",
+      "amountUsd": 826
+    },
+    {
+      "txId": "user_026-tx-0007",
+      "date": "2026-01-07",
+      "merchant": "Target",
+      "mcc": 5311,
+      "category": "non_driving",
+      "amountUsd": 34.14
+    },
+    {
+      "txId": "user_026-tx-0008",
+      "date": "2026-01-08",
+      "merchant": "Target",
+      "mcc": 5942,
+      "category": "refund",
+      "amountUsd": -52.79
+    },
+    {
+      "txId": "user_026-tx-0009",
+      "date": "2026-01-10",
+      "merchant": "Kroger",
+      "mcc": 5411,
+      "category": "non_driving",
+      "amountUsd": 96.43
+    },
+    {
+      "txId": "user_026-tx-0010",
+      "date": "2026-01-13",
+      "merchant": "Amazon",
+      "mcc": 5942,
+      "category": "non_driving",
+      "amountUsd": 39.09
+    },
+    {
+      "txId": "user_026-tx-0011",
+      "date": "2026-04-01",
+      "merchant": "Progressive",
+      "mcc": 6300,
+      "category": "insurance",
+      "amountUsd": 182.82
+    },
+    {
+      "txId": "user_026-tx-0012",
+      "date": "2026-04-01",
+      "merchant": "Target",
+      "mcc": 5311,
+      "category": "non_driving",
+      "amountUsd": 58.93
+    },
+    {
+      "txId": "user_026-tx-0012-dup",
+      "date": "2026-04-01",
+      "merchant": "Target",
+      "mcc": 5311,
+      "category": "non_driving",
+      "amountUsd": 58.93
+    },
+    {
+      "txId": "user_026-tx-0013",
+      "date": "2026-04-02",
+      "merchant": "Valero",
+      "mcc": 5541,
+      "category": "fuel",
+      "amountUsd": 41.7,
+      "gallons": 13.32,
+      "pricePerGal": 3.131,
+      "listPricePerGal": 3.131,
+      "loyaltyDiscountPerGal": 0
+    },
+    {
+      "txId": "user_026-tx-0014",
+      "date": "2026-04-04",
+      "merchant": "Target",
+      "mcc": 5311,
+      "category": "non_driving",
+      "amountUsd": 4.46
+    },
+    {
+      "txId": "user_026-tx-0015",
+      "date": "2026-04-05",
+      "merchant": "CHASE AUTO",
+      "mcc": 6012,
+      "category": "loan_payment",
+      "amountUsd": 826
+    },
+    {
+      "txId": "user_026-tx-0016",
+      "date": "2026-04-07",
+      "merchant": "Target",
+      "mcc": 5311,
+      "category": "non_driving",
+      "amountUsd": 81.11
+    },
+    {
+      "txId": "user_026-tx-0017",
+      "date": "2026-04-08",
+      "merchant": "BP",
+      "mcc": 5541,
+      "category": "fuel",
+      "amountUsd": 51.24,
+      "gallons": 14.96,
+      "pricePerGal": 3.425,
+      "listPricePerGal": 3.425,
+      "loyaltyDiscountPerGal": 0
+    },
+    {
+      "txId": "user_026-tx-0018",
+      "date": "2026-04-08",
+      "merchant": "LYFT",
+      "mcc": 4121,
+      "category": "rideshare",
+      "amountUsd": 39.42
+    },
+    {
+      "txId": "user_026-tx-0019",
+      "date": "2026-04-10",
+      "merchant": "Kroger",
+      "mcc": 5411,
+      "category": "non_driving",
+      "amountUsd": 91.99
+    },
+    {
+      "txId": "user_026-tx-0020",
+      "date": "2026-04-12",
+      "merchant": "Mister Car Wash",
+      "mcc": 7542,
+      "category": "car_wash",
+      "amountUsd": 12.23
+    },
+    {
+      "txId": "user_026-tx-0021",
+      "date": "2026-04-13",
+      "merchant": "ParkMobile",
+      "mcc": 7523,
+      "category": "parking",
+      "amountUsd": 11.08
+    },
+    {
+      "txId": "user_026-tx-0022",
+      "date": "2026-04-13",
+      "merchant": "Amazon",
+      "mcc": 5942,
+      "category": "non_driving",
+      "amountUsd": 90.86
+    },
+    {
+      "txId": "user_026-tx-0023",
+      "date": "2026-07-01",
+      "merchant": "Progressive",
+      "mcc": 6300,
+      "category": "insurance",
+      "amountUsd": 182.3
+    },
+    {
+      "txId": "user_026-tx-0024",
+      "date": "2026-07-01",
+      "merchant": "Kroger",
+      "mcc": 5411,
+      "category": "non_driving",
+      "amountUsd": 77.71
+    },
+    {
+      "txId": "user_026-tx-0025",
+      "date": "2026-07-04",
+      "merchant": "Costco Gas",
+      "mcc": 5541,
+      "category": "fuel",
+      "amountUsd": 59.91,
+      "gallons": 17.06,
+      "pricePerGal": 3.512,
+      "listPricePerGal": 3.512,
+      "loyaltyDiscountPerGal": 0
+    },
+    {
+      "txId": "user_026-tx-0026",
+      "date": "2026-07-04",
+      "merchant": "Kroger",
+      "mcc": 5411,
+      "category": "non_driving",
+      "amountUsd": 33.86
+    },
+    {
+      "txId": "user_026-tx-0027",
+      "date": "2026-07-05",
+      "merchant": "Chase Auto",
+      "mcc": 6012,
+      "category": "loan_payment",
+      "amountUsd": 826
+    },
+    {
+      "txId": "user_026-tx-0027-dup",
+      "date": "2026-07-06",
+      "merchant": "Chase Auto",
+      "mcc": 6012,
+      "category": "loan_payment",
+      "amountUsd": 826
+    },
+    {
+      "txId": "user_026-tx-0028",
+      "date": "2026-07-07",
+      "merchant": "Target",
+      "mcc": 5311,
+      "category": "non_driving",
+      "amountUsd": 71.93
+    },
+    {
+      "txId": "user_026-tx-0029",
+      "date": "2026-07-10",
+      "merchant": "Starbucks",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 60.07
+    },
+    {
+      "txId": "user_026-tx-0030",
+      "date": "2026-07-13",
+      "merchant": "Kroger",
+      "mcc": 5411,
+      "category": "non_driving",
+      "amountUsd": 38.08
+    },
+    {
+      "txId": "user_026-tx-0031",
+      "date": "2026-07-14",
+      "merchant": "Sheetz",
+      "mcc": 5541,
+      "category": "fuel",
+      "amountUsd": 46.94,
+      "gallons": 14.16,
+      "pricePerGal": 3.315,
+      "listPricePerGal": 3.315,
+      "loyaltyDiscountPerGal": 0
+    },
+    {
+      "txId": "user_026-tx-0032",
+      "date": "2026-10-01",
+      "merchant": "Progressive",
+      "mcc": 6300,
+      "category": "insurance",
+      "amountUsd": -181.32
+    },
+    {
+      "txId": "user_026-tx-0032-dup",
+      "date": "2026-10-01",
+      "merchant": "Progressive",
+      "mcc": 6300,
+      "category": "insurance",
+      "amountUsd": -181.32
+    },
+    {
+      "txId": "user_026-tx-0033",
+      "date": "2026-10-01",
+      "merchant": "Chipotle",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 116.21
+    },
+    {
+      "txId": "user_026-tx-0034",
+      "date": "2026-10-02",
+      "merchant": "ParkMobile",
+      "mcc": 7523,
+      "category": "parking",
+      "amountUsd": 8.24
+    },
+    {
+      "txId": "user_026-tx-0035",
+      "date": "2026-10-04",
+      "merchant": "Starbucks",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 43.71
+    },
+    {
+      "txId": "user_026-tx-0036",
+      "date": "2026-10-05",
+      "merchant": "Chase Auto",
+      "mcc": 6012,
+      "category": "loan_payment",
+      "amountUsd": 826
+    },
+    {
+      "txId": "user_026-tx-0037",
+      "date": "2026-10-07",
+      "merchant": "STARBUCKS",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 89.77
+    },
+    {
+      "txId": "user_026-tx-0038",
+      "date": "2026-10-08",
+      "merchant": "Firestone",
+      "mcc": 7538,
+      "category": "maintenance",
+      "amountUsd": 358.04
+    },
+    {
+      "txId": "user_026-tx-0039",
+      "date": "2026-10-10",
+      "merchant": "Kroger",
+      "mcc": 5411,
+      "category": "non_driving",
+      "amountUsd": 38.26
+    },
+    {
+      "txId": "user_026-tx-0040",
+      "date": "2026-10-11",
+      "merchant": "7-Eleven Fuel",
+      "mcc": 5541,
+      "category": "fuel",
+      "amountUsd": 43.78,
+      "gallons": 13.38,
+      "pricePerGal": 3.272,
+      "listPricePerGal": 3.272,
+      "loyaltyDiscountPerGal": 0
+    },
+    {
+      "txId": "user_026-tx-0041",
+      "date": "2026-10-13",
+      "merchant": "Amazon",
+      "mcc": 5942,
+      "category": "non_driving",
+      "amountUsd": 31.08
+    },
+    {
+      "txId": "user_026-tx-0041-dup",
+      "date": "2026-10-13",
+      "merchant": "Amazon",
+      "mcc": 5942,
+      "category": "non_driving",
+      "amountUsd": 31.08
+    }
+  ]
+}

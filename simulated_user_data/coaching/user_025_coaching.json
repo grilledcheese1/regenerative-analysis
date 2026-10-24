@@ -1,0 +1,232 @@
+{
+  "userId": "user_025",
+  "simulated": true,
+  "baselineScore": 74.4,
+  "dominantMissedCause": "cold battery",
+  "coachability": 0.47,
+  "bestStreakDays": 70,
+  "finalScore": 79.2,
+  "improvement": 4.8,
+  "weeks": [
+    {
+      "week": 1,
+      "weekStart": "2026-03-02",
+      "avgScore": 74.9,
+      "trips": 8,
+      "tip": null,
+      "currentStreakDays": 7
+    },
+    {
+      "week": 2,
+      "weekStart": "2026-03-09",
+      "avgScore": 76.3,
+      "trips": 11,
+      "tip": null,
+      "currentStreakDays": 14
+    },
+    {
+      "week": 3,
+      "weekStart": "2026-03-16",
+      "avgScore": 75.5,
+      "trips": 10,
+      "tip": {
+        "cause": "cold battery",
+        "text": "Cold batteries limit regen. A few minutes of gentle driving warms the pack."
+      },
+      "currentStreakDays": 1
+    },
+    {
+      "week": 4,
+      "weekStart": "2026-03-23",
+      "avgScore": 75.6,
+      "trips": 8,
+      "tip": null,
+      "currentStreakDays": 4
+    },
+    {
+      "week": 5,
+      "weekStart": "2026-03-30",
+      "avgScore": 78.4,
+      "trips": 8,
+      "tip": null,
+      "currentStreakDays": 11
+    },
+    {
+      "week": 6,
+      "weekStart": "2026-04-06",
+      "avgScore": 75.8,
+      "trips": 7,
+      "tip": null,
+      "currentStreakDays": 18
+    },
+    {
+      "week": 7,
+      "weekStart": "2026-04-13",
+      "avgScore": 77.5,
+      "trips": 11,
+      "tip": null,
+      "currentStreakDays": 25
+    },
+    {
+      "week": 8,
+      "weekStart": "2026-04-20",
+      "avgScore": 79.5,
+      "trips": 10,
+      "tip": null,
+      "currentStreakDays": 32
+    },
+    {
+      "week": 9,
+      "weekStart": "2026-04-27",
+      "avgScore": 75.4,
+      "trips": 6,
+      "tip": null,
+      "currentStreakDays": 39
+    },
+    {
+      "week": 10,
+      "weekStart": "2026-05-04",
+      "avgScore": 77.1,
+      "trips": 10,
+      "tip": null,
+      "currentStreakDays": 46
+    },
+    {
+      "week": 11,
+      "weekStart": "2026-05-11",
+      "avgScore": 77.9,
+      "trips": 9,
+      "tip": null,
+      "currentStreakDays": 1
+    },
+    {
+      "week": 12,
+      "weekStart": "2026-05-18",
+      "avgScore": 74.3,
+      "trips": 13,
+      "tip": {
+        "cause": "cold battery",
+        "text": "Cold batteries limit regen. A few minutes of gentle driving warms the pack."
+      },
+      "currentStreakDays": 8
+    },
+    {
+      "week": 13,
+      "weekStart": "2026-05-25",
+      "avgScore": 79,
+      "trips": 7,
+      "tip": null,
+      "currentStreakDays": 15
+    },
+    {
+      "week": 14,
+      "weekStart": "2026-06-01",
+      "avgScore": 75.8,
+      "trips": 10,
+      "tip": null,
+      "currentStreakDays": 4
+    },
+    {
+      "week": 15,
+      "weekStart": "2026-06-08",
+      "avgScore": 75.7,
+      "trips": 10,
+      "tip": null,
+      "currentStreakDays": 0
+    },
+    {
+      "week": 16,
+      "weekStart": "2026-06-15",
+      "avgScore": 75.9,
+      "trips": 11,
+      "tip": null,
+      "currentStreakDays": 0
+    },
+    {
+      "week": 17,
+      "weekStart": "2026-06-22",
+      "avgScore": 77.9,
+      "trips": 9,
+      "tip": null,
+      "currentStreakDays": 7
+    },
+    {
+      "week": 18,
+      "weekStart": "2026-06-29",
+      "avgScore": 78.3,
+      "trips": 12,
+      "tip": {
+        "cause": "cold battery",
+        "text": "Cold batteries limit regen. A few minutes of gentle driving warms the pack."
+      },
+      "currentStreakDays": 14
+    },
+    {
+      "week": 19,
+      "weekStart": "2026-07-06",
+      "avgScore": 78.5,
+      "trips": 14,
+      "tip": null,
+      "currentStreakDays": 21
+    },
+    {
+      "week": 20,
+      "weekStart": "2026-07-13",
+      "avgScore": 79.6,
+      "trips": 11,
+      "tip": null,
+      "currentStreakDays": 28
+    },
+    {
+      "week": 21,
+      "weekStart": "2026-07-20",
+      "avgScore": 79.6,
+      "trips": 14,
+      "tip": null,
+      "currentStreakDays": 35
+    },
+    {
+      "week": 22,
+      "weekStart": "2026-07-27",
+      "avgScore": 80.7,
+      "trips": 6,
+      "tip": null,
+      "currentStreakDays": 42
+    },
+    {
+      "week": 23,
+      "weekStart": "2026-08-03",
+      "avgScore": 81.1,
+      "trips": 7,
+      "tip": {
+        "cause": "cold battery",
+        "text": "Cold batteries limit regen. A few minutes of gentle driving warms the pack."
+      },
+      "currentStreakDays": 49
+    },
+    {
+      "week": 24,
+      "weekStart": "2026-08-10",
+      "avgScore": 79.4,
+      "trips": 14,
+      "tip": null,
+      "currentStreakDays": 56
+    },
+    {
+      "week": 25,
+      "weekStart": "2026-08-17",
+      "avgScore": 77.7,
+      "trips": 10,
+      "tip": null,
+      "currentStreakDays": 63
+    },
+    {
+      "week": 26,
+      "weekStart": "2026-08-24",
+      "avgScore": 79.2,
+      "trips": 8,
+      "tip": null,
+      "currentStreakDays": 70
+    }
+  ]
+}

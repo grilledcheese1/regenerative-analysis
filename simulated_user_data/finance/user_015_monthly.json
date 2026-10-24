@@ -1,0 +1,64 @@
+{
+  "userId": "user_015",
+  "simulated": true,
+  "annualFixedCosts": {
+    "insuranceUsdPerYear": 3127,
+    "registrationUsdPerYear": 20,
+    "maintenanceUsdPerYear": 640,
+    "loanPaymentUsdPerYear": 7308
+  },
+  "months": [
+    {
+      "month": "2026-01",
+      "regionId": "phoenix_az",
+      "tripsInSample": 25,
+      "sampledDays": 14,
+      "modeledEnergyCostUsd": 68.09,
+      "cardEnergySpendUsd": 0,
+      "budgetUsd": 305,
+      "varianceVsBudgetUsd": -236.91,
+      "avgGasPriceUsdPerGal": 3.5,
+      "priceSpike": false,
+      "fixedMonthlyUsd": 900.58
+    },
+    {
+      "month": "2026-04",
+      "regionId": "phoenix_az",
+      "tripsInSample": 25,
+      "sampledDays": 14,
+      "modeledEnergyCostUsd": 71.29,
+      "cardEnergySpendUsd": 102.86,
+      "budgetUsd": 305,
+      "varianceVsBudgetUsd": -233.71,
+      "avgGasPriceUsdPerGal": 3.6,
+      "priceSpike": false,
+      "fixedMonthlyUsd": 900.58
+    },
+    {
+      "month": "2026-07",
+      "regionId": "phoenix_az",
+      "tripsInSample": 19,
+      "sampledDays": 14,
+      "modeledEnergyCostUsd": 92.2,
+      "cardEnergySpendUsd": 102.26,
+      "budgetUsd": 305,
+      "varianceVsBudgetUsd": -212.8,
+      "avgGasPriceUsdPerGal": 3.702,
+      "priceSpike": false,
+      "fixedMonthlyUsd": 900.58
+    },
+    {
+      "month": "2026-10",
+      "regionId": "atlanta_ga",
+      "tripsInSample": 22,
+      "sampledDays": 14,
+      "modeledEnergyCostUsd": 53.17,
+      "cardEnergySpendUsd": 66.01,
+      "budgetUsd": 305,
+      "varianceVsBudgetUsd": -251.83,
+      "avgGasPriceUsdPerGal": 2.985,
+      "priceSpike": false,
+      "fixedMonthlyUsd": 924.58
+    }
+  ]
+}

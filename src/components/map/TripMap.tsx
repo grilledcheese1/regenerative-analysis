@@ -41,6 +41,16 @@ function fitToRoute(map: mapboxgl.Map, trip: Trip) {
   });
 }
 
+/** Mapbox GL v3 needs WebGL 2; plain WebGL is not enough. */
+function webglAvailable(): boolean {
+  try {
+    const canvas = document.createElement("canvas");
+    return Boolean(canvas.getContext("webgl2"));
+  } catch {
+    return false;
+  }
+}
+
 function missedPopup(props: Record<string, unknown>): HTMLElement {
   const wrap = document.createElement("div");
   wrap.className = "trip-popup";
@@ -86,6 +96,13 @@ export default function TripMap({
     if (!container.current || !env.mapboxToken) return;
     mapboxgl.accessToken = env.mapboxToken;
 
+    // Don't start Mapbox where it cannot run: its constructor throws, and Next's dev overlay shows that as a crash.
+    if (!webglAvailable()) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- reacting to a browser capability check
+      setWebglFailed(true);
+      return;
+    }
+
     let map: mapboxgl.Map;
     try {
       map = new mapboxgl.Map({
@@ -97,13 +114,14 @@ export default function TripMap({
         bearing: TRIP_CONFIG.camera.bearing,
       });
     } catch (err) {
-      console.error("Map could not start:", err);
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- reacting to a failed external init
+      console.warn("Map could not start:", err);
       setWebglFailed(true);
       return;
     }
     map.addControl(new mapboxgl.NavigationControl({ visualizePitch: true }), "top-right");
     mapRef.current = map;
+    // Dev-only handle for debugging in the browser console.
+    if (process.env.NODE_ENV !== "production") (window as unknown as { __tripMap?: mapboxgl.Map }).__tripMap = map;
 
     // Single owner of layer (re)building: runs on the first load and after every theme swap.
     map.on("style.load", () => {

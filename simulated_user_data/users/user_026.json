@@ -1,0 +1,103 @@
+{
+  "userId": "user_026",
+  "alias": "Kai (Pittsburgh, PA)",
+  "simulated": true,
+  "archetype": "heavy_tow",
+  "regionId": "pittsburgh_pa",
+  "home": {
+    "lat": 40.3753,
+    "lon": -80.01134
+  },
+  "work": {
+    "lat": 40.51468,
+    "lon": -80.0285
+  },
+  "commute": {
+    "oneWayKm": 16.5,
+    "workDaysPerWeek": 3,
+    "roadMix": {
+      "urban": 0.413,
+      "suburban": 0.271,
+      "highway": 0.316
+    }
+  },
+  "longTripRate": 0.9,
+  "vehicle": {
+    "vehicleId": "toyota_tundra_2025",
+    "modelYear": 2022,
+    "ageYears": 3,
+    "odometerKm": 108612,
+    "estimatedValueUsd": 29800,
+    "batteryHealth": null
+  },
+  "driver": {
+    "style": "smooth",
+    "jitterDecelMs2": 0.1,
+    "usesCruiseControl": false,
+    "ecoMode": false,
+    "highwayCruiseMs": 29.8,
+    "speedLimitMs": 31.3
+  },
+  "load": {
+    "typicalExtraMassKg": 80,
+    "crrMult": 1.119,
+    "unpavedShare": 0.113,
+    "roofRack": false,
+    "towing": {
+      "perLongTripProb": 0.5,
+      "trailerMassKg": 1800,
+      "cdaAddM2": 0.9
+    }
+  },
+  "tires": {
+    "type": "winter_seasonal",
+    "pressureDriftPct": 5
+  },
+  "charging": {
+    "access": "home",
+    "hasHomeCharger": true,
+    "mix": {
+      "home": 0.88,
+      "publicL2": 0.04,
+      "publicDC": 0.08
+    },
+    "touPlan": true,
+    "offPeakShare": 0.89,
+    "plugInHabit": 0.65
+  },
+  "income": {
+    "band": "high",
+    "householdUsd": 159550
+  },
+  "preferences": {
+    "bodyStyles": [
+      "truck",
+      "suv",
+      "hatchback"
+    ],
+    "excludeMakes": [
+      "Nissan"
+    ],
+    "budgetCapUsd": 48000,
+    "needsTowingKg": 1800,
+    "minRangeKm": 0
+  },
+  "finance": {
+    "fuelBudgetUsdPerMonth": 65,
+    "priceSensitivity": 0.32,
+    "insurer": "Progressive",
+    "insuranceUserFactor": 1.09,
+    "registrationMonth": 1,
+    "loyalty": null,
+    "loan": {
+      "lender": "Chase Auto",
+      "aprPct": 4.93,
+      "termMonths": 48,
+      "monthsRemaining": 11,
+      "monthlyPaymentUsd": 826,
+      "balanceUsd": 8864
+    }
+  },
+  "annualDrift": 0.901,
+  "lifeEvents": []
+}

@@ -1,0 +1,115 @@
+{
+  "_note": "SIMULATED. priceOffsetUsdPerGal vs regional average; variants are what bank statements look like (used by noisy/ copies).",
+  "stations": [
+    {
+      "name": "Costco Gas",
+      "priceOffsetUsdPerGal": -0.3,
+      "variants": [
+        "COSTCO GAS #%d",
+        "COSTCO WHSE GAS"
+      ]
+    },
+    {
+      "name": "Sheetz",
+      "priceOffsetUsdPerGal": -0.08,
+      "variants": [
+        "SHEETZ %d"
+      ]
+    },
+    {
+      "name": "QuikTrip",
+      "priceOffsetUsdPerGal": -0.05,
+      "variants": [
+        "QT %d",
+        "QUIKTRIP %d"
+      ]
+    },
+    {
+      "name": "Valero",
+      "priceOffsetUsdPerGal": -0.03,
+      "variants": [
+        "VALERO %d"
+      ]
+    },
+    {
+      "name": "Exxon",
+      "priceOffsetUsdPerGal": 0.03,
+      "variants": [
+        "EXXONMOBIL %d"
+      ]
+    },
+    {
+      "name": "BP",
+      "priceOffsetUsdPerGal": 0.05,
+      "variants": [
+        "BP#%d"
+      ]
+    },
+    {
+      "name": "Shell",
+      "priceOffsetUsdPerGal": 0.07,
+      "variants": [
+        "SHELL OIL %d",
+        "SHELL SERVICE STATION"
+      ]
+    },
+    {
+      "name": "7-Eleven Fuel",
+      "priceOffsetUsdPerGal": 0.08,
+      "variants": [
+        "7-ELEVEN %d"
+      ]
+    },
+    {
+      "name": "Chevron",
+      "priceOffsetUsdPerGal": 0.12,
+      "variants": [
+        "CHEVRON %d"
+      ]
+    }
+  ],
+  "chargers": [
+    {
+      "name": "Electrify America",
+      "kind": "dc",
+      "variants": [
+        "ELECTRIFYAMERICA"
+      ]
+    },
+    {
+      "name": "EVgo",
+      "kind": "dc",
+      "variants": [
+        "EVGO NETWORK"
+      ]
+    },
+    {
+      "name": "Tesla Supercharger",
+      "kind": "dc",
+      "variants": [
+        "TESLA SUPERCHARGER"
+      ]
+    },
+    {
+      "name": "ChargePoint",
+      "kind": "l2",
+      "variants": [
+        "CHARGEPOINT NETWORK"
+      ]
+    }
+  ],
+  "loyalty": [
+    {
+      "program": "Fuel rewards",
+      "discountPerGal": 0.05
+    },
+    {
+      "program": "Grocery fuel points",
+      "discountPerGal": 0.1
+    },
+    {
+      "program": "Card fuel rebate",
+      "discountPerGal": 0.07
+    }
+  ]
+}

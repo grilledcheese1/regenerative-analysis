@@ -1,0 +1,92 @@
+{
+  "header": {
+    "tripId": "user_005-0005",
+    "driver": "aggressive",
+    "vehicle": "Toyota Camry Hybrid (simulated)",
+    "condition": "wet",
+    "regenEnabled": true,
+    "distanceM": 2720
+  },
+  "samples": [
+    {"t":0,"lat":33.47663,"lon":-112.067144,"speed":2.42,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.54,"missed":null},
+    {"t":5,"lat":33.476957,"lon":-112.066933,"speed":12.49,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.543,"missed":null},
+    {"t":10,"lat":33.477451,"lon":-112.066614,"speed":12.49,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.545,"missed":null},
+    {"t":15,"lat":33.477939,"lon":-112.066281,"speed":12.49,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.548,"missed":null},
+    {"t":20,"lat":33.478454,"lon":-112.066031,"speed":12.49,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.55,"missed":null},
+    {"t":25,"lat":33.478999,"lon":-112.065869,"speed":12.49,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.552,"missed":null},
+    {"t":30,"lat":33.479536,"lon":-112.065672,"speed":12.49,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.554,"missed":null},
+    {"t":35,"lat":33.480077,"lon":-112.06551,"speed":12.49,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.556,"missed":null},
+    {"t":40,"lat":33.480206,"lon":-112.065496,"speed":0,"elevation":377.3,"grade":0,"brake":0.601,"regenKw":13.1,"frictionKw":18.33,"soc":0.565,"missed":"late braking"},
+    {"t":45,"lat":33.480206,"lon":-112.065496,"speed":0,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.566,"missed":null},
+    {"t":50,"lat":33.480206,"lon":-112.065496,"speed":0,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.567,"missed":null},
+    {"t":55,"lat":33.480206,"lon":-112.065496,"speed":0,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.569,"missed":null},
+    {"t":60,"lat":33.480206,"lon":-112.065496,"speed":0,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.57,"missed":null},
+    {"t":65,"lat":33.480249,"lon":-112.065491,"speed":4.85,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.571,"missed":null},
+    {"t":70,"lat":33.480699,"lon":-112.065441,"speed":12.49,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.572,"missed":null},
+    {"t":75,"lat":33.481257,"lon":-112.065375,"speed":12.49,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.574,"missed":null},
+    {"t":80,"lat":33.481816,"lon":-112.065316,"speed":12.49,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.575,"missed":null},
+    {"t":85,"lat":33.482377,"lon":-112.065292,"speed":12.49,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.576,"missed":null},
+    {"t":90,"lat":33.482934,"lon":-112.065227,"speed":12.49,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.577,"missed":null},
+    {"t":95,"lat":33.483583,"lon":-112.065098,"speed":19.77,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.578,"missed":null},
+    {"t":100,"lat":33.484435,"lon":-112.064734,"speed":20.21,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.579,"missed":null},
+    {"t":105,"lat":33.485234,"lon":-112.064218,"speed":20.21,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.579,"missed":null},
+    {"t":110,"lat":33.486081,"lon":-112.063835,"speed":20.21,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.58,"missed":null},
+    {"t":115,"lat":33.48697,"lon":-112.06362,"speed":20.21,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.581,"missed":null},
+    {"t":120,"lat":33.487881,"lon":-112.063295,"speed":25.06,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.582,"missed":null},
+    {"t":125,"lat":33.489192,"lon":-112.062839,"speed":33.53,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.583,"missed":null},
+    {"t":130,"lat":33.490283,"lon":-112.06249,"speed":18.47,"elevation":377.3,"grade":0,"brake":0.703,"regenKw":27.96,"frictionKw":124.87,"soc":0.599,"missed":"late braking"},
+    {"t":135,"lat":33.491093,"lon":-112.062273,"speed":18.47,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.599,"missed":null},
+    {"t":140,"lat":33.491885,"lon":-112.06198,"speed":18.47,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.599,"missed":null},
+    {"t":145,"lat":33.492702,"lon":-112.06182,"speed":18.47,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.599,"missed":null},
+    {"t":150,"lat":33.493528,"lon":-112.061737,"speed":18.47,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.599,"missed":null},
+    {"t":155,"lat":33.494187,"lon":-112.061672,"speed":12.34,"elevation":377.3,"grade":0,"brake":0.292,"regenKw":11.18,"frictionKw":26.49,"soc":0.605,"missed":"late braking"},
+    {"t":160,"lat":33.494687,"lon":-112.061616,"speed":6.19,"elevation":377.3,"grade":0,"brake":0.295,"regenKw":10.55,"frictionKw":12.29,"soc":0.611,"missed":"late braking"},
+    {"t":165,"lat":33.494657,"lon":-112.061619,"speed":0,"elevation":377.3,"grade":0,"brake":0.298,"regenKw":3.21,"frictionKw":4.52,"soc":0.612,"missed":"late braking"},
+    {"t":170,"lat":33.494657,"lon":-112.061619,"speed":0,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.612,"missed":null},
+    {"t":175,"lat":33.494657,"lon":-112.061619,"speed":0,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.611,"missed":null},
+    {"t":180,"lat":33.494657,"lon":-112.061619,"speed":0,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.611,"missed":null},
+    {"t":185,"lat":33.494657,"lon":-112.061619,"speed":0,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.61,"missed":null},
+    {"t":190,"lat":33.494829,"lon":-112.061587,"speed":9.7,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.61,"missed":null},
+    {"t":195,"lat":33.49536,"lon":-112.061469,"speed":12.34,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.61,"missed":null},
+    {"t":200,"lat":33.495909,"lon":-112.061452,"speed":12.34,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.609,"missed":null},
+    {"t":205,"lat":33.496461,"lon":-112.061513,"speed":12.34,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.609,"missed":null},
+    {"t":210,"lat":33.497008,"lon":-112.06141,"speed":12.34,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.608,"missed":null},
+    {"t":215,"lat":33.497531,"lon":-112.061224,"speed":12.34,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.608,"missed":null},
+    {"t":220,"lat":33.498009,"lon":-112.060886,"speed":12.34,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.608,"missed":null},
+    {"t":225,"lat":33.498506,"lon":-112.060594,"speed":12.34,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.607,"missed":null},
+    {"t":230,"lat":33.499011,"lon":-112.06032,"speed":12.34,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.607,"missed":null},
+    {"t":235,"lat":33.499514,"lon":-112.060042,"speed":12.34,"elevation":377.3,"grade":0,"brake":0,"regenKw":0,"frictionKw":0,"soc":0.607,"missed":null},
+    {"t":240,"lat":33.500465,"lon":-112.059192,"speed":6.34,"elevation":377.3,"grade":0,"brake":0.288,"regenKw":10.64,"frictionKw":11.81,"soc":0.613,"missed":"late braking"}
+  ],
+  "summary": {
+    "score": 28.3,
+    "energyRecoveredKwh": 0.072,
+    "energyCeilingKwh": 0.256,
+    "heatLossKwh": 0.282,
+    "missedEvents": [
+      {
+        "t": 36,
+        "cause": "late braking"
+      },
+      {
+        "t": 126,
+        "cause": "late braking"
+      },
+      {
+        "t": 152,
+        "cause": "late braking"
+      },
+      {
+        "t": 159,
+        "cause": "late braking"
+      },
+      {
+        "t": 239,
+        "cause": "late braking"
+      }
+    ],
+    "gallonsSaved": 0.0071,
+    "dollarsSaved": 0.025,
+    "co2Kg": 0.063
+  }
+}

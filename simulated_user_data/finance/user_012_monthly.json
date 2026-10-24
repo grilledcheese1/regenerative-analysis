@@ -1,0 +1,64 @@
+{
+  "userId": "user_012",
+  "simulated": true,
+  "annualFixedCosts": {
+    "insuranceUsdPerYear": 1617,
+    "registrationUsdPerYear": 130,
+    "maintenanceUsdPerYear": 650,
+    "loanPaymentUsdPerYear": 5988
+  },
+  "months": [
+    {
+      "month": "2026-01",
+      "regionId": "denver_co",
+      "tripsInSample": 33,
+      "sampledDays": 14,
+      "modeledEnergyCostUsd": 95.37,
+      "cardEnergySpendUsd": 64.61,
+      "budgetUsd": 148,
+      "varianceVsBudgetUsd": -52.63,
+      "avgGasPriceUsdPerGal": 2.924,
+      "priceSpike": false,
+      "fixedMonthlyUsd": 698.75
+    },
+    {
+      "month": "2026-04",
+      "regionId": "denver_co",
+      "tripsInSample": 30,
+      "sampledDays": 14,
+      "modeledEnergyCostUsd": 127.76,
+      "cardEnergySpendUsd": 157.93,
+      "budgetUsd": 148,
+      "varianceVsBudgetUsd": -20.24,
+      "avgGasPriceUsdPerGal": 3.041,
+      "priceSpike": false,
+      "fixedMonthlyUsd": 698.75
+    },
+    {
+      "month": "2026-07",
+      "regionId": "denver_co",
+      "tripsInSample": 31,
+      "sampledDays": 14,
+      "modeledEnergyCostUsd": 136.91,
+      "cardEnergySpendUsd": 107.88,
+      "budgetUsd": 148,
+      "varianceVsBudgetUsd": -11.09,
+      "avgGasPriceUsdPerGal": 3.158,
+      "priceSpike": false,
+      "fixedMonthlyUsd": 698.75
+    },
+    {
+      "month": "2026-10",
+      "regionId": "denver_co",
+      "tripsInSample": 24,
+      "sampledDays": 14,
+      "modeledEnergyCostUsd": 84.48,
+      "cardEnergySpendUsd": 117.8,
+      "budgetUsd": 148,
+      "varianceVsBudgetUsd": -63.52,
+      "avgGasPriceUsdPerGal": 3.071,
+      "priceSpike": false,
+      "fixedMonthlyUsd": 698.75
+    }
+  ]
+}
