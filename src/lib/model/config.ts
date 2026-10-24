@@ -27,17 +27,38 @@ export type DriverProfileName = "smooth" | "aggressive" | "mixed";
 
 export const DRIVER_PROFILES: Record<
   DriverProfileName,
-  { speedFactor: number; liftOffSeconds: number; brakeDecelMs2: number }
+  { speedFactor: number; liftOffSeconds: number; brakeDecelMs2: number; accelMs2: number }
 > = {
-  smooth: { speedFactor: 0.95, liftOffSeconds: 8, brakeDecelMs2: 1.2 },
-  aggressive: { speedFactor: 1.08, liftOffSeconds: 2, brakeDecelMs2: 3.5 },
-  mixed: { speedFactor: 1.0, liftOffSeconds: 5, brakeDecelMs2: 2.2 },
+  smooth: { speedFactor: 0.95, liftOffSeconds: 8, brakeDecelMs2: 1.2, accelMs2: 1.0 },
+  aggressive: { speedFactor: 1.08, liftOffSeconds: 2, brakeDecelMs2: 3.5, accelMs2: 2.6 },
+  mixed: { speedFactor: 1.0, liftOffSeconds: 5, brakeDecelMs2: 2.2, accelMs2: 1.6 },
 };
 
+// Drivers slow down and brake softer when grip is poor (multiplies speed and brake decel).
+export const CONDITION_CAUTION: Record<Condition, number> = {
+  dry: 1,
+  wet: 0.92,
+  gravel: 0.9,
+  snow: 0.8,
+  mud: 0.8,
+  ice: 0.65,
+};
+
+// Snow and ice imply a cold pack, which accepts less regen.
+export const COLD_CONDITIONS: Condition[] = ["snow", "ice"];
+
 export const BATTERY = {
+  capacityKwh: 1.6,
+  startSoc: 0.6,
   fadeStartSoc: 0.8,
   coldCutoffC: 0,
+  coldRegenFactor: 0.5,
 };
+
+// Lifting off the pedal in a hybrid gives light "engine braking" regen.
+export const LIFT_OFF_DECEL_MS2 = 0.6;
+// Braking harder than this counts against brake smoothness.
+export const SMOOTH_BRAKE_LIMIT_MS2 = 2.0;
 
 export const SAVINGS = {
   kwhPerGallon: 33.7,
