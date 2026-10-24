@@ -32,4 +32,22 @@ export const TRIP_CONFIG = {
   fallbackZoom: 11,
 } as const;
 
+// Keyless 3D map (MapLibre + free tiles), used when there's no Mapbox token.
+export const FREE_MAP_CONFIG = {
+  styles: {
+    dark: "https://tiles.openfreemap.org/styles/dark",
+    bright: "https://tiles.openfreemap.org/styles/positron",
+  },
+  terrainTiles: "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png",
+  terrainAttribution: "Terrain: Mapzen / AWS Open Data",
+  height: 520,
+  camera: { zoom: 14.6, pitch: 62, bearing: -20, followZoom: 16.2, followPitch: 68, turnSmoothing: 0.08, lookAheadSamples: 20 },
+  terrain: { exaggeration: 1.4 },
+  hillshade: { exaggeration: 0.5 },
+  buildings: { minzoom: 13, defaultHeightM: 6 },
+  line: { width: 6, glowWidth: 16, glowBlur: 10, glowOpacity: 0.55, dash: [1.5, 1] },
+  markers: { stopRadius: 5, missedRadius: 8, carRadius: 8, carHaloRadius: 18 },
+  weather: { rainDrops: 220, snowFlakes: 160, rainSpeed: 700, snowSpeed: 60 },
+} as const;
+
 export type MapTheme = "dark" | "bright";

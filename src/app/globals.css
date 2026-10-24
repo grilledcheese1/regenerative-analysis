@@ -723,3 +723,7 @@ select,
   flex-wrap: wrap;
   align-items: center;
 }
+
+.map-wrap .legend {
+  z-index: 2;
+}
