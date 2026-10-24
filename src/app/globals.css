@@ -623,6 +623,116 @@ select,
   display: none;
 }
 
+/* Road conditions and surfaces */
+:root,
+:root[data-theme="dark"] {
+  --surf-asphalt: #8a949a;
+  --surf-concrete: #c9d0d3;
+  --surf-gravel: #c98500;
+  --surf-dirt: #a8623f;
+  --surf-unknown: #4a535a;
+  --wx-rain: #5fa8e6;
+  --wx-snow: #dbe8f2;
+}
+
+:root[data-theme="bright"] {
+  --surf-asphalt: #4a4a4a;
+  --surf-concrete: #9a9a9a;
+  --surf-gravel: #b07400;
+  --surf-dirt: #8a4b2c;
+  --surf-unknown: #c4c4c4;
+  --wx-rain: #2f7fc4;
+  --wx-snow: #7fa7c8;
+}
+
+.cond-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--panel);
+  color: var(--text);
+  text-decoration: none;
+  font-size: 0.85rem;
+  text-transform: capitalize;
+}
+
+.cond-chip .muted {
+  font-size: 0.75rem;
+  text-transform: none;
+}
+
+.conditions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.cond-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+
+.cond-icon {
+  font-size: 1.8rem;
+  color: var(--accent-text);
+}
+
+.cond-name {
+  font-family: var(--font-heading);
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+.cond-reason {
+  margin: 0;
+  color: var(--text-2);
+}
+
+.cond-override {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.surface-bar {
+  display: flex;
+  height: 12px;
+  border-radius: 6px;
+  overflow: hidden;
+  gap: 2px;
+}
+
+.surface-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 0.8rem;
+  color: var(--text-2);
+}
+
+.surface-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.segmented.mini button {
+  padding: 2px 8px;
+  font-size: 0.7rem;
+}
+
+.legend {
+  flex-wrap: wrap;
+  align-items: center;
+}
+
 /* ---------- Next Move shell ---------- */
 .modes {
   display: flex;
