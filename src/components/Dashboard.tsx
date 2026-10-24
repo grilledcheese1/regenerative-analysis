@@ -1,13 +1,17 @@
 "use client";
 
 import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import type { ConditionsResponse, SurfaceDetail } from "@/app/api/_lib/types";
+import ConditionsCard, { CONDITION_ICON, SURFACE_STYLE, type ConditionChoice } from "@/components/ConditionsCard";
+import type { SurfaceSegment } from "@/components/RouteSvg";
 import RouteMap from "@/components/RouteMap";
 import TripMapClient from "@/components/map/TripMapClient";
 import Timeline from "@/components/Timeline";
 import { AxisCards, CoachTip, ComparePanel, SavingsCard, ScoreHero, Terminal } from "@/components/Panels";
 import { env } from "@/lib/env";
-import { buildDemoRoute } from "@/lib/mock/route";
-import { SURFACES, type Condition, type DriverProfileName } from "@/lib/model/config";
+import type { DemoRoute } from "@/lib/mock/route";
+import realRoute from "../../data/cache/routes/hill.json";
+import type { Condition, DriverProfileName } from "@/lib/model/config";
 import { analyzeTrip, estimateSavings, type MissedEvent } from "@/lib/model/score";
 import { simulateTrip } from "@/lib/model/simulate";
 import { toContractTrip } from "@/lib/trip/adapt";
@@ -16,13 +20,36 @@ import { buildSegments, CAUSE_LABEL } from "@/lib/segments";
 type Theme = "dark" | "bright";
 
 const DRIVERS: DriverProfileName[] = ["smooth", "mixed", "aggressive"];
-const CONDITIONS = Object.keys(SURFACES) as Condition[];
 const END = Number.MAX_SAFE_INTEGER;
-const route = buildDemoRoute();
+// Real route from Stream 2's pipeline (OSRM roads, Open-Meteo elevation, OpenStreetMap stops and surfaces).
+type RealRoute = Omit<DemoRoute, "points"> & {
+  routeId: string;
+  points: (DemoRoute["points"][number] & { surfaceDetail?: SurfaceDetail })[];
+};
+const route = realRoute as RealRoute;
 const stops = route.stopsM.map((s) => {
   const p = route.points[Math.min(route.points.length - 1, Math.round(s / route.stepM))];
   return [p.lon, p.lat] as [number, number];
 });
+
+// Group consecutive route points with the same road surface into map segments, and total the mix.
+const surfaceSegments: SurfaceSegment[] = [];
+for (const p of route.points) {
+  const kind = p.surfaceDetail ?? "unknown";
+  const last = surfaceSegments[surfaceSegments.length - 1];
+  const c: [number, number] = [p.lon, p.lat];
+  if (last?.kind === kind) last.coords.push(c);
+  else surfaceSegments.push({ kind, coords: last ? [last.coords[last.coords.length - 1], c] : [c] });
+}
+const surfaceMix = Object.entries(
+  route.points.reduce<Record<string, number>>((acc, p) => {
+    const k = p.surfaceDetail ?? "unknown";
+    acc[k] = (acc[k] ?? 0) + 1 / route.points.length;
+    return acc;
+  }, {}),
+).sort((x, y) => y[1] - x[1]) as [SurfaceDetail, number][];
+
+const LOCATE_TIMEOUT_MS = 6000;
 
 // Theme lives in localStorage; read it as an external store so SSR renders dark without a mismatch.
 const themeListeners = new Set<() => void>();
@@ -47,7 +74,11 @@ function subscribeTheme(l: () => void) {
 export default function Dashboard() {
   const theme = useSyncExternalStore(subscribeTheme, readTheme, () => "dark" as Theme);
   const [driver, setDriver] = useState<DriverProfileName>("mixed");
-  const [condition, setCondition] = useState<Condition>("dry");
+  const [choice, setChoice] = useState<ConditionChoice>("auto");
+  const [detected, setDetected] = useState<ConditionsResponse | null>(null);
+  const [locating, setLocating] = useState(true);
+  const [colorBy, setColorBy] = useState<"regen" | "surface">("regen");
+  const condition: Condition = choice === "auto" ? (detected?.condition ?? "dry") : choice;
   const [rawCursor, setCursor] = useState(END);
   const [playing, setPlaying] = useState(false);
   const [gasPrice, setGasPrice] = useState(env.defaultGasPrice);
@@ -57,6 +88,33 @@ export default function Dashboard() {
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
   }, [theme]);
+
+  // Detect the road condition from the weather where the user is. If they decline location
+  // (or it times out), the API falls back to the route's own weather.
+  useEffect(() => {
+    let cancelled = false;
+    const load = (q: string) =>
+      fetch(`/api/conditions?route=${encodeURIComponent(route.routeId)}${q}`)
+        .then((r) => (r.ok ? r.json() : null))
+        .catch(() => null)
+        .then((c: ConditionsResponse | null) => {
+          if (cancelled) return;
+          setDetected(c);
+          setLocating(false);
+        });
+    if (!("geolocation" in navigator)) {
+      load("");
+    } else {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => load(`&lat=${pos.coords.latitude.toFixed(2)}&lon=${pos.coords.longitude.toFixed(2)}`),
+        () => load(""),
+        { timeout: LOCATE_TIMEOUT_MS, maximumAge: 10 * 60 * 1000 },
+      );
+    }
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // Changing driver or conditions re-scores instantly and jumps to the end of the replay.
   const rescore = (fn: () => void) => {
@@ -123,13 +181,15 @@ export default function Dashboard() {
               </button>
             ))}
           </div>
-          <select value={condition} onChange={(e) => rescore(() => setCondition(e.target.value as Condition))} aria-label="Road condition">
-            {CONDITIONS.map((c) => (
-              <option key={c} value={c}>
-                {c} · μ {SURFACES[c].mu}
-              </option>
-            ))}
-          </select>
+          <a className="cond-chip" href="#conditions" title={detected?.reason ?? "Detecting your road conditions"}>
+            <span aria-hidden="true">{CONDITION_ICON[condition]}</span>
+            {locating && choice === "auto"
+              ? "Locating…"
+              : `${choice === "auto" ? (detected?.place ?? "Austin, TX") : "Override"} · ${condition}${
+                  choice === "auto" && detected ? ` · ${detected.weather.temperatureC}°C` : ""
+                }`}
+            <span className="muted">Change</span>
+          </a>
           <button className="btn" onClick={() => writeTheme(theme === "dark" ? "bright" : "dark")}>
             {theme === "dark" ? "☀ Bright" : "☾ Dark"}
           </button>
@@ -149,6 +209,9 @@ export default function Dashboard() {
                 <TripMapClient trip={contractTrip} theme={theme} currentIndex={cursor} />
               ) : (
                 <RouteMap
+                  colorBy={colorBy}
+                  surfaces={surfaceSegments}
+                  weather={condition}
                   theme={theme}
                   segments={segments}
                   stops={stops}
@@ -158,10 +221,22 @@ export default function Dashboard() {
                 />
               )}
               <div className="legend">
-                <span><i style={{ background: "var(--seg-good)" }} />captured</span>
-                <span><i style={{ background: "var(--seg-mid)" }} />partial</span>
-                <span><i style={{ background: "var(--seg-bad)" }} />missed</span>
-                <span><i style={{ background: "var(--muted)" }} />no braking</span>
+                <div className="segmented mini" role="group" aria-label="Color the route by">
+                  <button className={colorBy === "regen" ? "on" : ""} onClick={() => setColorBy("regen")}>regen</button>
+                  <button className={colorBy === "surface" ? "on" : ""} onClick={() => setColorBy("surface")}>surface</button>
+                </div>
+                {colorBy === "regen" ? (
+                  <>
+                    <span><i style={{ background: "var(--seg-good)" }} />captured</span>
+                    <span><i style={{ background: "var(--seg-mid)" }} />partial</span>
+                    <span><i style={{ background: "var(--seg-bad)" }} />missed</span>
+                    <span><i style={{ background: "var(--muted)" }} />no braking</span>
+                  </>
+                ) : (
+                  surfaceMix.map(([kind]) => (
+                    <span key={kind}><i style={{ background: SURFACE_STYLE[kind].color }} />{SURFACE_STYLE[kind].label.toLowerCase()}</span>
+                  ))
+                )}
               </div>
               {selected && (
                 <div className="legend" style={{ top: "auto", bottom: 64, flexDirection: "column", gap: 2 }}>
@@ -187,6 +262,16 @@ export default function Dashboard() {
               </div>
             </div>
             <ScoreHero a={a} />
+          </div>
+          <div id="conditions" style={{ marginTop: "1rem" }}>
+            <ConditionsCard
+              detected={detected}
+              locating={locating}
+              choice={choice}
+              setChoice={(c) => rescore(() => setChoice(c))}
+              condition={condition}
+              surfaceMix={surfaceMix}
+            />
           </div>
         </section>
 
@@ -228,7 +313,7 @@ export default function Dashboard() {
           />
           <p className="muted" style={{ fontSize: "0.75rem", marginTop: "1rem" }}>
             All physics constants, surface friction values and fuel conversions are approximate teaching numbers, not
-            official Toyota specs. Route and elevation are synthetic placeholders.
+            official Toyota specs. Route, elevation, stops and surfaces come from OSRM, Open-Meteo and OpenStreetMap.
           </p>
         </section>
       </main>

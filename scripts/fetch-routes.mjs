@@ -194,6 +194,11 @@ function surfaceOf(tag) {
   return "unknown";
 }
 
+// Finer surface kind for the map's surface view: asphalt, concrete, gravel, dirt or unknown.
+function surfaceDetailOf(tag) {
+  return C.concreteSurfaces.includes(tag) ? "concrete" : surfaceOf(tag);
+}
+
 // ---------- Weather (Open-Meteo, no key) ----------
 
 async function fetchWeather([lon, lat]) {
@@ -218,7 +223,9 @@ async function fetchWeather([lon, lat]) {
 }
 
 // Pick the road condition that matches today's real weather, with a reason the UI can show.
-function suggestCondition(w) {
+function suggestCondition(w, unpavedShare) {
+  if (w.precipitationLast24hMm >= C.wetAfterRainMm && unpavedShare >= C.mudUnpavedShare)
+    return { condition: "mud", reason: `${w.precipitationLast24hMm} mm of rain on a route that is ${Math.round(unpavedShare * 100)}% unpaved` };
   if (w.snowfallLast24hCm >= C.snowAfterSnowCm)
     return { condition: "snow", reason: `${w.snowfallLast24hCm} cm of snow fell in the last 24 hours` };
   if (w.temperatureC < 0) return { condition: "snow", reason: `It is ${w.temperatureC}°C, below freezing` };
@@ -258,6 +265,7 @@ async function buildRoute(r) {
       elevationM: round(elevation[i], 1),
       limitMs: round(limitMs, 1),
       surface: surfaceOf(tags.surface),
+      surfaceDetail: surfaceDetailOf(tags.surface),
       roadClass,
       street: tags.name ?? tags.ref ?? null,
     };
@@ -301,7 +309,7 @@ async function buildRoute(r) {
     stopsM,
     allStops: stops, // every signal and stop sign on the route, including green lights
     weather,
-    suggestedCondition: suggestCondition(weather),
+    suggestedCondition: suggestCondition(weather, points.filter((p) => p.surface === "gravel" || p.surface === "dirt").length / points.length),
     source: `${directions.source}; elevation and weather from Open-Meteo; roads and stops from OpenStreetMap`,
   };
 

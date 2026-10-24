@@ -24,6 +24,7 @@ export interface RouteListItem {
 // GET /api/routes/[id]: DemoRoute plus these extras on each point and on the route
 export interface RoutePointExtras {
   surface: "asphalt" | "gravel" | "dirt" | "unknown";
+  surfaceDetail: SurfaceDetail;
   roadClass: string;
   street: string | null;
 }
@@ -66,3 +67,23 @@ export interface CoachResponse {
   basedOn: string; // the facts the tip was written from, one per line
   source: "claude" | "rules";
 }
+
+// GET /api/conditions
+export interface LocalWeather {
+  temperatureC: number;
+  precipitationLast24hMm: number;
+  snowfallLast24hCm: number;
+  rainingNow: boolean;
+}
+
+export interface ConditionsResponse {
+  source: "location" | "route"; // "route" = the user's location wasn't available, so the route's weather was used
+  place: string; // "Near you" or the route's city
+  weather: LocalWeather;
+  condition: Condition;
+  reason: string; // "No rain in the last 24 hours and 29°C"
+  unpavedPct: number; // share of the route on gravel or dirt
+}
+
+// Surface kinds on each route point (surfaceDetail), used by the map's surface view
+export type SurfaceDetail = "asphalt" | "concrete" | "gravel" | "dirt" | "unknown";

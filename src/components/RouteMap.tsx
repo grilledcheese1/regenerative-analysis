@@ -6,7 +6,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { env } from "@/lib/env";
 import type { MissedEvent } from "@/lib/model/score";
 import { GRADE_VAR, type Segment } from "@/lib/segments";
-import RouteSvg from "./RouteSvg";
+import RouteSvg, { type SurfaceSegment } from "./RouteSvg";
 
 interface RouteMapProps {
   theme?: "dark" | "bright";
@@ -15,6 +15,9 @@ interface RouteMapProps {
   missed: MissedEvent[];
   car: [number, number]; // [lon, lat]
   onSelectMissed: (e: MissedEvent) => void;
+  colorBy?: "regen" | "surface";
+  surfaces?: SurfaceSegment[];
+  weather?: string;
 }
 
 const STYLES = {
@@ -176,7 +179,16 @@ export default function RouteMap(props: RouteMapProps) {
 
   if (!env.mapboxToken) {
     return (
-      <RouteSvg segments={segments} stops={stops} missed={missed} car={car} onSelectMissed={onSelectMissed} />
+      <RouteSvg
+        segments={segments}
+        stops={stops}
+        missed={missed}
+        car={car}
+        onSelectMissed={onSelectMissed}
+        colorBy={props.colorBy}
+        surfaces={props.surfaces}
+        weather={props.weather}
+      />
     );
   }
 
