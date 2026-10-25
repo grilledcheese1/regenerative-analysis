@@ -201,8 +201,8 @@ export default function ImportDrive({ personaId, vehicleLabel, onProfile }: Impo
           </button>
         </div>
         <p id={`vehicle-records-${personaId}`} className="muted small">
-          GPX, or CSV with the header <span className={`mono ${styles.header}`}>timestamp,latitude,longitude,speedMps,horizontalAccuracyMeters,altitudeMeters</span>. Vehicle
-          records need a verified Toyota or insurer data format and aren&apos;t connected.
+          Import a GPX file from a phone or GPS app, or a CSV export with timestamps, location and speed. Toyota vehicle records are a
+          planned integration and aren&apos;t connected.
         </p>
 
         <div aria-live="polite" className={styles.live}>

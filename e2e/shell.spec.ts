@@ -6,14 +6,14 @@ const TABS = ["Home", "Drives", "Cost", "Compare", "Next Step", "Settings"];
 
 async function openNextMove(page: Page) {
   await page.goto("/home");
-  await expect(page.getByText("Banking loaded (fixture)")).toBeVisible();
+  await expect(page.locator('main[data-bank="fixture"]')).toBeVisible();
 }
 
 const tab = (page: Page, name: string) => page.getByRole("navigation", { name: "Screens" }).getByRole("button", { name });
 
 async function selectPersona(page: Page, name: RegExp) {
   await page.getByLabel("Demo customer").selectOption({ label: (await page.getByLabel("Demo customer").locator("option", { hasText: name }).textContent())! });
-  await expect(page.getByText("Banking loaded (fixture)")).toBeVisible();
+  await expect(page.locator('main[data-bank="fixture"]')).toBeVisible();
 }
 
 test("the story is at /, /next-move redirects there, and the tabs live at /home", async ({ page }) => {
@@ -30,14 +30,14 @@ test("the story is at /, /next-move redirects there, and the tabs live at /home"
 
 test("Maria's journey reaches the next step with an explanation", async ({ page }) => {
   await page.goto("/home");
-  await expect(page.getByText("Banking loaded (fixture)")).toBeVisible();
+  await expect(page.locator('main[data-bank="fixture"]')).toBeVisible();
   await page.getByRole("button", { name: "Next Step", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Leading option: Buy out the 2024 Camry Hybrid LE" })).toBeVisible();
   const cta = page.getByRole("link", { name: /Open Toyota Financial Services lease-end options/ });
   await expect(cta).toHaveAttribute("href", /^https:\/\/www\.toyotafinancial\.com\//);
   await expect(cta).toHaveAttribute("target", "_blank");
   // Without an API key the server explains with the template and says why.
-  await expect(page.getByText(/Template explanation \(AI explanation unavailable/)).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByText("Standard explanation, written directly from the calculation.")).toBeVisible({ timeout: 15_000 });
 });
 
 test("Kai has no feasible option", async ({ page }) => {
@@ -126,7 +126,7 @@ test("E11 settings: insurer toggle disabled, consent toggles, delete keeps the a
   await expect(driving).toBeEnabled();
   await driving.click();
   await expect(driving).toBeChecked();
-  await expect(page.getByText(/driving_analysis: v.+/)).toBeVisible();
+  await expect(page.getByTestId("consent-status")).toContainText("Drives: on since");
   await driving.click();
   await expect(driving).not.toBeChecked();
   await page.getByRole("button", { name: "Delete my demo data" }).first().click();
@@ -134,7 +134,7 @@ test("E11 settings: insurer toggle disabled, consent toggles, delete keeps the a
   await page.getByRole("button", { name: "Confirm delete" }).click();
   await expect(page.getByText(/Deleted: |Nothing stored yet/)).toBeVisible();
   await tab(page, "Home").click();
-  await expect(page.getByText("Banking loaded (fixture)")).toBeVisible();
+  await expect(page.locator('main[data-bank="fixture"]')).toBeVisible();
 });
 
 test("E12 no horizontal scroll on any tab (runs on desktop and mobile projects)", async ({ page }) => {

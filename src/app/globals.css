@@ -1310,3 +1310,7 @@ input:focus-visible {
 .prequal__ev { color: var(--muted); font-size: 0.8rem; display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap; }
 .prequal__foot { margin: 0; }
 .option .prequal-badge { font-size: 0.8rem; font-weight: 700; }
+.home__how { list-style: none; counter-reset: how; display: grid; gap: 0.9rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); margin: 1.5rem 0 0; padding: 0; width: 100%; max-width: 980px; }
+.home__how li { counter-increment: how; display: grid; gap: 0.3rem; padding: 1.1rem 1.2rem; border: 1px solid var(--border); border-radius: 16px; background: var(--panel); }
+.home__how li::before { content: counter(how); width: 28px; height: 28px; display: grid; place-items: center; border-radius: 50%; background: var(--text); color: var(--panel); font-weight: 800; font-size: 0.85rem; }
+.home__how span { color: var(--muted); font-size: 0.92rem; }

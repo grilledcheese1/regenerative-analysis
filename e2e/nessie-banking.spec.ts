@@ -20,15 +20,17 @@ async function mockSync(page: Page, sandbox: (body: { mode: string }, route: Rou
 
 test("N1 fixture by default", async ({ page }) => {
   await page.goto("/home");
-  await expect(page.getByText("Banking loaded (fixture)")).toBeVisible();
+  await expect(page.locator('main[data-bank="fixture"]')).toBeVisible();
 });
 
-test("N2 sandbox sync is disabled with a reason when not configured", async ({ page }) => {
+const settings = (page: Page) => page.getByRole("navigation", { name: "Screens" }).getByRole("button", { name: "Settings" }).click();
+
+test("N2 without a configured sandbox, Settings offers no Nessie refresh", async ({ page }) => {
   await sandboxReady(page, false);
   await page.goto("/home");
-  const button = page.getByRole("button", { name: "Sync from Nessie sandbox" });
-  await expect(button).toBeDisabled();
-  await expect(button).toHaveAttribute("title", /NESSIE_API_KEY and NESSIE_CUSTOMERS/);
+  await settings(page);
+  await expect(page.getByTestId("bank-source")).toContainText("Simulated bank history");
+  await expect(page.getByRole("button", { name: "Refresh from Nessie" })).toHaveCount(0);
 });
 
 test("N3 a failed sandbox read keeps the earlier data and says so", async ({ page }) => {
@@ -37,14 +39,15 @@ test("N3 a failed sandbox read keeps the earlier data and says so", async ({ pag
     route.fulfill({ status: 502, json: { error: { code: "provider_error", message: "Nessie returned HTTP 503", retryable: true, requestId: "req_x" } } }),
   );
   await page.goto("/home");
-  await expect(page.getByText("Banking loaded (fixture)")).toBeVisible();
-  const budget = await page.getByText(/^\$[\d,]+$/).first().textContent();
-  await page.getByRole("button", { name: "Sync from Nessie sandbox" }).click();
-  await expect(page.getByText("Nessie returned HTTP 503. Still showing the earlier fixture data.")).toBeVisible();
-  expect(await page.getByText(/^\$[\d,]+$/).first().textContent()).toBe(budget);
+  await expect(page.locator('main[data-bank="fixture"]')).toBeVisible();
+  await settings(page);
+  await page.getByRole("button", { name: "Refresh from Nessie" }).click();
+  await expect(page.getByText("We couldn't refresh your bank data (Nessie returned HTTP 503). Showing what we had.")).toBeVisible();
+  await expect(page.locator('main[data-bank="fixture"]')).toBeVisible();
+  await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();
 });
 
-test("N4 a failure offers the last sandbox read, which is labeled stale", async ({ page, request }) => {
+test("N4 a failure offers the last sandbox read, which is labeled as earlier", async ({ page, request }) => {
   // A real fixture snapshot stands in for an earlier sandbox read.
   const fixture = await (await request.post("/api/banking/nessie/sync", { data: { personaId: "maria", mode: "fixture" } })).json();
   const earlier = { ...fixture.snapshot, mode: "sandbox", retrievedAt: "2026-10-24T19:12:00.000Z" };
@@ -58,18 +61,21 @@ test("N4 a failure offers the last sandbox read, which is labeled stale", async 
         }),
   );
   await page.goto("/home");
-  await page.getByRole("button", { name: "Sync from Nessie sandbox" }).click();
-  const useCached = page.getByRole("button", { name: /Use last sandbox read/ });
+  await settings(page);
+  await page.getByRole("button", { name: "Refresh from Nessie" }).click();
+  const useCached = page.getByRole("button", { name: /Use the last read/ });
   await expect(useCached).toBeVisible();
   await useCached.click();
-  await expect(page.getByText(/Stale Nessie sandbox read from/)).toBeVisible();
+  await expect(page.getByText(/Showing your bank data from/)).toBeVisible();
+  await expect(page.locator('main[data-bank="sandbox"]')).toBeVisible();
 });
 
 test("N5 live sandbox sync (E2E_LIVE=1)", async ({ page }) => {
   test.skip(!process.env.E2E_LIVE, "set E2E_LIVE=1 with Nessie keys to run against the real sandbox");
   await page.goto("/home");
-  await page.getByRole("button", { name: "Sync from Nessie sandbox" }).click();
-  await expect(page.getByText(/Banking loaded \(Nessie sandbox · retrieved/)).toBeVisible();
+  await settings(page);
+  await page.getByRole("button", { name: "Refresh from Nessie" }).click();
+  await expect(page.locator('main[data-bank="sandbox"]')).toBeVisible();
   await page.getByRole("navigation", { name: "Screens" }).getByRole("button", { name: "Cost" }).click();
   // Seeded from the fixture, so the live budget equals the fixture's $900.
   await expect(page.getByText("$900").first()).toBeVisible();

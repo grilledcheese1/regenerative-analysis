@@ -76,6 +76,13 @@ export default function NextMoveEntry({ as }: { as?: string }) {
                   <CaseStudyPicker trigger={{ label: "Explore a case study", variant: "ghost" }} />
                 </div>
               </StaggerItem>
+              <StaggerItem>
+                <ol className="home__how" aria-label="How it works">
+                  <li><strong>Tell us about your car</strong><span>Lease, loan or paid off, and how much you drive.</span></li>
+                  <li><strong>Connect your bank</strong><span>Through the Capital One Nessie sandbox. Your budget and a loan pre-qualification appear instantly.</span></li>
+                  <li><strong>See your next move</strong><span>Every option compared over the same three years, with the reasons behind the pick.</span></li>
+                </ol>
+              </StaggerItem>
             </StaggerList>
           </MotionProvider>
         )}

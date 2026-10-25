@@ -3,13 +3,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import type { BankingSyncState, ConsentPurpose, ConsentState, Maybe, Persona, SourceKind, UserBanking } from "@/contracts";
-import { usd } from "@/domain/format";
+import { niceDate, usd } from "@/domain/format";
 import { clearLocalProfiles } from "@/components/onboarding/localProfile";
 import { SourceChip } from "../Evidence";
 
-const CONSENT_ROWS: { purpose: ConsentPurpose; label: string }[] = [
-  { purpose: "driving_analysis", label: "Use my imported drives for personal analysis" },
-  { purpose: "banking_analysis", label: "Use banking data for affordability" },
+const CONSENT_ROWS: { purpose: ConsentPurpose; label: string; short: string }[] = [
+  { purpose: "driving_analysis", label: "Use my imported drives for personal analysis", short: "Drives" },
+  { purpose: "banking_analysis", label: "Use banking data for affordability", short: "Banking" },
 ];
 
 function maybeText(m: Maybe<number>, fmt: (n: number) => string): string {
@@ -36,11 +36,11 @@ function VehicleCard({ persona, userBanking }: { persona: Persona; userBanking: 
     <div className="card">
       <span className="label">Vehicle and contract</span>
       <ul className="plain">
-        <Row k="Odometer" v={`${v.odometerMiles.toLocaleString()} mi (as of ${v.odometerObservedAt})`} source="user_reported" />
+        <Row k="Odometer" v={`${v.odometerMiles.toLocaleString()} mi (as of ${niceDate(v.odometerObservedAt)})`} source="user_reported" />
         <Row k="Estimated value" v={maybeText(v.estimatedValueCents, (n) => usd(n))} source={v.valuationSource} />
         {c.type === "lease" && (
           <>
-            <Row k="Lease maturity" v={c.maturityDate} source={src} />
+            <Row k="Lease ends" v={niceDate(c.maturityDate)} source={src} />
             <Row k="Allowed miles" v={c.totalAllowedMiles.toLocaleString()} source={src} />
             <Row k="Excess mileage rate" v={`${usd(c.excessCentsPerMile, 2)}/mi`} source={src} />
             <Row k="Purchase option" v={maybeText(c.purchaseOptionCents, (n) => usd(n))} source={src} />
@@ -149,7 +149,7 @@ export function SettingsScreen({
     <section className="section">
       <div className="section-head">
         <span className="label">Settings</span>
-        <h2>What this demo knows and what it may use</h2>
+        <h2>What Regentic knows and what it may use</h2>
       </div>
       <div className="grid-2">
         <VehicleCard persona={persona} userBanking={userBanking} />
@@ -158,19 +158,25 @@ export function SettingsScreen({
           <ul className="plain">
             <li>
               <span>Banking</span>
-              <span className="mono muted">
-                {bank ? `${banking.stale ? "stale sandbox read" : bank.mode === "sandbox" ? "Nessie sandbox" : "Nessie-format fixture"} · retrieved ${new Date(bank.retrievedAt).toLocaleString()}` : "not loaded"}
+              <span className="muted" data-testid="bank-source">
+                {bank
+                  ? `${bank.mode === "sandbox" ? (banking.stale ? "Capital One Nessie sandbox (earlier read)" : "Capital One Nessie sandbox") : "Simulated bank history"} · updated ${new Date(bank.retrievedAt).toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}`
+                  : "Not loaded"}
               </span>
             </li>
           </ul>
-          <button
-            className="btn"
-            disabled={loading || !banking.sandboxReady}
-            title={banking.sandboxReady ? "Read this customer from the Nessie sandbox" : "Set NESSIE_API_KEY and NESSIE_CUSTOMERS to enable"}
-            onClick={() => banking.sync("sandbox")}
-          >
-            Sync
-          </button>
+          <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+            {banking.sandboxReady && (
+              <button className="btn" disabled={loading} onClick={() => banking.sync("sandbox")}>
+                Refresh from Nessie
+              </button>
+            )}
+            {bank?.mode === "sandbox" && (
+              <button className="btn" disabled={loading} onClick={() => banking.sync("fixture")}>
+                Use the simulated history
+              </button>
+            )}
+          </div>
           <ul className="plain" style={{ marginTop: "1rem" }}>
             <li>
               <span>Toyota vehicle records</span>
@@ -210,10 +216,11 @@ export function SettingsScreen({
             Share with an insurer (planned integration: no insurer receives data from this demo)
           </label>
           {consent && (
-            <p className="muted small mono">
+            <p className="muted small" data-testid="consent-status">
               {CONSENT_ROWS.map((r) => {
                 const e = consent.effective[r.purpose];
-                return e ? `${r.purpose}: v${e.version}, ${new Date(e.at).toLocaleString()}` : `${r.purpose}: not set`;
+                const when = e ? new Date(e.at).toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : null;
+                return `${r.short}: ${!e ? "not chosen yet" : `${e.granted ? "on" : "off"} since ${when}`}`;
               }).join(" · ")}
             </p>
           )}
@@ -232,7 +239,7 @@ export function SettingsScreen({
           {deleteError && <p className="excl" role="alert">{deleteError}</p>}
           <dialog ref={dialog} className="confirm" aria-labelledby="del-title">
             <h3 id="del-title">Delete demo data?</h3>
-            <p>This clears what the server holds for this session and resets the app to fixture banking.</p>
+            <p>This clears what Regentic holds for this session and goes back to the simulated bank history.</p>
             <div style={{ display: "flex", gap: "0.5rem", justifyContent: "flex-end" }}>
               <button className="btn" autoFocus onClick={() => dialog.current?.close()}>
                 Cancel

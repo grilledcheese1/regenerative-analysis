@@ -25,7 +25,7 @@ const result = (origin: "live" | "saved_fixture") => ({
 
 async function openCompare(page: Page) {
   await page.goto("/home");
-  await expect(page.getByText("Banking loaded (fixture)")).toBeVisible();
+  await expect(page.locator('main[data-bank="fixture"]')).toBeVisible();
   await page.getByRole("navigation", { name: "Screens" }).getByRole("button", { name: "Compare" }).click();
 }
 

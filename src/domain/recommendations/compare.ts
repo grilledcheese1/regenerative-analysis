@@ -19,7 +19,7 @@ import { leasePayment, monthsBetween, projectLeaseMileage } from "@/domain/finan
 import { amortize } from "@/domain/finance/loan";
 import { CREDIT_POLICY } from "@/domain/credit/config";
 import { underwrite } from "@/domain/credit/underwrite";
-import { usd } from "@/domain/format";
+import { niceDate, usd } from "@/domain/format";
 import { rankOptions } from "./rank";
 import { recommend } from "./recommend";
 
@@ -193,7 +193,7 @@ export function compareOptions({ persona, budget, catalog, asOf, overrides = {},
       note: "Remaining lease payments and running costs until maturity, common to every option.",
     };
     evidence.push(
-      { id: "lease_end_date", label: "Lease maturity", display: contract.maturityDate, source: "synthetic" },
+      { id: "lease_end_date", label: "Lease ends", display: niceDate(contract.maturityDate), source: persona.id.startsWith("u_") ? "user_reported" : "synthetic" },
       {
         id: "projected_mileage",
         label: "Projected miles at lease end",

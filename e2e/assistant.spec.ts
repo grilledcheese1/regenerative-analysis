@@ -7,7 +7,7 @@ const panel = (page: Page) => page.getByRole("dialog", { name: "Ask Next Move" }
 
 async function openAssistant(page: Page) {
   await page.goto("/home?as=maria");
-  await expect(page.getByText("Banking loaded (fixture)")).toBeVisible();
+  await expect(page.locator('main[data-bank="fixture"]')).toBeVisible();
   await tab(page, "Compare").click();
   await page.getByRole("button", { name: "Ask Me Anything!" }).click();
   await expect(panel(page)).toBeVisible();
@@ -65,7 +65,7 @@ test("A4 Esc closes, focus returns, and nothing scrolls sideways or logs errors"
 
 test("A5 the assistant is hidden on Settings", async ({ page }) => {
   await page.goto("/home?as=maria");
-  await expect(page.getByText("Banking loaded (fixture)")).toBeVisible();
+  await expect(page.locator('main[data-bank="fixture"]')).toBeVisible();
   await tab(page, "Settings").click();
   await expect(page.getByRole("button", { name: "Ask Me Anything!" })).toHaveCount(0);
 });

@@ -146,7 +146,7 @@ export default function NextMoveApp({ people, initialPersonaId, userBanking = nu
           </button>
         ))}
       </nav>
-      <main>
+      <main data-bank={bank ? bank.mode : "none"}>
         <BankingSyncBar {...banking} />
         <AnimatePresence mode="wait" initial={false} custom={nav.dir}>
         <motion.div key={tab} custom={nav.dir} variants={SCREEN} initial="enter" animate="center" exit="exit">
