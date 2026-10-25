@@ -1292,3 +1292,4 @@ input:focus-visible {
 .authdlg__form input { min-height: 44px; padding: 0 0.9rem; border-radius: 12px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font: inherit; }
 .authdlg__form input[aria-invalid="true"] { border-color: var(--seg-bad); }
 .authdlg__err { color: var(--seg-bad); font-weight: 600; font-size: 0.85rem; }
+.nm .header > .auth:last-child { margin-left: auto; }
