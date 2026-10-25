@@ -108,7 +108,7 @@ export default function DrivesView({ initialRouteId, vehicleName, hybrid }: Driv
             : `Your ${vehicleName} is gasoline and recovers no braking energy. This replay models a Camry Hybrid on the same route for comparison.`}
         </p>
         <div className="toolbar">
-          <select value={routeId} onChange={(e) => rescore(() => setRouteId(e.target.value))} aria-label="Route">
+          <select id="drive-route" name="drive-route" value={routeId} onChange={(e) => rescore(() => setRouteId(e.target.value))} aria-label="Route">
             {ROUTES.map((r) => (
               <option key={r.id} value={r.id}>
                 {r.name} · {(r.points[r.points.length - 1].s / 1609.34).toFixed(1)} mi
@@ -122,7 +122,7 @@ export default function DrivesView({ initialRouteId, vehicleName, hybrid }: Driv
               </button>
             ))}
           </div>
-          <select value={condition} onChange={(e) => rescore(() => setCondition(e.target.value as Condition))} aria-label="Road condition">
+          <select id="drive-condition" name="drive-condition" value={condition} onChange={(e) => rescore(() => setCondition(e.target.value as Condition))} aria-label="Road condition">
             {CONDITIONS.map((c) => (
               <option key={c} value={c}>
                 {c} · μ {SURFACES[c].mu}
@@ -174,7 +174,7 @@ export default function DrivesView({ initialRouteId, vehicleName, hybrid }: Driv
               >
                 {playing ? "❚❚ Pause" : "▶ Replay"}
               </button>
-              <input type="range" min={0} max={last} value={cursor} onChange={(e) => setCursor(+e.target.value)} aria-label="Replay position" />
+              <input type="range" id="drive-replay" name="drive-replay" min={0} max={last} value={cursor} onChange={(e) => setCursor(+e.target.value)} aria-label="Replay position" />
               <span className="mono muted readout" style={{ fontSize: "0.8rem", textAlign: "right" }}>
                 {(cur.speedMs * 2.237).toFixed(0)} mph · {cur.regenKw.toFixed(1)} kW · SOC {((cur.soc ?? 0) * 100).toFixed(0)}%
               </span>

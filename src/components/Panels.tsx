@@ -133,12 +133,12 @@ export function SavingsCard({ savings: s, gapDollars, gasPrice, tripsPerDay, set
       </div>
       <div className="slider">
         <span>Gas price</span>
-        <input type="range" min={2} max={5} step={0.05} value={gasPrice} onChange={(e) => setGasPrice(+e.target.value)} />
+        <input type="range" id="gas-price" name="gas-price" min={2} max={5} step={0.05} value={gasPrice} onChange={(e) => setGasPrice(+e.target.value)} />
         <span className="mono">${gasPrice.toFixed(2)}</span>
       </div>
       <div className="slider">
         <span>Trips / day</span>
-        <input type="range" min={1} max={8} step={1} value={tripsPerDay} onChange={(e) => setTripsPerDay(+e.target.value)} />
+        <input type="range" id="trips-per-day" name="trips-per-day" min={1} max={8} step={1} value={tripsPerDay} onChange={(e) => setTripsPerDay(+e.target.value)} />
         <span className="mono">{tripsPerDay}</span>
       </div>
       <div className="stat-row" style={{ marginTop: "0.75rem" }}>

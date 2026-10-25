@@ -1019,3 +1019,14 @@ input:focus-visible {
     scroll-behavior: auto !important;
   }
 }
+
+/* Next Move only: lift muted text to WCAG AA contrast (4.5:1) without touching the shared theme token. */
+.tabs ~ main,
+.modes {
+  --muted: #8b9599;
+}
+
+:root[data-theme="bright"] .tabs ~ main,
+:root[data-theme="bright"] .modes {
+  --muted: #5c5c5c;
+}
