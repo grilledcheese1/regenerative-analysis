@@ -3,29 +3,35 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { TripRecord } from "@/contracts";
 import { niceDate } from "@/domain/format";
-import RouteMap from "@/components/RouteMap";
 import RouteSvg from "@/components/RouteSvg";
-import TripMapClient from "@/components/map/TripMapClient";
+import FreeTripMapClient from "@/components/map/FreeTripMapClient";
+import SegmentCard from "@/components/map/SegmentCard";
+import { FREE_MAP_CONFIG } from "@/components/map/config";
 import Timeline from "@/components/Timeline";
 import { AxisCards, ComparePanel, SavingsCard, ScoreHero, Terminal } from "@/components/Panels";
 import { env } from "@/lib/env";
+import type { PersonaPhysics } from "@/fixtures/vehicle-physics";
 import { SURFACES, type Condition, type DriverProfileName } from "@/lib/model/config";
 import { analyzeTrip, estimateSavings, type MissedEvent } from "@/lib/model/score";
 import { simulateTrip } from "@/lib/model/simulate";
 import type { DemoRoute } from "@/lib/mock/route";
 import { ROUTES, stopCoords } from "@/lib/routes";
 import { buildSegments, CAUSE_LABEL } from "@/lib/segments";
-import { toContractTrip } from "@/lib/trip/adapt";
 
 const DRIVERS: DriverProfileName[] = ["smooth", "mixed", "aggressive"];
 const CONDITIONS = Object.keys(SURFACES) as Condition[];
 const END = Number.MAX_SAFE_INTEGER;
+const NO_SURFACES: never[] = []; // a stable empty list: a fresh [] each render would reset the route layer
 
 interface DrivesViewProps {
   initialRouteId: string;
   /** Owner's vehicle name; for a gasoline car the replay is framed as a hybrid comparison. */
   vehicleName: string;
   hybrid: boolean;
+  /** The car whose weight, drag and regen limits drive the simulation. Omitted, a default Camry Hybrid. */
+  physics?: PersonaPhysics;
+  /** The person's own driving style; the toggle still lets them try the others. */
+  defaultDriver?: DriverProfileName;
   /** The person's confirmed imported drives; each can be replayed like a cached route. */
   userTrips?: TripRecord[];
   /** Open this trip's replay (set when a drive is confirmed or "Replay & analyze" is pressed). */
@@ -38,7 +44,8 @@ const tripLabel = (t: TripRecord) =>
   `Your drive · ${t.summary.startAt ? `${niceDate(t.summary.startAt)}, ${time(t.summary.startAt)}` : "no time recorded"} · ${(t.summary.distanceMeters / 1609.34).toFixed(1)} mi`;
 
 /** Drives screen: a real route with a modeled Camry Hybrid replayed over it. */
-export default function DrivesView({ initialRouteId, vehicleName, hybrid, userTrips = [], focus = null }: DrivesViewProps) {
+export default function DrivesView({ initialRouteId, vehicleName, hybrid, physics, defaultDriver = "mixed", userTrips = [], focus = null }: DrivesViewProps) {
+  const vehicle = physics?.replay;
   const [routeId, setRouteId] = useState(initialRouteId);
   // Imported drives are fetched the first time they're opened, then kept.
   const [userRoutes, setUserRoutes] = useState<Record<string, DemoRoute>>({});
@@ -49,13 +56,14 @@ export default function DrivesView({ initialRouteId, vehicleName, hybrid, userTr
   const route: DemoRoute & { id?: string } = (userTripId && userRoutes[userTripId]) || ROUTES.find((r) => r.id === routeId) || ROUTES[0];
   const top = useRef<HTMLElement>(null);
   const stops = useMemo(() => stopCoords(route), [route]);
-  const [driver, setDriver] = useState<DriverProfileName>("mixed");
+  const [driver, setDriver] = useState<DriverProfileName>(defaultDriver);
   const [condition, setCondition] = useState<Condition>("dry");
   const [rawCursor, setCursor] = useState(END);
   const [playing, setPlaying] = useState(false);
   const [gasPrice, setGasPrice] = useState(env.defaultGasPrice);
   const [tripsPerDay, setTripsPerDay] = useState(env.defaultTripsPerDay);
   const [selected, setSelected] = useState<MissedEvent | null>(null);
+  const [segment, setSegment] = useState<number | null>(null); // the partial or missed stretch whose regen card is open
 
   // Changing route, driving style or conditions re-scores instantly and jumps to the end of the replay.
   const rescore = (fn: () => void) => {
@@ -63,6 +71,7 @@ export default function DrivesView({ initialRouteId, vehicleName, hybrid, userTr
     setCursor(END);
     setPlaying(false);
     setSelected(null);
+    setSegment(null);
   };
 
   const selectRoute = async (id: string) => {
@@ -97,7 +106,7 @@ export default function DrivesView({ initialRouteId, vehicleName, hybrid, userTr
   }, [focus]);
 
   const sims = useMemo(() => {
-    const run = (d: DriverProfileName, regen = true) => simulateTrip(route, { driver: d, condition, regen });
+    const run = (d: DriverProfileName, regen = true) => simulateTrip(route, { driver: d, condition, regen, vehicle });
     const trip = run(driver);
     const smooth = run("smooth");
     const aggressive = run("aggressive");
@@ -109,12 +118,11 @@ export default function DrivesView({ initialRouteId, vehicleName, hybrid, userTr
       aggressive: analyzeTrip(aggressive),
       conventional: analyzeTrip(conventional),
     };
-  }, [route, driver, condition]);
+  }, [route, driver, condition, vehicle]);
 
   const { trip, a } = sims;
   const last = trip.samples.length - 1;
-  const segments = useMemo(() => buildSegments(trip.samples), [trip]);
-  const contractTrip = useMemo(() => toContractTrip(trip, a, gasPrice), [trip, a, gasPrice]);
+  const segments = useMemo(() => buildSegments(trip.samples, 6, trip.physics.regenEfficiency), [trip]);
   const cursor = Math.min(rawCursor, last);
 
   useEffect(() => {
@@ -140,6 +148,7 @@ export default function DrivesView({ initialRouteId, vehicleName, hybrid, userTr
   }, [playing, last]);
 
   const cur = trip.samples[cursor];
+  const ahead = trip.samples[Math.min(last, cursor + FREE_MAP_CONFIG.camera.lookAheadSamples)];
   const savings = estimateSavings(a, gasPrice, tripsPerDay);
   const gapDollars = (sims.aggressive.fuelGallons - sims.smooth.fuelGallons) * gasPrice * tripsPerDay * 365;
   const visibleMissed = a.missed.filter((e) => e.t <= cursor);
@@ -154,10 +163,10 @@ export default function DrivesView({ initialRouteId, vehicleName, hybrid, userTr
         </div>
         <p className="notice">
           {userTrip
-            ? `Replaying a modeled ${hybrid ? vehicleName : "Camry Hybrid"} over the route you drove. Speeds follow how fast you went on each stretch and it stops where you stopped; regen figures are modeled, not measured from the car.`
+            ? `Replaying ${hybrid ? `your ${vehicleName}` : `a ${vehicle?.label ?? "Camry Hybrid"}`} over the route you drove${vehicle ? `, modeled at ${Math.round(vehicle.massKg).toLocaleString()} kg with your usual load` : ""}. Speeds follow how fast you went on each stretch and it stops where you stopped; regen figures are modeled, not measured from the car.`
             : hybrid
-            ? `Replaying a modeled ${vehicleName} over a real Austin route. Regen figures are modeled from GPS-grade inputs, not measured from the car.`
-            : `Your ${vehicleName} is gasoline and recovers no braking energy. This replay models a Camry Hybrid on the same route for comparison.`}
+            ? `Replaying your ${vehicleName} over a real Austin route${vehicle ? `, modeled at ${Math.round(vehicle.massKg).toLocaleString()} kg with your usual load, a drag coefficient of ${vehicle.dragCoefficient} and up to ${vehicle.maxRegenKw} kW of regen` : ""}. Regen figures are modeled from GPS-grade inputs, not measured from the car.`
+            : `Your ${vehicleName} is gasoline and recovers no braking energy. This replay models a ${vehicle?.label ?? "Camry Hybrid"} on the same route for comparison${vehicle ? `, at ${Math.round(vehicle.massKg).toLocaleString()} kg with your usual load` : ""}.`}
         </p>
         <div className="toolbar">
           <select id="drive-route" name="drive-route" value={routeId} onChange={(e) => void selectRoute(e.target.value)} aria-label="Route">
@@ -200,30 +209,34 @@ export default function DrivesView({ initialRouteId, vehicleName, hybrid, userTr
         )}
         <div className="grid-map">
           <div className="card map-wrap">
-            {env.mapboxToken ? (
-              <TripMapClient
-                trip={contractTrip}
-                theme="dark"
-                currentIndex={cursor}
-                fallback={<RouteSvg segments={segments} stops={stops} missed={visibleMissed} car={[cur.lon, cur.lat]} onSelectMissed={setSelected} />}
-              />
-            ) : (
-              <RouteMap
-                routeId={routeId}
-                theme="dark"
-                segments={segments}
-                stops={stops}
-                missed={visibleMissed}
-                car={[cur.lon, cur.lat]}
-                onSelectMissed={setSelected}
-              />
-            )}
-            {!env.mapboxToken && <p className="muted small">Map tiles unavailable (no Mapbox token configured). Showing a static route preview.</p>}
+            <FreeTripMapClient
+              theme="dark"
+              segments={segments}
+              surfaces={NO_SURFACES}
+              colorBy="regen"
+              stops={stops}
+              missed={visibleMissed}
+              car={[cur.lon, cur.lat]}
+              ahead={[ahead.lon, ahead.lat]}
+              follow={false}
+              onSelectMissed={setSelected}
+              onSelectSegment={(k) => {
+                setSegment(k);
+                setPlaying(false);
+              }}
+              fallback={
+                <>
+                  <RouteSvg segments={segments} stops={stops} missed={visibleMissed} car={[cur.lon, cur.lat]} onSelectMissed={setSelected} />
+                  <p className="muted small">The interactive map needs WebGL, which this browser can&apos;t start. Showing a static route preview.</p>
+                </>
+              }
+            />
+            <SegmentCard selected={segment} samples={trip.samples} segments={segments} missed={a.missed} regenEfficiency={trip.physics.regenEfficiency} onClose={() => setSegment(null)} />
             <div className="legend">
-              <span><i style={{ background: "var(--seg-good)" }} />captured</span>
-              <span><i style={{ background: "var(--seg-mid)" }} />partial</span>
-              <span><i style={{ background: "var(--seg-bad)" }} />missed</span>
-              <span><i style={{ background: "var(--muted)" }} />no braking</span>
+              <span><i style={{ background: "var(--map-good)" }} />captured</span>
+              <span><i style={{ background: "var(--map-mid)" }} />partial</span>
+              <span><i style={{ background: "var(--map-bad)" }} />missed</span>
+              <span><i style={{ background: "var(--map-idle)" }} />no braking</span>
             </div>
             {selected && (
               <div className="legend" style={{ top: "auto", bottom: 64, flexDirection: "column", gap: 2 }}>

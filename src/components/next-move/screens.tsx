@@ -1,6 +1,6 @@
 "use client";
 
-import type { BankingSnapshot, CatalogVehicle, CompareRequest, Comparison, NextAction, Persona, Recommendation } from "@/contracts";
+import type { BankingSnapshot, CompareRequest, Comparison, NextAction, Persona, Recommendation } from "@/contracts";
 import type { BudgetSnapshot } from "@/domain/finance/budget";
 import { niceDate, usd } from "@/domain/format";
 import { NEXT_ACTION_LABEL } from "@/domain/recommendations/recommend";
@@ -9,6 +9,8 @@ import { ROUTES } from "@/lib/routes";
 import AiExplanation from "./explain/AiExplanation";
 import type { HeroSlide } from "./HomeHero";
 import HomeHeroClient from "./HomeHeroClient";
+import { describedVehicle } from "@/fixtures/described-vehicle";
+import CarCutout from "./ui/CarCutout";
 import DealerList from "./market/DealerList";
 import MarketResearch from "./market/MarketResearch";
 import PrequalCard from "./credit/PrequalCard";
@@ -34,14 +36,12 @@ function Kv({ k, v, sub }: { k: string; v: string; sub?: string }) {
 
 export function HomeScreen({
   persona,
-  vehicle,
   budget,
   comparison,
   onReview,
   onGo,
 }: {
   persona: Persona;
-  vehicle: CatalogVehicle;
   budget: BudgetSnapshot;
   comparison: Comparison;
   onReview: () => void;
@@ -54,15 +54,16 @@ export function HomeScreen({
   const total = payment + running;
   const r = comparison.recommendation;
   const route = ROUTES.find((x) => x.id === persona.usage.routeId) ?? ROUTES[0];
-  const car = `${vehicle.modelYear} ${vehicle.model}`;
+  const described = describedVehicle(persona);
+  const car = described.label;
   const projected = comparison.evidence.find((e) => e.id === "projected_mileage")?.display;
   const overage = comparison.evidence.find((e) => e.id === "mileage_overage")?.display;
   const slides: HeroSlide[] = [
     c.type === "lease"
       ? { title: `Your lease ends on ${niceDate(c.maturityDate)}.`, body: `See the smartest next move for your ${car}, from your driving and your budget.`, cta: { label: "See your next move", onClick: onReview } }
       : c.type === "loan"
-        ? { title: `${c.remainingMonths} payments left on your ${vehicle.model}.`, body: "See whether to keep it, refinance or replace it.", cta: { label: "See your next move", onClick: onReview } }
-        : { title: `Your ${vehicle.model} is paid off.`, body: "See whether replacing it is worth it.", cta: { label: "See your next move", onClick: onReview } },
+        ? { title: `${c.remainingMonths} payments left on your ${described.label}.`, body: "See whether to keep it, refinance or replace it.", cta: { label: "See your next move", onClick: onReview } }
+        : { title: `Your ${described.label} is paid off.`, body: "See whether replacing it is worth it.", cta: { label: "See your next move", onClick: onReview } },
     c.type === "lease" && projected
       ? { title: `On pace for ${projected} miles.`, body: overage ? `Possible mileage charge ${overage}. Compare every option side by side.` : "Compare every option side by side.", cta: { label: "Compare options", onClick: () => onGo("compare") } }
       : { title: "Every option, side by side.", body: "Keep, buy out, lease or finance, with the same driving.", cta: { label: "Compare options", onClick: () => onGo("compare") } },
@@ -73,9 +74,11 @@ export function HomeScreen({
       <HomeHeroClient route={route.points.map((p) => [p.lon, p.lat] as [number, number])} routeName={route.name} slides={slides} />
       <div className="section-head">
         <span className="label">Home</span>
-        <h2>{persona.profile.displayName}&apos;s {vehicle.modelYear} {vehicle.model}</h2>
+        <h2>{persona.profile.displayName}&apos;s {described.label}</h2>
         <span className="tag">{c.type === "owned" ? "Owned outright" : c.type === "loan" ? "Financed" : "Leased"}</span>
       </div>
+      <CarCutout imageKey={described.imageKey} label={`${described.label}, ${c.type === "owned" ? "owned outright" : c.type === "loan" ? "financed" : "leased"}`} />
+      {!described.modeledExactly && <p className="car-note">Costs here are modeled on a {described.modeledAs}, the closest car in our catalog.</p>}
       <p className="lede">{persona.situation}</p>
       <div className="grid-2">
         <div className="card">

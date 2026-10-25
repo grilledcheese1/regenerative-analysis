@@ -4,12 +4,14 @@ import {
   BATTERY,
   COLD_CONDITIONS,
   CONDITION_CAUTION,
+  DEFAULT_PHYSICS,
   DRIVER_PROFILES,
   LIFT_OFF_DECEL_MS2,
   SURFACES,
   VEHICLE,
   type Condition,
   type DriverProfileName,
+  type VehiclePhysics,
 } from "./config";
 import { splitBraking } from "./braking";
 
@@ -17,6 +19,8 @@ export interface SimOptions {
   driver: DriverProfileName;
   condition: Condition;
   regen: boolean;
+  /** The car being driven. Omitted, it is the default Camry Hybrid. A car with no regen brakes with friction only. */
+  vehicle?: VehiclePhysics;
 }
 
 export interface SimSample extends TripSample {
@@ -30,12 +34,17 @@ export interface SimTrip extends Trip {
   regenEnabled: boolean;
   stopSpeedsMs: number[]; // speed when braking for each stop began
   descentM: number; // total elevation lost along the route
+  physics: VehiclePhysics; // the car that was simulated
 }
 
 /** Second-by-second simulation of a driver profile over a route. Pure. */
 export function simulateTrip(route: DemoRoute, opts: SimOptions): SimTrip {
-  const { massKg: m, gravity: g, airDensity: rho, dragCoefficient: cd, frontalAreaM2: area } = VEHICLE;
-  const { mu, crr } = SURFACES[opts.condition];
+  const phys = opts.vehicle ?? DEFAULT_PHYSICS;
+  const { gravity: g, airDensity: rho } = VEHICLE;
+  const { massKg: m, dragCoefficient: cd, frontalAreaM2: area } = phys;
+  const regenOn = opts.regen && phys.regenCapable;
+  const { mu } = SURFACES[opts.condition];
+  const crr = SURFACES[opts.condition].crr * (phys.rollingResistance / DEFAULT_PHYSICS.rollingResistance);
   const profile = DRIVER_PROFILES[opts.driver];
   const caution = CONDITION_CAUTION[opts.condition];
   const cold = COLD_CONDITIONS.includes(opts.condition);
@@ -106,13 +115,13 @@ export function simulateTrip(route: DemoRoute, opts: SimOptions): SimTrip {
       tractionKw = (fTrac * v) / 1000;
     } else {
       const brakeKw = (-fTrac * v) / 1000;
-      if (opts.regen) {
-        const gripKw = (m * mu * g * VEHICLE.drivenAxleWeightShare * v) / 1000;
+      if (regenOn) {
+        const gripKw = (m * mu * g * phys.drivenAxleWeightShare * v) / 1000;
         const socFade =
           soc <= BATTERY.fadeStartSoc ? 1 : Math.max(0, (1 - soc) / (1 - BATTERY.fadeStartSoc));
-        const batteryKw = VEHICLE.maxRegenKw * socFade * (cold ? BATTERY.coldRegenFactor : 1);
-        const motorCapKw = VEHICLE.maxRegenKw / VEHICLE.regenEfficiency;
-        const split = splitBraking(brakeKw, motorCapKw, gripKw, batteryKw, VEHICLE.regenEfficiency);
+        const batteryKw = phys.maxRegenKw * socFade * (cold ? BATTERY.coldRegenFactor : 1);
+        const motorCapKw = phys.maxRegenKw / phys.regenEfficiency;
+        const split = splitBraking(brakeKw, motorCapKw, gripKw, batteryKw, phys.regenEfficiency);
         regenKw = split.capturedKw;
         frictionKw = split.frictionKw;
         if (frictionKw > 1) {
@@ -127,7 +136,7 @@ export function simulateTrip(route: DemoRoute, opts: SimOptions): SimTrip {
     }
 
     // Hybrid assist drains the pack a little so it doesn't fill on long trips.
-    soc += (regenKw - Math.min(tractionKw, 12) * 0.35) / 3600 / BATTERY.capacityKwh;
+    soc += (regenKw - Math.min(tractionKw, 12) * 0.35) / 3600 / Math.max(phys.batteryKwh, 0.1);
     soc = Math.min(0.98, Math.max(0.3, soc));
 
     samples.push({
@@ -160,12 +169,13 @@ export function simulateTrip(route: DemoRoute, opts: SimOptions): SimTrip {
     id: `${opts.driver}-${opts.condition}${opts.regen ? "" : "-noregen"}`,
     driver: opts.driver,
     condition: opts.condition,
-    vehicle: "Camry Hybrid (simulated)",
+    vehicle: phys === DEFAULT_PHYSICS ? phys.label : `${phys.label} (simulated)`,
     startTime: "2026-10-24T08:00:00-05:00",
     distanceM: lengthM,
     samples,
-    regenEnabled: opts.regen,
+    regenEnabled: regenOn,
     stopSpeedsMs,
     descentM,
+    physics: phys,
   };
 }

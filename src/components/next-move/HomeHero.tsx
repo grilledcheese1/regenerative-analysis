@@ -161,6 +161,10 @@ export default function HomeHero({ route, routeName, slides }: Props) {
   const still = useReducedMotion();
 
   return (
+    <div className="nm-hero-wrap">
+      {!still && (
+        <video className="nm-hero-video" src="/CHB_MY27_WelcomeMat_HeroDeskTab1920x796TYCK3173000H.mp4" autoPlay muted loop playsInline preload="metadata" aria-hidden="true" tabIndex={-1} />
+      )}
     <section className="nm-hero" aria-roledescription="carousel" aria-label="Your vehicle at a glance">
       {mapOk ? <div ref={container} className="nm-hero-map" aria-hidden="true" /> : <div className="nm-hero-map nm-hero-fallback" aria-hidden="true" />}
       <div className="nm-hero-scrim" aria-hidden="true" />
@@ -203,5 +207,6 @@ export default function HomeHero({ route, routeName, slides }: Props) {
         <span className="nm-hero-caption">Simulated replay · {routeName}, Austin</span>
       </div>
     </section>
+    </div>
   );
 }

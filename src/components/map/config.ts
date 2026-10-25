@@ -1,10 +1,6 @@
 // All tunable map/chart values live here.
 
 export const TRIP_CONFIG = {
-  styles: {
-    dark: "mapbox://styles/mapbox/dark-v11",
-    bright: "mapbox://styles/mapbox/light-v11",
-  },
   camera: {
     pitch: 60,
     bearing: -25,
@@ -31,7 +27,7 @@ export const TRIP_CONFIG = {
   fallbackZoom: 11,
 } as const;
 
-// Keyless 3D map (MapLibre + free tiles), used when there's no Mapbox token.
+// The 3D map everywhere (MapLibre + OpenFreeMap tiles + Mapzen / AWS Open Data terrain). No account or API key.
 export const FREE_MAP_CONFIG = {
   styles: {
     dark: "https://tiles.openfreemap.org/styles/dark",
@@ -46,8 +42,8 @@ export const FREE_MAP_CONFIG = {
   terrain: { exaggeration: 1.4 },
   hillshade: { exaggeration: 0.5 },
   buildings: { minzoom: 13, defaultHeightM: 6 },
-  line: { width: 6, hitWidth: 20, glowWidth: 16, glowBlur: 10, glowOpacity: 0.55, dash: [1.5, 1] },
-  markers: { stopRadius: 5, missedRadius: 8, carRadius: 8, carHaloRadius: 18 },
+  line: { width: 6, hitWidth: 24, glowExtra: 8, glowBlur: 10, glowOpacity: 0.55, dash: [1.5, 1] },
+  markers: { stopRadius: 3.5, missedRadius: 8, carRadius: 8, carHaloRadius: 18 },
   weather: { rainDrops: 220, snowFlakes: 160, rainSpeed: 700, snowSpeed: 60 },
 } as const;
 
