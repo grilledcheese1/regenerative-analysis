@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import type { ConditionsResponse, SurfaceDetail } from "@/app/api/_lib/types";
-import ConditionsCard, { CONDITION_ICON, SURFACE_STYLE, type ConditionChoice } from "@/components/ConditionsCard";
+import ConditionsCard, { SURFACE_STYLE, type ConditionChoice } from "@/components/ConditionsCard";
 import type { SurfaceSegment } from "@/components/RouteSvg";
 import RouteSvg from "@/components/RouteSvg";
 import FreeTripMapClient from "@/components/map/FreeTripMapClient";
@@ -53,19 +53,14 @@ const surfaceMix = Object.entries(
 
 const LOCATE_TIMEOUT_MS = 6000;
 
-// Theme lives in localStorage; read it as an external store so SSR renders dark without a mismatch.
+// Theme is held in memory so every page load starts dark; read it as an external store so SSR matches.
 const themeListeners = new Set<() => void>();
+let currentTheme: Theme = "dark";
 function readTheme(): Theme {
-  try {
-    return localStorage.getItem("theme") === "bright" ? "bright" : "dark";
-  } catch {
-    return "dark";
-  }
+  return currentTheme;
 }
 function writeTheme(t: Theme) {
-  try {
-    localStorage.setItem("theme", t);
-  } catch {}
+  currentTheme = t;
   themeListeners.forEach((l) => l());
 }
 function subscribeTheme(l: () => void) {
@@ -185,15 +180,6 @@ export default function Dashboard() {
               </button>
             ))}
           </div>
-          <a className="cond-chip" href="#conditions" title={detected?.reason ?? "Detecting your road conditions"}>
-            <span aria-hidden="true">{CONDITION_ICON[condition]}</span>
-            {locating && choice === "auto"
-              ? "Locating…"
-              : `${choice === "auto" ? (detected?.place ?? "Austin, TX") : "Override"} · ${condition}${
-                  choice === "auto" && detected ? ` · ${detected.weather.temperatureC}°C` : ""
-                }`}
-            <span className="muted">Change</span>
-          </a>
           <button className="btn" onClick={() => writeTheme(theme === "dark" ? "bright" : "dark")}>
             {theme === "dark" ? "☀ Bright" : "☾ Dark"}
           </button>
@@ -203,7 +189,7 @@ export default function Dashboard() {
       <main>
         <section className="section">
           <div className="section-head">
-            <span className="label">01 · Map</span>
+            <span className="label">Map</span>
             <h2>{route.name}</h2>
             <span className="tag">{trip.vehicle}</span>
           </div>
@@ -291,7 +277,7 @@ export default function Dashboard() {
 
         <section className="section">
           <div className="section-head">
-            <span className="label">02 · Analysis</span>
+            <span className="label">Analysis</span>
             <h2>Where the energy went</h2>
           </div>
           <AxisCards axes={a.axes} />
@@ -314,7 +300,7 @@ export default function Dashboard() {
 
         <section className="section">
           <div className="section-head">
-            <span className="label">03 · Compare</span>
+            <span className="label">Compare</span>
             <h2>Same road, three cars</h2>
             <span className="tag">{condition}</span>
           </div>
