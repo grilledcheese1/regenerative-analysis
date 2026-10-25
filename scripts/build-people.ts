@@ -76,6 +76,7 @@ function candidate(catalogId: string, how: "lease" | "finance" | "cash", insuran
 interface Spec {
   checking: number; savings: number; cardBalance: number;
   monthly: { income: [number, number]; bills: [string, number, number][]; purchases: [string, number, number][]; card: [string, number, number][]; savingsTransfer: number };
+  credit?: { score: number; loans: { type: "auto" | "auto lease" | "credit file"; status: "approved"; amount: number; monthly_payment: number; description: string }[] };
 }
 
 const personas: Persona[] = [];
@@ -245,6 +246,24 @@ for (const file of readdirSync(sim("users")).filter((f) => /^user_\d+\.json$/.te
       card: [["Home goods store", roundTo(net * 0.06, 5), 17]],
       savingsTransfer: roundTo(net * 0.095, 25),
     },
+  };
+
+  // --- A synthetic credit profile, stored on a Nessie loan record. Its own seed, so nothing above changes.
+  // Tier mix (super prime / prime / near prime / subprime / deep subprime): 20 / 35 / 20 / 17 / 8 %.
+  const creditRand = rng(num * 104729);
+  const pick = creditRand();
+  const [lo, hi] = pick < 0.2 ? [781, 840] : pick < 0.55 ? [661, 780] : pick < 0.75 ? [601, 660] : pick < 0.92 ? [501, 600] : [440, 500];
+  const c = contract!;
+  const loanCar = `${u.vehicle.modelYear} ${veh.make} ${veh.model}`;
+  bankingSpecs[id].credit = {
+    score: Math.round(lo + creditRand() * (hi - lo)),
+    loans: [
+      c.type === "loan"
+        ? { type: "auto", status: "approved", amount: Math.round(c.payoffCents / 100), monthly_payment: Math.round(c.paymentCents / 100), description: `${loanCar} loan` }
+        : c.type === "lease"
+          ? { type: "auto lease", status: "approved", amount: c.purchaseOptionCents.known ? Math.round(c.purchaseOptionCents.value / 100) : 0, monthly_payment: Math.round(c.paymentCents / 100), description: `${loanCar} lease` }
+          : { type: "credit file", status: "approved", amount: 0, monthly_payment: 0, description: "No open auto loans" },
+    ],
   };
 }
 

@@ -1943,6 +1943,18 @@
      ]
     ],
     "savingsTransfer": 200
+   },
+   "credit": {
+    "score": 560,
+    "loans": [
+     {
+      "type": "auto",
+      "status": "approved",
+      "amount": 9810,
+      "monthly_payment": 489,
+      "description": "2021 Toyota Camry Hybrid loan"
+     }
+    ]
    }
   },
   "user-002": {
@@ -2026,6 +2038,18 @@
      ]
     ],
     "savingsTransfer": 400
+   },
+   "credit": {
+    "score": 769,
+    "loans": [
+     {
+      "type": "auto",
+      "status": "approved",
+      "amount": 26615,
+      "monthly_payment": 553,
+      "description": "2024 Toyota Sienna Hybrid loan"
+     }
+    ]
    }
   },
   "user-003": {
@@ -2104,6 +2128,18 @@
      ]
     ],
     "savingsTransfer": 500
+   },
+   "credit": {
+    "score": 794,
+    "loans": [
+     {
+      "type": "credit file",
+      "status": "approved",
+      "amount": 0,
+      "monthly_payment": 0,
+      "description": "No open auto loans"
+     }
+    ]
    }
   },
   "user-004": {
@@ -2187,6 +2223,18 @@
      ]
     ],
     "savingsTransfer": 675
+   },
+   "credit": {
+    "score": 633,
+    "loans": [
+     {
+      "type": "auto lease",
+      "status": "approved",
+      "amount": 26650,
+      "monthly_payment": 495,
+      "description": "2020 Toyota 4Runner lease"
+     }
+    ]
    }
   },
   "user-005": {
@@ -2265,6 +2313,18 @@
      ]
     ],
     "savingsTransfer": 325
+   },
+   "credit": {
+    "score": 831,
+    "loans": [
+     {
+      "type": "credit file",
+      "status": "approved",
+      "amount": 0,
+      "monthly_payment": 0,
+      "description": "No open auto loans"
+     }
+    ]
    }
   },
   "user-006": {
@@ -2348,6 +2408,18 @@
      ]
     ],
     "savingsTransfer": 1525
+   },
+   "credit": {
+    "score": 517,
+    "loans": [
+     {
+      "type": "auto lease",
+      "status": "approved",
+      "amount": 34700,
+      "monthly_payment": 644,
+      "description": "2020 Toyota Tundra Hybrid lease"
+     }
+    ]
    }
   },
   "user-007": {
@@ -2426,6 +2498,18 @@
      ]
     ],
     "savingsTransfer": 250
+   },
+   "credit": {
+    "score": 718,
+    "loans": [
+     {
+      "type": "credit file",
+      "status": "approved",
+      "amount": 0,
+      "monthly_payment": 0,
+      "description": "No open auto loans"
+     }
+    ]
    }
   },
   "user-008": {
@@ -2509,6 +2593,18 @@
      ]
     ],
     "savingsTransfer": 225
+   },
+   "credit": {
+    "score": 488,
+    "loans": [
+     {
+      "type": "auto",
+      "status": "approved",
+      "amount": 12493,
+      "monthly_payment": 567,
+      "description": "2021 Toyota Tundra loan"
+     }
+    ]
    }
   },
   "user-009": {
@@ -2592,6 +2688,18 @@
      ]
     ],
     "savingsTransfer": 1400
+   },
+   "credit": {
+    "score": 674,
+    "loans": [
+     {
+      "type": "auto",
+      "status": "approved",
+      "amount": 1436,
+      "monthly_payment": 484,
+      "description": "2019 Toyota Camry Hybrid loan"
+     }
+    ]
    }
   },
   "user-010": {
@@ -2675,6 +2783,18 @@
      ]
     ],
     "savingsTransfer": 575
+   },
+   "credit": {
+    "score": 806,
+    "loans": [
+     {
+      "type": "auto lease",
+      "status": "approved",
+      "amount": 24800,
+      "monthly_payment": 460,
+      "description": "2025 Toyota Sienna Hybrid lease"
+     }
+    ]
    }
   },
   "user-011": {
@@ -2758,6 +2878,18 @@
      ]
     ],
     "savingsTransfer": 375
+   },
+   "credit": {
+    "score": 645,
+    "loans": [
+     {
+      "type": "auto",
+      "status": "approved",
+      "amount": 2154,
+      "monthly_payment": 728,
+      "description": "2018 Hyundai Ioniq 5 loan"
+     }
+    ]
    }
   },
   "user-012": {
@@ -2841,6 +2973,18 @@
      ]
     ],
     "savingsTransfer": 200
+   },
+   "credit": {
+    "score": 667,
+    "loans": [
+     {
+      "type": "auto",
+      "status": "approved",
+      "amount": 4386,
+      "monthly_payment": 499,
+      "description": "2022 Honda Civic loan"
+     }
+    ]
    }
   },
   "user-013": {
@@ -2924,6 +3068,18 @@
      ]
     ],
     "savingsTransfer": 1450
+   },
+   "credit": {
+    "score": 537,
+    "loans": [
+     {
+      "type": "auto lease",
+      "status": "approved",
+      "amount": 14250,
+      "monthly_payment": 265,
+      "description": "2019 Toyota Corolla lease"
+     }
+    ]
    }
   },
   "user-014": {
@@ -3007,6 +3163,18 @@
      ]
     ],
     "savingsTransfer": 450
+   },
+   "credit": {
+    "score": 742,
+    "loans": [
+     {
+      "type": "auto lease",
+      "status": "approved",
+      "amount": 19200,
+      "monthly_payment": 357,
+      "description": "2021 Toyota Camry Hybrid lease"
+     }
+    ]
    }
   },
   "user-015": {
@@ -3090,6 +3258,18 @@
      ]
     ],
     "savingsTransfer": 700
+   },
+   "credit": {
+    "score": 840,
+    "loans": [
+     {
+      "type": "auto",
+      "status": "approved",
+      "amount": 34200,
+      "monthly_payment": 609,
+      "description": "2025 Toyota Sienna Hybrid loan"
+     }
+    ]
    }
   },
   "user-016": {
@@ -3168,6 +3348,18 @@
      ]
     ],
     "savingsTransfer": 575
+   },
+   "credit": {
+    "score": 619,
+    "loans": [
+     {
+      "type": "credit file",
+      "status": "approved",
+      "amount": 0,
+      "monthly_payment": 0,
+      "description": "No open auto loans"
+     }
+    ]
    }
   },
   "user-017": {
@@ -3251,6 +3443,18 @@
      ]
     ],
     "savingsTransfer": 1225
+   },
+   "credit": {
+    "score": 736,
+    "loans": [
+     {
+      "type": "auto lease",
+      "status": "approved",
+      "amount": 17650,
+      "monthly_payment": 328,
+      "description": "2022 Toyota Corolla Cross Hybrid lease"
+     }
+    ]
    }
   },
   "user-018": {
@@ -3329,6 +3533,18 @@
      ]
     ],
     "savingsTransfer": 675
+   },
+   "credit": {
+    "score": 594,
+    "loans": [
+     {
+      "type": "credit file",
+      "status": "approved",
+      "amount": 0,
+      "monthly_payment": 0,
+      "description": "No open auto loans"
+     }
+    ]
    }
   },
   "user-019": {
@@ -3407,6 +3623,18 @@
      ]
     ],
     "savingsTransfer": 300
+   },
+   "credit": {
+    "score": 692,
+    "loans": [
+     {
+      "type": "credit file",
+      "status": "approved",
+      "amount": 0,
+      "monthly_payment": 0,
+      "description": "No open auto loans"
+     }
+    ]
    }
   },
   "user-020": {
@@ -3490,6 +3718,18 @@
      ]
     ],
     "savingsTransfer": 350
+   },
+   "credit": {
+    "score": 474,
+    "loans": [
+     {
+      "type": "auto",
+      "status": "approved",
+      "amount": 11642,
+      "monthly_payment": 688,
+      "description": "2023 Toyota Prius Prime loan"
+     }
+    ]
    }
   },
   "user-021": {
@@ -3573,6 +3813,18 @@
      ]
     ],
     "savingsTransfer": 700
+   },
+   "credit": {
+    "score": 653,
+    "loans": [
+     {
+      "type": "auto",
+      "status": "approved",
+      "amount": 18490,
+      "monthly_payment": 472,
+      "description": "2023 Toyota Tacoma loan"
+     }
+    ]
    }
   },
   "user-022": {
@@ -3656,6 +3908,18 @@
      ]
     ],
     "savingsTransfer": 275
+   },
+   "credit": {
+    "score": 793,
+    "loans": [
+     {
+      "type": "auto",
+      "status": "approved",
+      "amount": 14345,
+      "monthly_payment": 642,
+      "description": "2022 Chevrolet Silverado 1500 loan"
+     }
+    ]
    }
   },
   "user-023": {
@@ -3734,6 +3998,18 @@
      ]
     ],
     "savingsTransfer": 1050
+   },
+   "credit": {
+    "score": 552,
+    "loans": [
+     {
+      "type": "credit file",
+      "status": "approved",
+      "amount": 0,
+      "monthly_payment": 0,
+      "description": "No open auto loans"
+     }
+    ]
    }
   },
   "user-024": {
@@ -3817,6 +4093,18 @@
      ]
     ],
     "savingsTransfer": 400
+   },
+   "credit": {
+    "score": 760,
+    "loans": [
+     {
+      "type": "auto",
+      "status": "approved",
+      "amount": 24795,
+      "monthly_payment": 506,
+      "description": "2025 Chevrolet Bolt EV loan"
+     }
+    ]
    }
   },
   "user-025": {
@@ -3895,6 +4183,18 @@
      ]
     ],
     "savingsTransfer": 650
+   },
+   "credit": {
+    "score": 449,
+    "loans": [
+     {
+      "type": "credit file",
+      "status": "approved",
+      "amount": 0,
+      "monthly_payment": 0,
+      "description": "No open auto loans"
+     }
+    ]
    }
   },
   "user-026": {
@@ -3978,6 +4278,18 @@
      ]
     ],
     "savingsTransfer": 975
+   },
+   "credit": {
+    "score": 716,
+    "loans": [
+     {
+      "type": "auto",
+      "status": "approved",
+      "amount": 8864,
+      "monthly_payment": 826,
+      "description": "2022 Toyota Tundra loan"
+     }
+    ]
    }
   }
  },
