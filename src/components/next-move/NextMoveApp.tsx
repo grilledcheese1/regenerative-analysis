@@ -136,7 +136,7 @@ export default function NextMoveApp({ initialPersonaId }: { initialPersonaId?: s
               </p>
             )}
             {tab === "home" && (
-              <HomeScreen persona={persona} vehicle={vehicle} budget={budget} comparison={comparison} onReview={() => setTab("next")} />
+              <HomeScreen persona={persona} vehicle={vehicle} budget={budget} comparison={comparison} onReview={() => setTab("next")} onGo={setTab} />
             )}
             {tab === "drives" && (
               <>

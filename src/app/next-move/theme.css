@@ -1,0 +1,739 @@
+/*
+ * Next Move theme, modeled on toyota.com. Scoped under .nm (set in ./layout.tsx);
+ * the Regen Coach dashboard at / is untouched.
+ *
+ * What it borrows from Toyota's site: a rounded geometric sans, large centered section
+ * headings, centered underline tabs, black and outline pill buttons, text links with a
+ * chevron, black badges, warm taupe information panels, and large light figures with
+ * small labels underneath. Toyota red stays a small brand mark only.
+ */
+
+/* ---------- Tokens ---------- */
+
+.nm {
+  color-scheme: light;
+  --bg: #ffffff;
+  --panel: #ffffff;
+  --subtle: #f4f4f2;
+  --taupe: #9d9d8f; /* Toyota's vehicle-card panel */
+  --taupe-soft: #e9e8e2;
+  --border: #d9d9d4;
+  --text: #000000;
+  --text-2: #3d3d3d;
+  --muted: #6b6b6b;
+  --accent: #eb0a1e; /* brand mark only */
+  --accent-text: #000000;
+  --accent-contrast: #ffffff;
+  --seg-good: #1a6b3f;
+  --seg-mid: #8a5a00;
+  --seg-bad: #b42318;
+  --grid: #e6e6e2;
+  --link: #000000;
+  --font-heading: var(--font-nm), "Avenir Next", "Helvetica Neue", Arial, sans-serif;
+  --font-body: var(--font-nm), "Avenir Next", "Helvetica Neue", Arial, sans-serif;
+
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+html:has(.nm),
+body:has(.nm) {
+  background: #ffffff;
+}
+
+.nm .mono,
+.nm .budget-math,
+.nm .kv strong,
+.nm table {
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+}
+
+.nm h1,
+.nm h2,
+.nm h3 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.nm main {
+  max-width: 1240px;
+  padding: 0 2.5rem 6rem;
+}
+
+/* ---------- Header ---------- */
+
+.nm .header {
+  min-height: 72px;
+  padding: 0 2.5rem;
+  background: #ffffff;
+  backdrop-filter: none;
+  border-bottom: 1px solid var(--border);
+}
+
+.nm .wordmark {
+  gap: 0.65rem;
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+
+.nm .wordmark em {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* Small red square, like Toyota's logo block */
+.nm .dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 2px;
+  background: var(--accent);
+}
+
+.nm .header select {
+  min-height: 40px;
+  padding: 0 1rem;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+  background: #ffffff;
+  border: 1px solid #b9b9b3;
+  border-radius: 999px;
+}
+
+/* ---------- Tabs: centered, grey baseline, black active underline ---------- */
+
+.nm .tabs {
+  justify-content: center;
+  gap: 2.25rem;
+  padding: 0 2.5rem;
+  background: #ffffff;
+  border-bottom: 0;
+}
+
+.nm .tabs button {
+  padding: 1.1rem 0.25rem 0.85rem;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-2);
+  border-bottom: 3px solid transparent;
+  box-shadow: inset 0 -2px 0 #9a9a9a;
+}
+
+.nm .tabs button:hover {
+  color: var(--text);
+}
+
+.nm .tabs button.on {
+  color: var(--text);
+  font-weight: 800;
+  border-bottom-color: var(--text);
+  box-shadow: none;
+}
+
+/* ---------- Labels, badges, chips ---------- */
+
+.nm .label {
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--muted);
+}
+
+.nm .tag,
+.nm .status,
+.nm .chip {
+  font-family: inherit;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* Black badge, as on Toyota's vehicle cards */
+.nm .tag {
+  padding: 2px 9px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #ffffff;
+  background: #000000;
+  border: 0;
+  border-radius: 3px;
+}
+
+.nm .modes .tag {
+  color: var(--text-2);
+  background: var(--subtle);
+}
+
+.nm .status {
+  padding: 3px 10px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-radius: 3px;
+}
+
+.nm .chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 7px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-2);
+  background: var(--subtle);
+  border: 0;
+  border-radius: 3px;
+}
+
+.nm .chip-observed {
+  color: var(--seg-good);
+}
+.nm .chip-modeled {
+  color: var(--seg-mid);
+}
+.nm .chip-lead {
+  color: #ffffff;
+  background: #000000;
+}
+.nm .chip-out {
+  color: var(--seg-bad);
+}
+
+/* ---------- Section headings: large and centered ---------- */
+
+.nm .section {
+  margin-top: 3rem;
+}
+
+.nm .section-head {
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1.75rem;
+  text-align: center;
+}
+
+.nm .section-head h2 {
+  order: 1;
+  font-size: clamp(1.9rem, 3.4vw, 2.75rem);
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+}
+
+.nm .section-head .label {
+  order: 0;
+}
+
+.nm .section-head .tag,
+.nm .section-head .status {
+  order: 2;
+}
+
+.nm .lede {
+  max-width: 64ch;
+  margin: 0 auto 1.75rem;
+  text-align: center;
+  font-size: 1.08rem;
+  color: var(--text-2);
+}
+
+/* ---------- Panels ---------- */
+
+.nm .card {
+  padding: 1.75rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.nm .grid-2 {
+  gap: 1.5rem;
+}
+
+/* The decision panel takes Toyota's taupe */
+.nm .card.next-preview {
+  background: var(--taupe);
+  border-color: var(--taupe);
+  color: #000000;
+}
+
+.nm .card.next-preview .label {
+  color: #1f1f1f;
+}
+
+.nm .card.next-preview .status {
+  color: #ffffff;
+  background: #000000;
+  border-color: #000000;
+}
+
+.nm .notice {
+  margin: 1.25rem 0 0;
+  padding: 0.7rem 1rem;
+  font-size: 0.92rem;
+  color: var(--text);
+  background: var(--taupe-soft);
+  border: 0;
+  border-radius: 8px;
+}
+
+.nm .linkish {
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.nm .linkish::after {
+  content: " ›";
+}
+
+.nm .small {
+  font-size: 0.82rem;
+}
+
+/* ---------- Buttons: black pill, outline pill ---------- */
+
+.nm .btn {
+  min-height: 48px;
+  padding: 0 26px;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  background: #ffffff;
+  border: 1.5px solid #000000;
+  border-radius: 999px;
+}
+
+.nm .btn:hover:enabled {
+  background: var(--subtle);
+}
+
+.nm .btn:enabled:active {
+  scale: 1;
+}
+
+.nm .btn.primary,
+.nm a.btn.primary {
+  display: inline-flex;
+  align-items: center;
+  color: #ffffff;
+  background: #000000;
+  border-color: #000000;
+}
+
+.nm .btn.primary:hover:enabled,
+.nm a.btn.primary:hover {
+  background: #2b2b2b;
+}
+
+/* On the taupe panel, Toyota uses a white pill */
+.nm .card.next-preview .btn.primary {
+  color: #000000;
+  background: #ffffff;
+  border-color: #ffffff;
+}
+
+.nm .card.next-preview .btn.primary:hover:enabled {
+  background: #f1f1ee;
+}
+
+.nm select,
+.nm input[type="number"],
+.nm input[type="text"] {
+  font: inherit;
+  color: var(--text);
+  background: #ffffff;
+  border: 1px solid #b9b9b3;
+  border-radius: 8px;
+}
+
+.nm input[type="range"] {
+  accent-color: #000000;
+}
+
+.nm :focus-visible {
+  outline: 2px solid #000000;
+  outline-offset: 3px;
+}
+
+/* ---------- Sync bar ---------- */
+
+.nm .sync-bar {
+  margin-top: 1.25rem;
+  padding: 0;
+  font-size: 0.88rem;
+}
+
+.nm .sync-bar .btn {
+  min-height: 38px;
+  padding: 0 18px;
+  font-size: 0.88rem;
+}
+
+/* ---------- Figures: large value, small label underneath (Toyota's MSRP style) ---------- */
+
+.nm .kv-grid {
+  gap: 1.5rem 2rem;
+}
+
+.nm .kv {
+  gap: 2px;
+}
+
+.nm .kv strong {
+  order: -1;
+  font-size: 1.85rem;
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+.nm .kv .muted {
+  font-size: 0.82rem;
+  color: var(--text-2);
+}
+
+.nm .kv-sub {
+  color: var(--muted) !important;
+}
+
+.nm .budget-math .total {
+  font-weight: 800;
+}
+
+/* ---------- Status colors ---------- */
+
+.nm .status-recommended {
+  color: var(--seg-good);
+}
+.nm .status-needs_information {
+  color: var(--seg-mid);
+}
+.nm .status-no_feasible_option {
+  color: var(--seg-bad);
+}
+
+/* ---------- Compare: vehicle-card style ---------- */
+
+.nm .toolbar {
+  justify-content: center;
+}
+
+.nm .options {
+  gap: 1.5rem;
+}
+
+.nm .option header {
+  padding-bottom: 0.9rem;
+  margin-bottom: 0.4rem;
+  border-bottom: 1px solid var(--grid);
+}
+
+.nm .option h3 {
+  font-size: 1.35rem;
+  line-height: 1.25;
+}
+
+.nm .option .kv strong {
+  font-size: 1.6rem;
+}
+
+/* The leading option gets the taupe panel and a black badge */
+.nm .option.leader {
+  background: var(--taupe);
+  border-color: var(--taupe);
+}
+
+.nm .option.leader header {
+  border-bottom-color: rgb(0 0 0 / 0.15);
+}
+
+.nm .option.leader .kv .muted,
+.nm .option.leader .tradeoff {
+  color: #1f1f1f;
+}
+
+.nm .option.excluded {
+  opacity: 1;
+  background: var(--subtle);
+}
+
+.nm .tradeoff {
+  color: var(--text-2);
+}
+
+.nm details > summary {
+  font-family: inherit;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text);
+  cursor: pointer;
+}
+
+/* ---------- Next Move ---------- */
+
+.nm ul.why {
+  display: grid;
+  gap: 0.55rem;
+  padding-left: 1.15rem;
+}
+
+.nm .action {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  border-radius: 10px;
+  background: var(--taupe-soft);
+}
+
+.nm .action ol {
+  display: grid;
+  gap: 0.4rem;
+  padding-left: 1.25rem;
+}
+
+.nm .evidence-list li {
+  border-color: var(--grid);
+}
+
+/* ---------- Tables ---------- */
+
+.nm table.txns td {
+  padding: 0.55rem 0.75rem 0.55rem 0;
+  border-bottom: 1px solid var(--grid);
+}
+
+/* ---------- Phones ---------- */
+
+@media (max-width: 760px) {
+  .nm .header,
+  .nm .tabs {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .nm .tabs {
+    justify-content: flex-start;
+    gap: 1.5rem;
+  }
+
+  .nm main {
+    padding: 0 1rem 4rem;
+  }
+
+  .nm .card {
+    padding: 1.25rem;
+  }
+}
+
+/* ======================================================================
+ * Home hero: live flyover of the commute, Toyota-style centered copy
+ * ====================================================================== */
+
+.nm-hero {
+  position: relative;
+  height: clamp(420px, 58vh, 600px);
+  margin: 1.5rem 0 3rem;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #0f1113;
+  color: #ffffff;
+  isolation: isolate;
+}
+
+/* !important: MapLibre's own .maplibregl-map rule sets position: relative */
+.nm-hero-map {
+  position: absolute !important;
+  inset: 0;
+  z-index: 0;
+}
+
+.nm-hero-fallback {
+  background: radial-gradient(120% 90% at 60% 35%, #2a2d31 0%, #0f1113 70%);
+}
+
+.nm-hero-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(0deg, rgb(0 0 0 / 0.72) 0%, rgb(0 0 0 / 0.35) 45%, rgb(0 0 0 / 0.05) 75%);
+}
+
+.nm-hero-copy {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  bottom: 5rem;
+  width: min(820px, 90%);
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+.nm-hero-title {
+  margin: 0 0 0.6rem;
+  font-size: clamp(2rem, 4.4vw, 3.6rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+}
+
+.nm-hero-body {
+  margin: 0 auto 1.5rem;
+  max-width: 52ch;
+  font-size: 1.1rem;
+  color: rgb(255 255 255 / 0.88);
+}
+
+.nm-hero-cta {
+  min-height: 52px;
+  padding: 0 40px;
+  font: inherit;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #000000;
+  background: #ffffff;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.nm-hero-cta:hover {
+  background: #ededea;
+}
+
+.nm-hero-cta:focus-visible,
+.nm-hero-pause:focus-visible,
+.nm-hero-step:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 3px;
+}
+
+.nm-hero-controls {
+  position: absolute;
+  z-index: 2;
+  left: 1.75rem;
+  right: 1.75rem;
+  bottom: 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.nm-hero-pause {
+  flex: none;
+  width: 40px;
+  height: 28px;
+  font-size: 0.7rem;
+  color: #000000;
+  background: #ffffff;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+/* Segmented progress across the width, as on toyota.com */
+.nm-hero-steps {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1.4rem;
+  display: flex;
+  gap: 6px;
+}
+
+.nm-hero-step {
+  flex: 1;
+  height: 14px;
+  padding: 0;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.nm-hero-step span {
+  position: relative;
+  display: block;
+  height: 4px;
+  margin-top: 10px;
+  overflow: hidden;
+  background: rgb(255 255 255 / 0.35);
+}
+
+.nm-hero-step span::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: scaleX(0);
+  transform-origin: left;
+  background: #ffffff;
+}
+
+.nm-hero-step.on span::after {
+  transform: scaleX(1);
+}
+
+.nm-hero-step.run span::after {
+  animation: nm-progress var(--slide-ms) linear both;
+}
+
+.nm-hero-caption {
+  margin-left: auto;
+  font-size: 0.78rem;
+  color: rgb(255 255 255 / 0.7);
+  white-space: nowrap;
+}
+
+.nm-hero .maplibregl-ctrl-bottom-right {
+  z-index: 3;
+  bottom: 3.5rem;
+}
+
+@keyframes nm-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nm-hero-step.run span::after {
+    animation: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .nm-hero {
+    height: 460px;
+    margin-top: 1rem;
+  }
+
+  .nm-hero-copy {
+    bottom: 4.25rem;
+  }
+
+  .nm-hero-caption {
+    display: none;
+  }
+}
+
+/* Readable small print on taupe panels */
+.nm .option.leader .muted,
+.nm .option.leader .kv-sub,
+.nm .card.next-preview .muted,
+.nm .card.next-preview .kv-sub {
+  color: #262626 !important;
+}
