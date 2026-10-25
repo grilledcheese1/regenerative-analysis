@@ -4,6 +4,8 @@ import { ExplanationOutput } from "./prompt";
 const NUMBER = /\$?\d[\d,]*(?:\.\d+)?%?/g;
 const PROHIBITED =
   /\b(pre-?approved|approved|pre-?qualified|you qualify|guarantee[sd]?|locked[- ]in|booked|appointment (is|has been) (set|made)|discount of)\b/i;
+// snake_case codes and camelCase field names, e.g. needs_information, totalMonthly
+const INTERNAL_ID = /\b(?:[a-z]+(?:_[a-z0-9]+)+|[a-z]+[A-Z][A-Za-z]*)\b/;
 const MAX_SUMMARY = 600;
 const MAX_ITEM = 200;
 const MAX_ITEMS = 3;
@@ -51,6 +53,10 @@ export function validateExplanation(raw: unknown, bundle: EvidenceBundle): Valid
   }
 
   if (texts.some((t) => PROHIBITED.test(t))) return { ok: false, detail: "prohibited_claim" };
+
+  // Internal ids and status codes ("needs_information") aren't plain English.
+  const internal = texts.join(" ").match(INTERNAL_ID);
+  if (internal) return { ok: false, detail: `internal_identifier:${internal[0]}` };
 
   if (
     o.summary.length > MAX_SUMMARY ||

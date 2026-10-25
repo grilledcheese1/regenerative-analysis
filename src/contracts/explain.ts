@@ -1,7 +1,7 @@
 // Contracts for the server comparison, recommendation and explanation API (Workstream C).
 import type { Comparison, NextAction, Recommendation, SourceKind } from "./index";
 
-export const PROMPT_VERSION = "explain-1";
+export const PROMPT_VERSION = "explain-3";
 
 /** Same union as Workstream B's BankingSyncMode; kept inline so this file has no cross-stream import. */
 export type BankingModeInput = "fixture" | "sandbox" | "sandbox_cached";
