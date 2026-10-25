@@ -1,7 +1,7 @@
 import "server-only";
 import { z } from "zod";
 import type { BankingSnapshot } from "@/contracts";
-import { nessieFixture } from "@/fixtures/banking";
+import { nessieBundlesFromSpec, nessieFixture, type BankingSpec } from "@/fixtures/banking";
 import { NessieAccount, NessieBill, NessieDeposit, NessiePurchase, NessieTransfer, NessieWithdrawal, normalizeNessie } from "./nessie-normalize";
 
 // ---------- Live sandbox access ----------
@@ -159,13 +159,14 @@ export async function fetchCustomer(customerId: string): Promise<BankingSnapshot
   return normalizeNessie(customerId, "sandbox", bundles);
 }
 
-export async function fetchSandbox(personaId: string): Promise<BankingSnapshot> {
-  const customerId = sandboxCustomerId(personaId);
+export async function fetchSandbox(personaId: string, customerIdOverride?: string | null): Promise<BankingSnapshot> {
+  const customerId = customerIdOverride ?? sandboxCustomerId(personaId);
   if (!customerId) throw new NessieUnavailable(`No Nessie customer mapped for ${personaId}`, false);
   return fetchCustomer(customerId);
 }
 
-export function fixtureSnapshot(personaId: string): BankingSnapshot | null {
-  const bundles = nessieFixture(personaId);
+/** The local bank history: a case study's fixture, or an onboarded user's history from their spec. */
+export function fixtureSnapshot(personaId: string, spec?: BankingSpec): BankingSnapshot | null {
+  const bundles = spec ? nessieBundlesFromSpec(personaId, spec) : nessieFixture(personaId);
   return bundles ? normalizeNessie(`fixture_${personaId}`, "fixture", bundles) : null;
 }

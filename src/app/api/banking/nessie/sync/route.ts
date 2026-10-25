@@ -1,9 +1,9 @@
 import { z } from "zod";
 import type { BankingSyncError, BankingSyncResult } from "@/contracts";
-import { persona } from "@/fixtures/personas";
 import { apiError, newRequestId } from "@/server/http";
 import { fetchSandbox, fixtureSnapshot, NessieBadResponse, NessieUnavailable, sandboxCustomerId } from "@/server/providers/nessie";
 import { bankingSnapshots } from "@/server/records";
+import { personaForRequest } from "@/server/profiles";
 import { ownerId } from "@/server/session";
 
 const Body = z.object({ personaId: z.string(), mode: z.enum(["fixture", "sandbox", "sandbox_cached"]) });
@@ -21,12 +21,14 @@ export async function POST(request: Request) {
   const parsed = Body.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return apiError(400, "invalid_request", "Expected { personaId, mode }", false, requestId);
   const { personaId, mode } = parsed.data;
-  if (!persona(personaId)) return apiError(404, "unknown_persona", "No such demo customer", false, requestId);
+  const resolved = await personaForRequest(personaId);
+  if (!resolved) return apiError(404, "unknown_persona", "No such demo customer", false, requestId);
+  const userCustomerId = resolved.stored?.profile.banking.nessieCustomerId ?? null;
 
   const ok = (r: Omit<BankingSyncResult, "requestId">) => Response.json({ requestId, ...r } satisfies BankingSyncResult);
 
   if (mode === "fixture") {
-    const snapshot = fixtureSnapshot(personaId)!;
+    const snapshot = fixtureSnapshot(personaId, resolved.stored?.spec)!;
     bankingSnapshots.put(owner, `${personaId}:fixture`, snapshot);
     return ok({ snapshot, stale: false });
   }
@@ -46,7 +48,7 @@ export async function POST(request: Request) {
     return Response.json(body, { status });
   };
   try {
-    const snapshot = await fetchSandbox(personaId);
+    const snapshot = await fetchSandbox(personaId, userCustomerId);
     bankingSnapshots.put(owner, `${personaId}:sandbox`, snapshot);
     log({ requestId, personaId, outcome: "ok", ms: Date.now() - started });
     return ok({ snapshot, stale: false });
@@ -56,7 +58,7 @@ export async function POST(request: Request) {
       return fail(502, "provider_bad_response", "Nessie returned records we could not read", false);
     }
     if (e instanceof NessieUnavailable) {
-      const configured = Boolean(process.env.NESSIE_API_KEY && sandboxCustomerId(personaId));
+      const configured = Boolean(process.env.NESSIE_API_KEY && (userCustomerId ?? sandboxCustomerId(personaId)));
       log({ requestId, personaId, outcome: configured ? "provider_error" : "not_configured", ms: Date.now() - started });
       return configured
         ? fail(502, "provider_error", e.message, e.retryable)

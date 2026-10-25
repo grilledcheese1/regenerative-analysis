@@ -1,7 +1,7 @@
 import { isSampleFile } from "@/domain/driving/samples";
-import { persona } from "@/fixtures/personas";
 import { apiError, newRequestId } from "@/server/http";
 import { createImport, detectFormat, findDuplicate, logImport, maxImportBytes, publicPreview, sha256Bytes } from "@/server/imports/service";
+import { personaForRequest } from "@/server/profiles";
 import { ownerId } from "@/server/session";
 
 // Room for the multipart boundaries and the other form fields around the file itself.
@@ -32,7 +32,7 @@ export async function POST(req: Request) {
   if (!(file instanceof File)) {
     return apiError(400, "invalid_form", "Attach a file.", false, requestId, { file: "Required" });
   }
-  if (typeof vehicleId !== "string" || !persona(vehicleId)) {
+  if (typeof vehicleId !== "string" || !(await personaForRequest(vehicleId))) {
     return apiError(400, "invalid_vehicle", "Unknown vehicle.", false, requestId, { vehicleId: "Unknown vehicle" });
   }
   const sample = form.get("sample") === "1";
