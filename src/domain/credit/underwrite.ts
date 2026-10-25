@@ -71,12 +71,14 @@ export function underwrite(app: LoanApplication, p: CreditProfile): LoanDecision
   if (gross <= 0 || p.payrollDepositsPerMonth < P.minPayrollDepositsPerMonth) {
     failed.push(reason("income", "No steady income found: fewer than 2 payroll deposits a month", "Payroll deposits", `${p.payrollDepositsPerMonth.toFixed(1)}/mo`, "observed"));
   }
-  if (pti > P.maxPti) failed.push(reason("pti", `Car payment would be ${pct(pti)} of income (limit ${pct(P.maxPti)})`, "Payment-to-income", pct(pti), "derived"));
-  if (dti > P.maxDti) failed.push(reason("dti", `Debt payments would be ${pct(dti)} of income (limit ${pct(P.maxDti)})`, "Debt-to-income", pct(dti), "derived"));
+  const hasIncome = gross > 0;
+  // Without income the ratios are meaningless; the income rule alone explains the decline.
+  if (hasIncome && pti > P.maxPti) failed.push(reason("pti", `Car payment would be ${pct(pti)} of income (limit ${pct(P.maxPti)})`, "Payment-to-income", pct(pti), "derived"));
+  if (hasIncome && dti > P.maxDti) failed.push(reason("dti", `Debt payments would be ${pct(dti)} of income (limit ${pct(P.maxDti)})`, "Debt-to-income", pct(dti), "derived"));
   if (ltv !== null && ltv > P.maxLtv) failed.push(reason("ltv", `Loan is ${pct(ltv)} of the car's value (limit ${pct(P.maxLtv)})`, "Loan-to-value", pct(ltv), "derived"));
   if (app.termMonths > P.maxTermMonths) failed.push(reason("term", `${app.termMonths}-month term is longer than ${P.maxTermMonths} months`, "Term", `${app.termMonths} months`, "derived"));
 
-  const nearLimit = pti > P.maxPti * P.nearLimitShare || dti > P.maxDti * P.nearLimitShare || (ltv !== null && ltv > P.maxLtv * P.nearLimitShare);
+  const nearLimit = (hasIncome && (pti > P.maxPti * P.nearLimitShare || dti > P.maxDti * P.nearLimitShare)) || (ltv !== null && ltv > P.maxLtv * P.nearLimitShare);
   const status: LoanDecision["status"] = failed.length ? "not_prequalified" : pBad >= th.review || nearLimit ? "needs_review" : "prequalified";
 
   const notes: CreditReason[] = [];
@@ -85,7 +87,7 @@ export function underwrite(app: LoanApplication, p: CreditProfile): LoanDecision
   // Adverse-action style for anything short of pre-qualified; otherwise the factors that helped most.
   const against = status !== "prequalified";
   const modelReasons = [...contributions]
-    .filter((c) => (against ? c.value > 0 : c.value < 0))
+    .filter((c) => (against ? c.value > 0 : c.value < 0) && (hasIncome || c.feature !== "A8"))
     .sort((a, b) => (against ? b.value - a.value : a.value - b.value))
     .map((c) => {
       const r = MODEL_REASON[c.feature](p, app, against);
@@ -111,8 +113,8 @@ export function underwrite(app: LoanApplication, p: CreditProfile): LoanDecision
     paymentCents,
     maxAmountCents,
     pBad,
-    ptiPct: Math.round(pti * 1000) / 10,
-    dtiPct: Math.round(dti * 1000) / 10,
+    ptiPct: hasIncome ? Math.round(pti * 1000) / 10 : null,
+    dtiPct: hasIncome ? Math.round(dti * 1000) / 10 : null,
     ltvPct: ltv === null ? null : Math.round(ltv * 1000) / 10,
     reasons,
     ...(worthIt !== undefined && { worthIt }),

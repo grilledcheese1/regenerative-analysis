@@ -57,8 +57,8 @@ export interface LoanDecision {
   paymentCents: Cents;
   maxAmountCents: Cents;
   pBad: number;
-  ptiPct: number;
-  dtiPct: number;
+  ptiPct: number | null; // null when there is no income to divide by
+  dtiPct: number | null;
   ltvPct: number | null;
   reasons: CreditReason[];
   worthIt?: boolean; // refinance only

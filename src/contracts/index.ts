@@ -4,7 +4,7 @@
 import type { BankLoan, LoanDecision } from "./credit";
 
 export const SCHEMA_VERSION = "1.0";
-export const MODEL_VERSION = "finance-1";
+export const MODEL_VERSION = "finance-2"; // finance-2: personal pre-qualified rates
 
 export type Cents = number;
 

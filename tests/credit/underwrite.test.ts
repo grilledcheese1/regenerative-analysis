@@ -60,8 +60,9 @@ describe("underwrite", () => {
   it("declines without NaN when there is no income", () => {
     const d = underwrite(car, { ...prime, takeHomeMonthlyCents: 0, grossMonthlyCents: 0, payrollDepositsPerMonth: 0 });
     expect(d.status).toBe("not_prequalified");
-    expect(Number.isFinite(d.ptiPct)).toBe(true);
-    expect(Number.isFinite(d.dtiPct)).toBe(true);
+    expect(d.ptiPct).toBeNull(); // no income: no ratio, never NaN
+    expect(d.dtiPct).toBeNull();
+    expect(Number.isFinite(d.maxAmountCents)).toBe(true);
     expect(d.reasons.map((r) => r.code)).toContain("income");
   });
 
@@ -103,5 +104,17 @@ describe("reason copy", () => {
     const d = underwrite({ ...car, termMonths: 84 }, { ...one, checkingCents: -5000, savingsCents: 0 });
     const r = d.reasons.find((x) => x.code === "loans");
     if (r) expect(r.text).not.toMatch(/several/i);
+  });
+});
+
+describe("review fixes", () => {
+  it("with no income, cites only the income rule, never an invented 100%", () => {
+    const d = underwrite(car, { ...prime, takeHomeMonthlyCents: 0, grossMonthlyCents: 0, payrollDepositsPerMonth: 0 });
+    const codes = d.reasons.map((r) => r.code);
+    expect(codes).toContain("income");
+    expect(codes).not.toContain("pti");
+    expect(codes).not.toContain("dti");
+    expect(d.ptiPct).toBeNull();
+    expect(d.dtiPct).toBeNull();
   });
 });

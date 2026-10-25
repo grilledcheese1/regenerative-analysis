@@ -28,3 +28,15 @@ describe("creditProfile", () => {
     expect(p.loans).toEqual([]);
   });
 });
+
+describe("late payments", () => {
+  it("doesn't count a pending car payment as late", () => {
+    const bank = fixtureSnapshot("kai")!;
+    const withPending = {
+      ...bank,
+      transactions: bank.transactions.map((t, i) => (t.category === "vehicle_payment" && i === bank.transactions.findIndex((x) => x.category === "vehicle_payment") ? { ...t, status: "pending" as const } : t)),
+    };
+    const p = creditProfile(withPending, buildBudget(withPending, persona("kai")!.profile, DEMO_AS_OF), "synthetic");
+    expect(p.lateCarPayments).toBe(0);
+  });
+});

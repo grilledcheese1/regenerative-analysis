@@ -446,8 +446,8 @@ export function compareOptions({ persona, budget, catalog, asOf, overrides = {},
     const f = prequalification.finance;
     if (f) {
       evidence.push(
-        { id: "pti", label: "Car payment ÷ income", display: `${f.ptiPct}% (limit 20%)`, source: "derived" },
-        { id: "dti", label: "All debt payments ÷ income", display: `${f.dtiPct}% (limit 50%)`, source: "derived" },
+        { id: "pti", label: "Car payment ÷ income", display: f.ptiPct === null ? "No income found" : `${f.ptiPct}% (limit 20%)`, source: "derived" },
+        { id: "dti", label: "All debt payments ÷ income", display: f.dtiPct === null ? "No income found" : `${f.dtiPct}% (limit 50%)`, source: "derived" },
       );
     }
   }

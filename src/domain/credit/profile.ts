@@ -21,7 +21,8 @@ export function creditProfile(bank: BankingSnapshot, budget: BudgetSnapshot, sco
     scoreSource,
     loans,
     onTimeCarPayments: carBills.filter((t) => t.status === "completed").length,
-    lateCarPayments: carBills.filter((t) => t.status === "pending" || t.status === "cancelled").length,
+    // Pending means upcoming (and unknown live statuses normalize to pending), so only cancelled counts as missed.
+    lateCarPayments: carBills.filter((t) => t.status === "cancelled").length,
     payrollDepositsPerMonth: budget.incomeDeposits / months,
     takeHomeMonthlyCents: budget.recurringIncomeCents,
     grossMonthlyCents: Math.round(budget.recurringIncomeCents / P.grossFromTakeHome),
