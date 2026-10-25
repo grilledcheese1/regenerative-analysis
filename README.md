@@ -42,7 +42,6 @@ See `.env.example` for comments. All optional; missing ones fall back to fixture
 
 | Variable | Purpose |
 | --- | --- |
-| `NEXT_PUBLIC_MAPBOX_TOKEN` | Map tiles (blank = static route preview) |
 | `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL`, `AI_DAILY_CAP` | Claude coaching and explanations |
 | `NESSIE_API_KEY`, `NESSIE_BASE_URL`, `NESSIE_CUSTOMERS` | Nessie sandbox banking |
 | `NESSIE_SEED_ALLOW` | Dev machine only. Never set in Vercel |
@@ -59,7 +58,7 @@ Toyota or Insure Connect data import, an insurer partnership, lender quotes, nat
 - Unit (`npm test`): budget, loan/lease math, option comparison and ranking (including the Maria, Devon and Kai demo
   scenarios), and the braking model.
 - End to end (`npm run test:e2e`): `e2e/` covers page separation, the Maria journey, changed inputs, Devon and Kai
-  outcomes, sliders, evidence, persona reset, Settings, phone-width overflow and the missing-Mapbox fallback. Specs run
+  outcomes, sliders, evidence, persona reset, Settings, phone-width overflow and the no-WebGL map fallback. Specs run
   with no provider keys, so fixture banking and template explanations keep them deterministic.
 
 ## Workstream docs

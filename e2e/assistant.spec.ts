@@ -67,3 +67,20 @@ test("A5 the assistant is hidden on Settings", async ({ page }) => {
   await tab(page, "Settings").click();
   await expect(page.getByRole("button", { name: "Ask Me Anything!" })).toHaveCount(0);
 });
+
+test("A6 Contact the dealer, inside the chat, lists the Toyota dealerships", async ({ page }) => {
+  await openAssistant(page);
+  const contact = panel(page).getByRole("button", { name: "Contact the dealer" });
+  await contact.click();
+  const list = panel(page).getByRole("region", { name: "Toyota dealerships near you" });
+  await expect(list).toBeVisible();
+  await expect(list.getByRole("listitem")).not.toHaveCount(0);
+  await expect(list.getByText(/Toyota/).first()).toBeVisible();
+  // Escape closes the dealer list first, then the chat.
+  await page.keyboard.press("Escape");
+  await expect(list).toHaveCount(0);
+  await expect(panel(page)).toBeVisible();
+  await expect(contact).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(panel(page)).toHaveCount(0);
+});

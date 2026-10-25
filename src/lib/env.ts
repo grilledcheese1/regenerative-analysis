@@ -1,5 +1,4 @@
 export const env = {
-  mapboxToken: process.env.NEXT_PUBLIC_MAPBOX_TOKEN ?? "",
   defaultGasPrice: Number(process.env.NEXT_PUBLIC_DEFAULT_GAS_PRICE ?? 3),
   defaultTripsPerDay: Number(process.env.NEXT_PUBLIC_DEFAULT_TRIPS_PER_DAY ?? 2),
 };

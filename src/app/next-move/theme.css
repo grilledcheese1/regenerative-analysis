@@ -573,6 +573,30 @@ body:has(.nm) {
   background: radial-gradient(120% 90% at 60% 35%, #2a2d31 0%, #0f1113 70%);
 }
 
+/* Full-width low-opacity video band behind the hero card: it runs edge to edge of the page, under the map. */
+.nm-hero-wrap {
+  position: relative;
+  isolation: isolate;
+}
+
+.nm-hero-video {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  z-index: -1;
+  width: 100vw;
+  height: 100%;
+  transform: translateX(-50%);
+  object-fit: cover;
+  opacity: 0.22;
+  pointer-events: none;
+}
+
+html {
+  overflow-x: clip; /* 100vw includes the scrollbar, so keep the band from adding sideways scroll */
+}
+
 .nm-hero-scrim {
   position: absolute;
   inset: 0;
@@ -1436,4 +1460,44 @@ body:has(.nm) {
 .nm .slider > span:last-child {
   text-align: right;
   white-space: nowrap;
+}
+
+/* ---------- Home: the customer's car, cut out, with a ground shadow ---------- */
+
+.nm .car-stage {
+  position: relative;
+  display: grid;
+  place-items: end center;
+  height: clamp(150px, 24vw, 230px);
+  margin: 0.25rem 0 1.25rem;
+  isolation: isolate;
+}
+
+.nm .car-stage img {
+  position: relative;
+  z-index: 1;
+  max-width: min(100%, 600px);
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.nm .car-stage::after {
+  content: "";
+  position: absolute;
+  bottom: 1%;
+  left: 50%;
+  z-index: 0;
+  width: min(78%, 470px);
+  height: 16px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(0 0 0 / 0.42), rgb(0 0 0 / 0.14) 60%, transparent);
+  filter: blur(4px);
+}
+
+.nm .car-note {
+  margin: -0.6rem 0 1rem;
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--muted);
 }

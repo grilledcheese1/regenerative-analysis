@@ -8,11 +8,13 @@ import SignIn from "@/components/auth/SignIn";
 import AskNextMove from "@/components/next-move/assistant/AskNextMove";
 import DrivesView from "@/components/DrivesView";
 import { MotionProvider } from "@/components/story/motion";
+import { describedVehicle } from "@/fixtures/described-vehicle";
+import { physicsFor } from "@/fixtures/vehicle-physics";
 import { ScrollProgress } from "@/components/story/SectionRail";
 import type { CompareRequest, DrivingProfile, ScenarioInputs, SourceKind } from "@/contracts";
 import { runScenario } from "@/domain/recommendations/scenario";
 import { catalogVehicle } from "@/fixtures/catalog";
-import { PEOPLE, persona as findPersona } from "@/fixtures/personas";
+import { PEOPLE, persona as findPersona, styleOf } from "@/fixtures/personas";
 import BankingSyncBar from "./banking/BankingSyncBar";
 import { useBankingSync } from "./banking/useBankingSync";
 import ImportDrive from "./import/ImportDrive";
@@ -154,12 +156,12 @@ export default function NextMoveApp({ initialPersonaId }: { initialPersonaId?: s
               </p>
             )}
             {tab === "home" && (
-              <HomeScreen persona={persona} vehicle={vehicle} budget={budget} comparison={comparison} onReview={() => setTab("next")} onGo={setTab} />
+              <HomeScreen persona={persona} budget={budget} comparison={comparison} onReview={() => setTab("next")} onGo={setTab} />
             )}
             {tab === "drives" && (
               <>
                 <ImportDrive key={`${persona.id}-${dataKey}`} personaId={persona.id} vehicleLabel={`${vehicle.modelYear} ${vehicle.model}`} onProfile={onProfile} />
-                <DrivesView key={`replay-${persona.id}`} initialRouteId={persona.usage.routeId} vehicleName={`${vehicle.modelYear} ${vehicle.model}`} hybrid={vehicle.powertrain === "hybrid"} />
+                <DrivesView key={`replay-${persona.id}`} initialRouteId={persona.usage.routeId} vehicleName={describedVehicle(persona).label} hybrid={physicsFor(persona.id).ownRegen} physics={physicsFor(persona.id)} defaultDriver={styleOf(persona.id)} />
               </>
             )}
             {tab === "money" && (

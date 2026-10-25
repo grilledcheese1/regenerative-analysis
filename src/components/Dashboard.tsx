@@ -7,7 +7,7 @@ import type { SurfaceSegment } from "@/components/RouteSvg";
 import RouteSvg from "@/components/RouteSvg";
 import FreeTripMapClient from "@/components/map/FreeTripMapClient";
 import { FREE_MAP_CONFIG } from "@/components/map/config";
-import TripMapClient from "@/components/map/TripMapClient";
+import SegmentCard from "@/components/map/SegmentCard";
 import Timeline from "@/components/Timeline";
 import { AxisCards, CoachTip, ComparePanel, SavingsCard, ScoreHero, Terminal } from "@/components/Panels";
 import { env } from "@/lib/env";
@@ -16,7 +16,6 @@ import realRoute from "../../data/cache/routes/hill.json";
 import type { Condition, DriverProfileName } from "@/lib/model/config";
 import { analyzeTrip, estimateSavings, type MissedEvent } from "@/lib/model/score";
 import { simulateTrip } from "@/lib/model/simulate";
-import { toContractTrip } from "@/lib/trip/adapt";
 import { buildSegments, CAUSE_LABEL } from "@/lib/segments";
 
 type Theme = "dark" | "bright";
@@ -82,6 +81,7 @@ export default function Dashboard() {
   const [gasPrice, setGasPrice] = useState(env.defaultGasPrice);
   const [tripsPerDay, setTripsPerDay] = useState(env.defaultTripsPerDay);
   const [selected, setSelected] = useState<MissedEvent | null>(null);
+  const [segment, setSegment] = useState<number | null>(null); // the partial or missed stretch whose regen card is open
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -120,6 +120,7 @@ export default function Dashboard() {
     setCursor(END);
     setPlaying(false);
     setSelected(null);
+    setSegment(null);
   };
 
   const sims = useMemo(() => {
@@ -140,7 +141,6 @@ export default function Dashboard() {
   const { trip, a } = sims;
   const last = trip.samples.length - 1;
   const segments = useMemo(() => buildSegments(trip.samples), [trip]);
-  const contractTrip = useMemo(() => toContractTrip(trip, a, gasPrice), [trip, a, gasPrice]);
   const cursor = Math.min(rawCursor, last);
 
   useEffect(() => {
@@ -195,28 +195,25 @@ export default function Dashboard() {
           </div>
           <div className="grid-map">
             <div className="card map-wrap">
-              {env.mapboxToken ? (
-                <TripMapClient
-                  trip={contractTrip}
-                  theme={theme}
-                  currentIndex={cursor}
-                  fallback={<RouteSvg segments={segments} stops={stops} missed={visibleMissed} car={[cur.lon, cur.lat]} onSelectMissed={setSelected} />}
-                />
-              ) : (
-                <FreeTripMapClient
-                  theme={theme}
-                  segments={segments}
-                  surfaces={surfaceSegments}
-                  colorBy={colorBy}
-                  stops={stops}
-                  missed={visibleMissed}
-                  car={[cur.lon, cur.lat]}
-                  ahead={[ahead.lon, ahead.lat]}
-                  follow={playing && followCar}
-                  weather={condition}
-                  onSelectMissed={setSelected}
-                />
-              )}
+              <FreeTripMapClient
+                theme={theme}
+                segments={segments}
+                surfaces={surfaceSegments}
+                colorBy={colorBy}
+                stops={stops}
+                missed={visibleMissed}
+                car={[cur.lon, cur.lat]}
+                ahead={[ahead.lon, ahead.lat]}
+                follow={playing && followCar}
+                weather={condition}
+                onSelectMissed={setSelected}
+                onSelectSegment={(k) => {
+                  setSegment(k);
+                  setPlaying(false);
+                }}
+                fallback={<RouteSvg segments={segments} stops={stops} missed={visibleMissed} car={[cur.lon, cur.lat]} onSelectMissed={setSelected} />}
+              />
+              <SegmentCard selected={segment} samples={trip.samples} segments={segments} missed={a.missed} onClose={() => setSegment(null)} />
               <div className="legend">
                 <div className="segmented mini" role="group" aria-label="Color the route by">
                   <button className={colorBy === "regen" ? "on" : ""} onClick={() => setColorBy("regen")}>regen</button>
@@ -224,10 +221,10 @@ export default function Dashboard() {
                 </div>
                 {colorBy === "regen" ? (
                   <>
-                    <span><i style={{ background: "var(--seg-good)" }} />captured</span>
-                    <span><i style={{ background: "var(--seg-mid)" }} />partial</span>
-                    <span><i style={{ background: "var(--seg-bad)" }} />missed</span>
-                    <span><i style={{ background: "var(--muted)" }} />no braking</span>
+                    <span><i style={{ background: "var(--map-good)" }} />captured</span>
+                    <span><i style={{ background: "var(--map-mid)" }} />partial</span>
+                    <span><i style={{ background: "var(--map-bad)" }} />missed</span>
+                    <span><i style={{ background: "var(--map-idle)" }} />no braking</span>
                   </>
                 ) : (
                   surfaceMix.map(([kind]) => (

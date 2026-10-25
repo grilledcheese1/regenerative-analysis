@@ -65,8 +65,8 @@ function ReplayMap({ drive, stops }: { drive: DriveParts; stops: [number, number
   const focus = replay.playing ? brakeFocus(samples, replay.index, REPLAY_CONFIG.brakeWindowSamples) : 0;
 
   const summary = useMemo(
-    () => (selected === null ? null : summarizeSegment(segmentSamples(samples, selected), a.missed)),
-    [selected, samples, a.missed],
+    () => (selected === null ? null : summarizeSegment(segmentSamples(samples, selected), a.missed, trip.physics.regenEfficiency)),
+    [selected, samples, a.missed, trip.physics.regenEfficiency],
   );
   const { setPaused } = replay;
   const select = useCallback(
@@ -108,9 +108,9 @@ function ReplayMap({ drive, stops }: { drive: DriveParts; stops: [number, number
         </button>
       )}
       <div className="story__legend">
-        <span><i style={{ background: "var(--seg-good)" }} />captured</span>
-        <span><i style={{ background: "var(--seg-mid)" }} />partial</span>
-        <span><i style={{ background: "var(--seg-bad)" }} />missed</span>
+        <span><i style={{ background: "var(--map-good)" }} />captured</span>
+        <span><i style={{ background: "var(--map-mid)" }} />partial</span>
+        <span><i style={{ background: "var(--map-bad)" }} />missed</span>
       </div>
     </div>
   );
@@ -119,7 +119,7 @@ const noopSelect = () => {};
 
 /** Slide 2. A simulated replay of the person's route on the keyless map, with their regen score against the others. */
 export default function Commute({ persona, drive, hybrid }: { persona: Persona; drive: Drive; hybrid: boolean }) {
-  const { route, style, a } = drive;
+  const { route, style, a, physics } = drive;
   const rank = useMemo(() => peerRank(persona.id), [persona.id]);
   const stops = useMemo(() => stopCoords(route), [route]);
   const miles = (route.points[route.points.length - 1].s / 1609.34).toFixed(1);
@@ -131,8 +131,8 @@ export default function Commute({ persona, drive, hybrid }: { persona: Persona; 
       title={`${route.name}, driven ${style}`}
       lede={
         hybrid
-          ? "A simulated replay of this route. Regen figures are modeled, not measured from the car."
-          : "A simulated replay of this route in a hybrid, for comparison. Your car recovers no braking energy."
+          ? `A simulated replay of this route with a ${physics.replay.label}'s weight, drag and regen limits. Regen figures are modeled, not measured from the car.`
+          : `Your ${physics.ownLabel} is gasoline and recovers no braking energy, so this replay models a ${physics.replay.label} on the same route, for comparison.`
       }
       lite
     >

@@ -16,6 +16,65 @@
   cursor: pointer;
   box-shadow: 0 8px 24px rgb(0 0 0 / 0.25);
 }
+.titleRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.75rem;
+}
+.dealerBtn {
+  padding: 0.25rem 0.8rem;
+  border: 1px solid var(--text);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 150ms ease-out, color 150ms ease-out;
+}
+.dealerBtn:hover,
+.dealerBtn[aria-expanded="true"] {
+  background: var(--text);
+  color: var(--bg);
+}
+/* The chat's log, chips and form sit in one box so the dealer list can slide over exactly that area. */
+.body {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+}
+.dealerSheet {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0.9rem 1.1rem 1rem;
+  background: var(--panel);
+}
+.dealerHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+}
+.dealerClose {
+  padding: 0.3rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--subtle);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
 .eyes {
   display: inline-flex;
   gap: 4px;
@@ -41,6 +100,8 @@
   97% { transform: scaleY(0.08); }
 }
 .fab:focus-visible,
+.dealerBtn:focus-visible,
+.dealerClose:focus-visible,
 .close:focus-visible,
 .chip:focus-visible,
 .cite:focus-visible,
@@ -280,7 +341,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .fab,
+  .dealerBtn,
   .panel,
   .pupil {
     transition: none;
