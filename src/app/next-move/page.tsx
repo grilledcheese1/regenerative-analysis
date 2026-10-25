@@ -1,14 +1,7 @@
-import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import NextMoveEntry from "@/components/story/NextMoveEntry";
 
-export const metadata: Metadata = {
-  title: "Regentic",
-  description: "Vehicle ownership decisions from your driving, contract and budget.",
-};
-
-export default async function NextMovePage({ searchParams }: { searchParams: Promise<{ view?: string; as?: string }> }) {
-  const { view, as } = await searchParams;
-  if (view === "details") redirect(as ? `/home?as=${encodeURIComponent(as)}` : "/home"); // old link
-  return <NextMoveEntry as={as} />;
+// The story moved from /next-move to /; keep old links (and their query) working.
+export default async function NextMovePage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const qs = new URLSearchParams(Object.entries(await searchParams).filter((e): e is [string, string] => typeof e[1] === "string")).toString();
+  redirect(qs ? `/?${qs}` : "/");
 }

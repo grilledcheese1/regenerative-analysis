@@ -4,6 +4,7 @@ import { usd } from "@/domain/format";
 import { runScenario } from "@/domain/recommendations/scenario";
 import { persona } from "@/fixtures/personas";
 import { comparisonIdFor, loadBank } from "@/server/compare";
+import { storedForPersonaId } from "@/server/profiles";
 import { buildEvidenceBundle, type EvidenceBundle } from "@/server/explain/bundle";
 import { canonicalJson, sha256Hex } from "@/server/hash";
 import { comparisons, type ComparisonRecord } from "@/server/records";
@@ -80,9 +81,11 @@ export type WhatIfOutcome =
 export function runWhatIf(owner: string, record: ComparisonRecord, parsed: ParsedWhatIf | null): WhatIfOutcome {
   if (!parsed) return { ok: false, reason: "unsupported" };
   const base = record.request.scenario;
-  const p = persona(record.request.personaId);
+  // The comparison was created through an authorized route, so its persona id is trusted here.
+  const stored = storedForPersonaId(record.request.personaId);
+  const p = persona(record.request.personaId) ?? stored?.persona;
   if (!p) return { ok: false, reason: "unsupported" };
-  const bank = loadBank(owner, record.request.personaId, record.request.bankingMode);
+  const bank = loadBank(owner, record.request.personaId, record.request.bankingMode, stored?.spec);
   if (!bank) return { ok: false, reason: "banking_not_loaded" };
 
   const change = { ...parsed.change };

@@ -1,5 +1,0 @@
-{
-  "tip": "A lot of braking energy was lost to heat. The biggest loss was 6 cold battery events: give the battery a few minutes to warm up, and brake gently while it is cold. With a snow road, brake earlier than you would on dry pavement.",
-  "basedOn": "score 32.6, 6 cold battery events, 5 low grip events, snow road",
-  "source": "fallback"
-}

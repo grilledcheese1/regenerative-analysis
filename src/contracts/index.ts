@@ -1,8 +1,10 @@
 // Shared contracts for Next Move. Money is integer cents (USD), rates are basis points,
 // distance is meters internally. Unknown values are null with a reason, never zero.
 
+import type { BankLoan, LoanDecision } from "./credit";
+
 export const SCHEMA_VERSION = "1.0";
-export const MODEL_VERSION = "finance-1";
+export const MODEL_VERSION = "finance-2"; // finance-2: personal pre-qualified rates
 
 export type Cents = number;
 
@@ -122,6 +124,7 @@ export interface BankingSnapshot {
   retrievedAt: string;
   accounts: Account[];
   transactions: Transaction[];
+  loans?: BankLoan[]; // absent on snapshots read before loan records existed
 }
 
 // ---------- Profile and persona ----------
@@ -212,6 +215,7 @@ export interface OptionResult {
   exclusions: string[];
   missingInputs: string[];
   tradeoff: string;
+  credit?: LoanDecision; // pre-qualification for the loan this option needs
 }
 
 export type NextAction =
@@ -245,6 +249,8 @@ export interface Comparison {
   notConsidered: { label: string; reason: string }[];
   sensitivity: { label: string; flipsRanking: boolean; detail: string }[];
   evidence: EvidenceFact[];
+  /** The card's headline decisions: the best financed option, and refinancing the current loan. */
+  prequalification: { finance: LoanDecision | null; refinance: LoanDecision | null };
   recommendation: Recommendation;
 }
 
@@ -252,4 +258,6 @@ export * from "./explain";
 export * from "./driving";
 export * from "./banking-sync";
 export * from "./market";
+export * from "./onboarding";
+export * from "./credit";
 export * from "./assistant";

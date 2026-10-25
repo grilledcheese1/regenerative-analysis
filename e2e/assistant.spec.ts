@@ -7,7 +7,7 @@ const panel = (page: Page) => page.getByRole("dialog", { name: "Ask Next Move" }
 
 async function openAssistant(page: Page) {
   await page.goto("/home?as=maria");
-  await expect(page.getByText("Banking loaded (fixture)")).toBeVisible();
+  await expect(page.locator('main[data-bank="fixture"]')).toBeVisible();
   await tab(page, "Compare").click();
   await page.getByRole("button", { name: "Ask Me Anything!" }).click();
   await expect(panel(page)).toBeVisible();
@@ -35,7 +35,9 @@ test("A2 a $300 expense re-runs the math and the card says the decision changed"
   await expect(card).toBeVisible();
   await expect(card).toContainText("The recommendation changed.");
   await expect(card).toContainText("Your screens are unchanged");
-  // The main screen still shows the original scenario.
+  // The main screen still shows the original scenario. (Close the panel first: its scrim covers the page.)
+  await panel(page).getByRole("button", { name: "Close assistant" }).click();
+  await expect(panel(page)).toBeHidden();
   await tab(page, "Cost").click();
   await expect(page.getByLabel("New monthly expense")).toHaveValue("0");
 });
@@ -63,7 +65,7 @@ test("A4 Esc closes, focus returns, and nothing scrolls sideways or logs errors"
 
 test("A5 the assistant is hidden on Settings", async ({ page }) => {
   await page.goto("/home?as=maria");
-  await expect(page.getByText("Banking loaded (fixture)")).toBeVisible();
+  await expect(page.locator('main[data-bank="fixture"]')).toBeVisible();
   await tab(page, "Settings").click();
   await expect(page.getByRole("button", { name: "Ask Me Anything!" })).toHaveCount(0);
 });

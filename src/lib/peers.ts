@@ -1,6 +1,7 @@
 // Where one simulated person's regen score sits among all the others. Pure and deterministic: each person is scored by
 // replaying their cached route at their driving style in dry conditions. APPROXIMATION on simulated drives.
 
+import type { Persona } from "@/contracts";
 import { PEOPLE, styleOf, type DriveStyle } from "@/fixtures/personas";
 import { analyzeTrip } from "@/lib/model/score";
 import { simulateTrip } from "@/lib/model/simulate";
@@ -30,10 +31,10 @@ export interface PeerRank {
   n: number;
 }
 
-export function peerRank(personaId: string): PeerRank {
-  const scored = PEOPLE.map((p) => ({ id: p.id, score: driveScore(p.usage.routeId, styleOf(p.id)) }));
-  const me = scored.find((s) => s.id === personaId)!;
-  const others = scored.filter((s) => s.id !== personaId).map((s) => s.score);
+/** Ranks anyone (a case study or an onboarded user) against the simulated people, never against themselves. */
+export function peerRank(persona: Persona): PeerRank {
+  const me = { score: driveScore(persona.usage.routeId, styleOf(persona.id)) };
+  const others = PEOPLE.filter((p) => p.id !== persona.id).map((p) => driveScore(p.usage.routeId, styleOf(p.id)));
   const beaten = others.reduce((acc, s) => acc + (me.score > s ? 1 : me.score === s ? 0.5 : 0), 0);
   return { score: me.score, betterThanPct: Math.round((100 * beaten) / others.length), others, n: others.length };
 }

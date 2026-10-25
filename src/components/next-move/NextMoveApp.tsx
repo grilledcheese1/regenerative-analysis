@@ -4,17 +4,19 @@ import { AnimatePresence, motion, type Variants } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useMemo, useState } from "react";
-import SignIn from "@/components/auth/SignIn";
+import IdentityControl from "@/components/auth/IdentityControl";
+import { openCaseStudy, useCaseStudyId } from "@/components/auth/caseStudy";
+import { useAccount } from "@/components/auth/useAccount";
 import AskNextMove from "@/components/next-move/assistant/AskNextMove";
 import DrivesView from "@/components/DrivesView";
 import { MotionProvider } from "@/components/story/motion";
 import { describedVehicle } from "@/fixtures/described-vehicle";
 import { physicsFor } from "@/fixtures/vehicle-physics";
 import { ScrollProgress } from "@/components/story/SectionRail";
-import type { CompareRequest, DrivingProfile, ScenarioInputs, SourceKind } from "@/contracts";
+import type { CompareRequest, DrivingProfile, Persona, ScenarioInputs, SourceKind, TripRecord, UserBanking } from "@/contracts";
 import { runScenario } from "@/domain/recommendations/scenario";
 import { catalogVehicle } from "@/fixtures/catalog";
-import { PEOPLE, persona as findPersona, styleOf } from "@/fixtures/personas";
+import { styleOf } from "@/fixtures/personas";
 import BankingSyncBar from "./banking/BankingSyncBar";
 import { useBankingSync } from "./banking/useBankingSync";
 import ImportDrive from "./import/ImportDrive";
@@ -37,15 +39,21 @@ const TAB_LABEL: Record<Tab, string> = { home: "Home", drives: "Drives", money: 
 const assistantLabels = (c: { evidence: { id: string; label: string }[]; options: { optionId: string; label: string }[] }) =>
   Object.fromEntries([...c.evidence.map((e) => [e.id, e.label]), ...c.options.map((o) => [o.optionId, o.label])]);
 
-export default function NextMoveApp({ initialPersonaId }: { initialPersonaId?: string }) {
-  const [personaId, setPersonaId] = useState(initialPersonaId && findPersona(initialPersonaId) ? initialPersonaId : PEOPLE[0].id);
-  const persona = findPersona(personaId)!;
+/** The tabbed screens over `people`: every case study, or just the signed-in user's own profile. */
+export default function NextMoveApp({ people, initialPersonaId, userBanking = null }: { people: Persona[]; initialPersonaId?: string; userBanking?: UserBanking | null }) {
+  const findPersona = (id: string) => people.find((p) => p.id === id);
+  const [personaId, setPersonaId] = useState(initialPersonaId && findPersona(initialPersonaId) ? initialPersonaId : people[0].id);
+  const persona = findPersona(personaId) ?? people[0];
+  const { account } = useAccount();
+  const caseStudyId = useCaseStudyId();
+  // One identity at a time: the case-study picker shows only when browsing case studies.
+  const showPicker = people.length > 1 && (!account || Boolean(caseStudyId));
   const vehicle = catalogVehicle(persona.vehicle.catalogId);
   const [nav, setNav] = useState<{ tab: Tab; dir: 1 | -1 }>({ tab: "home", dir: 1 });
   const tab = nav.tab;
   // Slide direction follows tab order: later tabs enter from the right, earlier ones from the left.
   const setTab = useCallback((t: Tab) => setNav((n) => ({ tab: t, dir: TABS.indexOf(t) < TABS.indexOf(n.tab) ? -1 : 1 })), []);
-  const banking = useBankingSync(personaId);
+  const banking = useBankingSync(persona.id, userBanking?.mode ?? "fixture");
   const { bank } = banking;
   const [dataKey, setDataKey] = useState(0); // bumped by "Delete my demo data" to remount data-holding children
 
@@ -59,6 +67,9 @@ export default function NextMoveApp({ initialPersonaId }: { initialPersonaId?: s
   const [usageSource, setUsageSource] = useState<SourceKind | null>(null);
   // Evidence ids the AI explanation cited, highlighted in the evidence list.
   const [highlight, setHighlight] = useState<string[]>([]);
+  // Confirmed imported drives, and which one to open in the replay.
+  const [driveTrips, setDriveTrips] = useState<TripRecord[]>([]);
+  const [driveFocus, setDriveFocus] = useState<{ tripId: string; nonce: number } | null>(null);
 
   const selectPersona = (id: string) => {
     const p = findPersona(id)!;
@@ -111,16 +122,26 @@ export default function NextMoveApp({ initialPersonaId }: { initialPersonaId?: s
           <Image src="/regentic-logo.png" alt="" width={310} height={286} className="wordmark__logo" priority />
           <span>Regen<em>tic</em></span>
         </button>
-        <select id="persona" name="persona" value={personaId} onChange={(e) => selectPersona(e.target.value)} aria-label="Demo customer">
-          {PEOPLE.map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.summary}
-            </option>
-          ))}
-        </select>
-        <span className="persona-line">{persona.summary}</span>
-        <Link href="/next-move" className="linkish">Story view</Link>
-        <SignIn />
+        {showPicker && (
+          <select
+            id="persona"
+            name="persona"
+            value={personaId}
+            onChange={(e) => {
+              openCaseStudy(e.target.value);
+              selectPersona(e.target.value);
+            }}
+            aria-label="Demo customer"
+          >
+            {people.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.summary}
+              </option>
+            ))}
+          </select>
+        )}
+        {!account && <Link href="/" className="linkish">Story view</Link>}
+        <IdentityControl />
       </header>
       <nav className="tabs" aria-label="Screens">
         {TABS.map((t) => (
@@ -130,7 +151,7 @@ export default function NextMoveApp({ initialPersonaId }: { initialPersonaId?: s
           </button>
         ))}
       </nav>
-      <main>
+      <main data-bank={bank ? bank.mode : "none"}>
         <BankingSyncBar {...banking} />
         <AnimatePresence mode="wait" initial={false} custom={nav.dir}>
         <motion.div key={tab} custom={nav.dir} variants={SCREEN} initial="enter" animate="center" exit="exit">
@@ -138,6 +159,7 @@ export default function NextMoveApp({ initialPersonaId }: { initialPersonaId?: s
           <SettingsScreen
             persona={persona}
             banking={banking}
+            userBanking={persona.id.startsWith("u_") ? userBanking : null}
             onDeleted={() => {
               onProfile(null);
               setDataKey((k) => k + 1);
@@ -160,8 +182,25 @@ export default function NextMoveApp({ initialPersonaId }: { initialPersonaId?: s
             )}
             {tab === "drives" && (
               <>
-                <ImportDrive key={`${persona.id}-${dataKey}`} personaId={persona.id} vehicleLabel={`${vehicle.modelYear} ${vehicle.model}`} onProfile={onProfile} />
-                <DrivesView key={`replay-${persona.id}`} initialRouteId={persona.usage.routeId} vehicleName={describedVehicle(persona).label} hybrid={physicsFor(persona.id).ownRegen} physics={physicsFor(persona.id)} defaultDriver={styleOf(persona.id)} />
+                <ImportDrive
+                  key={`${persona.id}-${dataKey}`}
+                  personaId={persona.id}
+                  vehicleLabel={`${vehicle.modelYear} ${vehicle.model}`}
+                  onProfile={onProfile}
+                  usage={{ fromDrives: usageSource !== null, monthlyMiles, estimateMiles: persona.usage.monthlyMiles }}
+                  onTrips={setDriveTrips}
+                  onAnalyze={(tripId) => setDriveFocus({ tripId, nonce: Date.now() })}
+                />
+                <DrivesView
+                  key={`replay-${persona.id}`}
+                  initialRouteId={persona.usage.routeId}
+                  vehicleName={describedVehicle(persona).label}
+                  hybrid={physicsFor(persona.id).ownRegen}
+                  physics={physicsFor(persona.id)}
+                  defaultDriver={styleOf(persona.id)}
+                  userTrips={driveTrips}
+                  focus={driveFocus}
+                />
               </>
             )}
             {tab === "money" && (
@@ -172,6 +211,7 @@ export default function NextMoveApp({ initialPersonaId }: { initialPersonaId?: s
                 setExtraSpendingCents={setExtraSpendingCents}
                 incomeConfirmed={incomeConfirmed}
                 setIncomeConfirmed={setIncomeConfirmed}
+                prequal={comparison.prequalification}
               />
             )}
             {tab === "compare" && (

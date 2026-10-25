@@ -3,8 +3,8 @@ import { expect, test, type Page } from "@playwright/test";
 // Drive imports (stream 1). Each test gets a fresh browser context, so a fresh demo owner.
 
 async function openDrives(page: Page) {
-  await page.goto("/next-move");
-  await expect(page.getByText("Banking loaded (fixture)")).toBeVisible();
+  await page.goto("/home");
+  await expect(page.locator('main[data-bank="fixture"]')).toBeVisible();
   await page.getByRole("button", { name: "Drives", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Your drives" })).toBeVisible();
 }
@@ -54,13 +54,18 @@ test("E2 + E3: imported usage changes Compare, and reverting restores the person
 
   await expect(page.getByLabel("Trips per week")).toHaveValue("10");
   const profileMiles = (await page.getByTestId("profile-monthly-miles").textContent())!.trim();
+  await expect(page.getByTestId("usage-status")).toHaveText("Your comparison uses your estimate of 875 mi/mo.");
+  await expect(page.getByRole("button", { name: "Use my estimate instead" })).toBeDisabled();
   await page.getByRole("button", { name: "Use for comparison" }).click();
+  // Visible confirmation on the Drives tab itself, not only on Compare.
+  await expect(page.getByTestId("usage-status")).toHaveText(`Your comparison now uses ${profileMiles} mi/mo from your drives.`);
 
   await page.getByRole("button", { name: "Compare", exact: true }).click();
   await expect(compareMiles(page)).toHaveText(profileMiles);
 
   await page.getByRole("button", { name: "Drives", exact: true }).click();
-  await page.getByRole("button", { name: "Revert to persona estimate" }).click();
+  await page.getByRole("button", { name: "Use my estimate instead" }).click();
+  await expect(page.getByTestId("usage-status")).toHaveText("Your comparison uses your estimate of 875 mi/mo.");
   await page.getByRole("button", { name: "Compare", exact: true }).click();
   await expect(compareMiles(page)).toHaveText("875");
 });
@@ -88,4 +93,24 @@ test("re-importing a confirmed file says it was already imported", async ({ page
   await trySample(page, "devon-errand.gpx");
   await expect(page.getByTestId("import-preview").getByText(/^Already imported on/)).toBeVisible();
   await expect(confirmedTrips(page)).toHaveCount(1);
+});
+
+test("an imported drive opens in the replay with a full regen analysis", async ({ page }) => {
+  await openDrives(page);
+  await page.getByLabel("Import a drive").setInputFiles("docs/demo/drives/demo-drive-1-commute.gpx");
+  await expect(page.getByTestId("import-preview")).toBeVisible();
+  await page.getByLabel("I was driving (not a passenger)").check();
+  await page.getByRole("button", { name: "Confirm", exact: true }).click();
+  // Confirming opens the drive in the replay: the driven route, scored by the regen model.
+  await expect(page.getByRole("heading", { name: /^Your drive, Oct 22, 2026/ })).toBeVisible();
+  await expect(page.getByText("Your route · modeled car")).toBeVisible();
+  await expect(page.locator("#drive-route")).toHaveValue(/^trip:/);
+  await expect(page.getByText("Route, elevation, speeds and stops from your imported GPS file.")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Where the braking energy went" })).toBeVisible();
+
+  // Switching away and back through the list works too.
+  await page.locator("#drive-route").selectOption({ index: 1 });
+  await expect(page.getByText("Real route · modeled car")).toBeVisible();
+  await confirmedTrips(page).first().getByRole("button", { name: "Replay & analyze" }).click();
+  await expect(page.getByText("Your route · modeled car")).toBeVisible();
 });

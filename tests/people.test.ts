@@ -78,7 +78,7 @@ describe("the 29 people you can sign in as", () => {
 describe("peer rank", () => {
   it("is truthful: the percentage is the share of others beaten, so a low score reads low", async () => {
     const { peerRank } = await import("@/lib/peers");
-    const ranks = PEOPLE.map((p) => ({ id: p.id, ...peerRank(p.id) }));
+    const ranks = PEOPLE.map((p) => ({ id: p.id, ...peerRank(p) }));
     for (const r of ranks) {
       expect(r.n).toBe(PEOPLE.length - 1);
       expect(r.betterThanPct).toBeGreaterThanOrEqual(0);

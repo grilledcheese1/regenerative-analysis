@@ -2,9 +2,14 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useSyncExternalStore } from "react";
-import SignIn from "@/components/auth/SignIn";
-import { useSignedInId } from "@/components/auth/auth";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useSyncExternalStore } from "react";
+import AuthDialog, { type AuthDialogHandle } from "@/components/auth/AuthDialog";
+import CaseStudyPicker from "@/components/auth/CaseStudyPicker";
+import IdentityControl from "@/components/auth/IdentityControl";
+import { useCaseStudyId } from "@/components/auth/caseStudy";
+import { useAccount } from "@/components/auth/useAccount";
+import { useMyProfile } from "@/components/onboarding/useMyProfile";
 import { PEOPLE, persona } from "@/fixtures/personas";
 import { StaggerItem, StaggerList, MotionProvider } from "./motion";
 import Story from "./Story";
@@ -12,13 +17,26 @@ import Story from "./Story";
 const noop = () => () => {};
 const useHydrated = () => useSyncExternalStore(noop, () => true, () => false);
 
-/** /next-move: sign in, then the scroll story. the tabbed screens live at /home; `?as=<id>` skips sign-in. */
+/**
+ * /: create an account, sign in, or explore a case study; then the scroll story. An open case study
+ * (or `?as=<id>`) wins; a signed-in user sees their own story, or onboarding if they have no profile.
+ */
 export default function NextMoveEntry({ as }: { as?: string }) {
-  const cookieId = useSignedInId();
+  const caseStudyId = useCaseStudyId();
+  const { account } = useAccount();
   const hydrated = useHydrated();
-  const id = [as, cookieId].find((x) => x && persona(x)) ?? null;
-  // Carry the persona to /home, which otherwise only knows the cookie.
-  const homeHref = id ? `/home?as=${encodeURIComponent(id)}` : "/next-move";
+  const auth = useRef<AuthDialogHandle>(null);
+  const router = useRouter();
+  const mine = useMyProfile();
+  const caseId = [as, caseStudyId].find((x) => x && persona(x)) ?? null;
+  const shown = caseId ? persona(caseId)! : mine.status === "ready" ? mine.persona : null;
+  const id = shown?.id ?? null;
+
+  useEffect(() => {
+    if (hydrated && !caseId && mine.status === "none") router.replace("/onboarding");
+  }, [hydrated, caseId, mine.status, router]);
+  // Carry an open case study to /home, which otherwise only knows the cookie.
+  const homeHref = caseId ? `/home?as=${encodeURIComponent(caseId)}` : id ? "/home" : "/";
 
   return (
     <>
@@ -28,13 +46,13 @@ export default function NextMoveEntry({ as }: { as?: string }) {
           <span>Regen<em>tic</em></span>
         </Link>
         <nav className="story-nav" aria-label="Views">
-          {id && <Link href={homeHref} className="linkish">Details view</Link>}
-          {id && <SignIn variant="ghost" />}
+          {id && !account && <Link href={homeHref} className="linkish">Details view</Link>}
+          <IdentityControl />
         </nav>
       </header>
       <main className={id ? "story-page" : undefined}>
-        {!hydrated ? null : id ? (
-          <Story key={id} personaId={id} />
+        {!hydrated || (account && !caseId && mine.status !== "ready") ? null : id ? (
+          <Story key={id} persona={shown!} initialBankingMode={caseId ? "fixture" : (mine.profile?.banking.mode ?? "fixture")} />
         ) : (
           <MotionProvider>
             <StaggerList className="home">
@@ -42,18 +60,34 @@ export default function NextMoveEntry({ as }: { as?: string }) {
               <StaggerItem><h1 className="home__title">What is the smartest move for you and your car?</h1></StaggerItem>
               <StaggerItem>
                 <p className="story__lede">
-                  Sign in as one of {PEOPLE.length} simulated people. Each has their own contract, bank history and commute.
-                  Everything here is simulated and every number is an estimate. There are no real accounts.
+                  Create an account to get your own plan, or explore one of {PEOPLE.length} simulated case studies. Every number is an estimate.
                 </p>
               </StaggerItem>
-              <StaggerItem><SignIn label="Sign in to see your move" variant="primary" /></StaggerItem>
               <StaggerItem>
-                <Link href="/home" className="linkish">Or open the detailed screens without signing in</Link>
+                <div className="home__actions">
+                  {account ? (
+                    <Link href="/onboarding" className="m-btn m-btn--primary">Set up my profile</Link>
+                  ) : (
+                    <>
+                      <button type="button" className="m-btn m-btn--primary" onClick={() => auth.current?.open("signup")}>Create an account</button>
+                      <button type="button" className="m-btn m-btn--ghost" onClick={() => auth.current?.open("signin")}>Sign in</button>
+                    </>
+                  )}
+                  <CaseStudyPicker trigger={{ label: "Explore a case study", variant: "ghost" }} />
+                </div>
+              </StaggerItem>
+              <StaggerItem>
+                <ol className="home__how" aria-label="How it works">
+                  <li><strong>Tell us about your car</strong><span>Lease, loan or paid off, and how much you drive.</span></li>
+                  <li><strong>Connect your bank</strong><span>Through the Capital One Nessie sandbox. Your budget and a loan pre-qualification appear instantly.</span></li>
+                  <li><strong>See your next move</strong><span>Every option compared over the same three years, with the reasons behind the pick.</span></li>
+                </ol>
               </StaggerItem>
             </StaggerList>
           </MotionProvider>
         )}
       </main>
+      <AuthDialog ref={auth} />
     </>
   );
 }

@@ -6,7 +6,6 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "check:physics": "node src/lib/physics/selfcheck.ts",
     "fetch-demo-routes": "node scripts/fetch-demo-routes.mjs",
     "test": "vitest run",
     "typecheck": "next typegen && tsc --noEmit",

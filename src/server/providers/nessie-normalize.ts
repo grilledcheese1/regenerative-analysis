@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { Account, BankingSnapshot, Transaction, TxnCategory, TxnStatus, TxnType } from "@/contracts";
+import type { Account, BankingSnapshot, BankLoan, Transaction, TxnCategory, TxnStatus, TxnType } from "@/contracts";
 
 // Nessie (Capital One sandbox) record shapes, per prod.nessieisreal.com/docs. Amounts are dollars.
 const status = z.enum(["pending", "cancelled", "completed", "recurring", "executed"]).catch("pending");
@@ -19,6 +19,15 @@ export const NessieTransfer = z.preprocess(
   (v) => (v && typeof v === "object" && !("_id" in v) && "id" in v ? { ...v, _id: (v as { id: unknown }).id } : v),
   money.extend({ transaction_date: z.string(), payer_id: z.string().optional(), payee_id: z.string().optional() }),
 );
+export const NessieLoan = z.object({
+  _id: z.string(),
+  type: z.string(),
+  status: z.string(),
+  credit_score: z.number(),
+  monthly_payment: z.number(),
+  amount: z.number(),
+  description: z.string().default(""),
+});
 export const NessieBill = z.object({
   _id: z.string(),
   status,
@@ -36,6 +45,7 @@ export interface NessieAccountBundle {
   purchases: z.infer<typeof NessiePurchase>[];
   transfers: z.infer<typeof NessieTransfer>[];
   bills: z.infer<typeof NessieBill>[];
+  loans?: z.infer<typeof NessieLoan>[];
 }
 
 // Nessie has no transaction categories, so classify by description. Vehicle costs are
@@ -115,6 +125,18 @@ export function normalizeNessie(customerId: string, mode: BankingSnapshot["mode"
     }
   }
   txns.sort((a, b) => a.effectiveAt.localeCompare(b.effectiveAt));
-  return { customerId, mode, retrievedAt: new Date().toISOString(), accounts, transactions: txns };
+  const loans: BankLoan[] = bundles.flatMap((b) =>
+    (b.loans ?? []).map((l) => ({
+      loanId: `loan_${l._id}`,
+      accountId: `acct_${b.account._id}`,
+      type: l.type,
+      status: l.status,
+      creditScore: l.credit_score,
+      monthlyPaymentCents: toCents(l.monthly_payment),
+      amountCents: toCents(l.amount),
+      description: l.description,
+    })),
+  );
+  return { customerId, mode, retrievedAt: new Date().toISOString(), accounts, transactions: txns, loans };
 }
 

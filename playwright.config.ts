@@ -10,6 +10,8 @@ const serverEnv: Record<string, string> = Object.fromEntries(
   Object.entries(process.env).filter((e): e is [string, string] => typeof e[1] === "string"),
 );
 if (!process.env.E2E_LIVE) for (const k of PROVIDER_KEYS) serverEnv[k] = "";
+// The production server refuses to sign demo-account sessions without a secret.
+serverEnv.AUTH_SECRET ||= "e2e-only-auth-secret";
 
 export default defineConfig({
   testDir: "e2e",

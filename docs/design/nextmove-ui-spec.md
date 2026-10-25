@@ -1,6 +1,6 @@
 # Next Move UI spec (from the six photos)
 
-Source photos in the repo root: `Home(1).png`, `Money(1).png`, `Money(2).png`, `Compare(1).png`, `Nextmove(1).png`, `Settings(1).png` (1672×941, persona Devon). No Drives photo; Drives reuses the same cards, pills and buttons. Light theme only. Everything is SIMULATED and every number is an estimate.
+Source photos in `docs/design/photos/`: `Home(1).png`, `Money(1).png`, `Money(2).png`, `Compare(1).png`, `Nextmove(1).png`, `Settings(1).png` (1672×941, persona Devon). No Drives photo; Drives reuses the same cards, pills and buttons. Light theme only. Everything is SIMULATED and every number is an estimate.
 
 Code: `src/components/next-move/nextmove.css` (all rules under `.nm`), `ui/Icon.tsx`, `ui/parts.tsx`, `ui/HeroImage.tsx`, `screens.tsx`, `settings/SettingsScreen.tsx`, `NextMoveApp.tsx`, `banking/BankingSyncBar.tsx`.
 

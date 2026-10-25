@@ -10,15 +10,24 @@ import styles from "./ImportDrive.module.css";
 const fmt1 = (n: number) => n.toFixed(1);
 const clamp = (n: number, lo: number, hi: number) => (Number.isFinite(n) ? Math.min(hi, Math.max(lo, n)) : lo);
 
+/** Which miles the comparison is using: from the imported drives, or the person's own estimate. */
+export interface UsageStatus {
+  fromDrives: boolean;
+  monthlyMiles: number;
+  estimateMiles: number;
+}
+
 /** Weekly pattern the user confirms; with the confirmed trips it becomes the driving profile. */
 export default function WeeklyForm({
   vehicleId,
   trips,
+  usage,
   onUse,
   onRevert,
 }: {
   vehicleId: string;
   trips: TripRecord[];
+  usage?: UsageStatus;
   onUse: (p: DrivingProfile) => void;
   onRevert: () => void;
 }) {
@@ -71,11 +80,17 @@ export default function WeeklyForm({
         <button className="btn primary" disabled={!monthly.known} onClick={() => onUse(profile)}>
           Use for comparison
         </button>
-        {/* Always enabled: this card remounts on tab changes, so it can't know whether the shell still uses a profile. */}
-        <button className="btn" onClick={onRevert}>
-          Revert to persona estimate
+        <button className="btn" disabled={usage ? !usage.fromDrives : false} onClick={onRevert}>
+          Use my estimate instead
         </button>
       </div>
+      {usage && (
+        <p className={`${styles.usage}${usage.fromDrives ? ` ${styles.usageOn}` : ""}`} data-testid="usage-status" role="status">
+          {usage.fromDrives
+            ? `Your comparison now uses ${usage.monthlyMiles.toLocaleString()} mi/mo from your drives.`
+            : `Your comparison uses your estimate of ${usage.estimateMiles.toLocaleString()} mi/mo.`}
+        </p>
+      )}
     </div>
   );
 }

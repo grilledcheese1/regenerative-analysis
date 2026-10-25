@@ -1,13 +1,17 @@
 import "server-only";
 import type { BankingSnapshot, CompareRequest } from "@/contracts";
+import type { BankingSpec } from "@/fixtures/banking";
 import { MODEL_VERSION } from "@/contracts";
 import { canonicalJson, sha256Hex } from "@/server/hash";
 import { fixtureSnapshot } from "@/server/providers/nessie";
 import { bankingSnapshots } from "@/server/records";
 
-/** The banking read a comparison runs on: the fixture, or the owner's last sandbox sync. Undefined when not loaded. */
-export function loadBank(owner: string, personaId: string, mode: CompareRequest["bankingMode"]): BankingSnapshot | null | undefined {
-  return mode === "fixture" ? fixtureSnapshot(personaId) : bankingSnapshots.get(owner, `${personaId}:sandbox`);
+/**
+ * The banking read a comparison runs on: the fixture (an onboarded user's comes from their spec), or the
+ * owner's last sandbox sync. Undefined when not loaded.
+ */
+export function loadBank(owner: string, personaId: string, mode: CompareRequest["bankingMode"], spec?: BankingSpec): BankingSnapshot | null | undefined {
+  return mode === "fixture" ? fixtureSnapshot(personaId, spec) : bankingSnapshots.get(owner, `${personaId}:sandbox`);
 }
 
 /**

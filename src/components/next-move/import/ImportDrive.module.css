@@ -230,3 +230,16 @@
     box-shadow: none;
   }
 }
+
+.usage {
+  margin: 0.75rem 0 0;
+  padding: 0.6rem 0.9rem;
+  border-radius: 12px;
+  background: var(--subtle, #f4f4f2);
+  font-size: 0.92rem;
+}
+.usageOn {
+  background: #e8f6ec;
+  color: var(--seg-good);
+  font-weight: 700;
+}

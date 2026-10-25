@@ -1,10 +1,10 @@
 import { z } from "zod";
 import type { CompareResponse } from "@/contracts";
 import { runScenario } from "@/domain/recommendations/scenario";
-import { persona } from "@/fixtures/personas";
 import { comparisonIdFor, loadBank } from "@/server/compare";
 import { apiError, newRequestId, withIdempotency } from "@/server/http";
 import { comparisons, fieldErrors } from "@/server/records";
+import { personaForRequest } from "@/server/profiles";
 import { ownerId } from "@/server/session";
 
 const SOURCE_KINDS = ["observed", "user_reported", "derived", "modeled", "synthetic"] as const;
@@ -37,10 +37,10 @@ export async function POST(request: Request) {
       return apiError(400, "invalid_request", "Expected a CompareRequest (schemaVersion 1.0)", false, requestId, fieldErrors(parsed.error.issues));
     }
     const req = parsed.data;
-    const p = persona(req.personaId);
-    if (!p) return apiError(400, "invalid_request", "Unknown persona", false, requestId, { personaId: "No such demo customer" });
+    const resolved = await personaForRequest(req.personaId);
+    if (!resolved) return apiError(400, "invalid_request", "Unknown persona", false, requestId, { personaId: "No such demo customer" });
 
-    const bank = loadBank(owner, req.personaId, req.bankingMode);
+    const bank = loadBank(owner, req.personaId, req.bankingMode, resolved.stored?.spec);
     if (!bank) {
       return apiError(409, "banking_not_loaded_resync", "Sync banking for this customer, then retry", true, requestId);
     }
@@ -52,7 +52,7 @@ export async function POST(request: Request) {
       return Response.json({ requestId, comparisonId, comparison: existing.comparison } satisfies CompareResponse, { status: 200 });
     }
 
-    const { comparison } = runScenario(p, bank, req.scenario);
+    const { comparison } = runScenario(resolved.persona, bank, req.scenario);
     comparisons.put(owner, comparisonId, {
       comparisonId,
       request: req,

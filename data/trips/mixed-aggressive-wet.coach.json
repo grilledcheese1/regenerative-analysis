@@ -1,5 +1,0 @@
-{
-  "tip": "A lot of braking energy was lost to heat. The biggest loss was 14 late braking events: start easing off the pedal earlier and brake more gently, so the motor can take the load. With a wet road, brake earlier than you would on dry pavement.",
-  "basedOn": "score 40.5, 14 late braking events, 10 low grip events, wet road",
-  "source": "fallback"
-}

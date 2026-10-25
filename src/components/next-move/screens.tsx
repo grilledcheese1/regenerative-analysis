@@ -1,8 +1,8 @@
 "use client";
 
-import type { BankingSnapshot, CompareRequest, Comparison, NextAction, Persona } from "@/contracts";
+import type { BankingSnapshot, CompareRequest, Comparison, NextAction, Persona, Recommendation } from "@/contracts";
 import type { BudgetSnapshot } from "@/domain/finance/budget";
-import { usd } from "@/domain/format";
+import { niceDate, usd } from "@/domain/format";
 import { NEXT_ACTION_LABEL } from "@/domain/recommendations/recommend";
 import { EvidenceList, SourceChip } from "./Evidence";
 import { ROUTES } from "@/lib/routes";
@@ -13,6 +13,7 @@ import { describedVehicle } from "@/fixtures/described-vehicle";
 import CarCutout from "./ui/CarCutout";
 import DealerList from "./market/DealerList";
 import MarketResearch from "./market/MarketResearch";
+import PrequalCard from "./credit/PrequalCard";
 
 const CATEGORY_LABEL: Record<string, string> = {
   vehicle_payment: "Car payment",
@@ -59,7 +60,7 @@ export function HomeScreen({
   const overage = comparison.evidence.find((e) => e.id === "mileage_overage")?.display;
   const slides: HeroSlide[] = [
     c.type === "lease"
-      ? { title: `Your lease ends on ${c.maturityDate}.`, body: `See the smartest next move for your ${car}, from your driving and your budget.`, cta: { label: "See your next move", onClick: onReview } }
+      ? { title: `Your lease ends on ${niceDate(c.maturityDate)}.`, body: `See the smartest next move for your ${car}, from your driving and your budget.`, cta: { label: "See your next move", onClick: onReview } }
       : c.type === "loan"
         ? { title: `${c.remainingMonths} payments left on your ${described.label}.`, body: "See whether to keep it, refinance or replace it.", cta: { label: "See your next move", onClick: onReview } }
         : { title: `Your ${described.label} is paid off.`, body: "See whether replacing it is worth it.", cta: { label: "See your next move", onClick: onReview } },
@@ -95,7 +96,7 @@ export function HomeScreen({
           <span className="label">Upcoming decision</span>
           {c.type === "lease" ? (
             <p>
-              Lease matures <strong>{c.maturityDate}</strong>. Projected{" "}
+              Lease matures <strong>{niceDate(c.maturityDate)}</strong>. Projected{" "}
               {comparison.evidence.find((e) => e.id === "projected_mileage")?.display} miles; possible charge{" "}
               {comparison.evidence.find((e) => e.id === "mileage_overage")?.display}.
             </p>
@@ -125,6 +126,7 @@ export function MoneyScreen({
   setExtraSpendingCents,
   incomeConfirmed,
   setIncomeConfirmed,
+  prequal,
 }: {
   bank: BankingSnapshot;
   budget: BudgetSnapshot;
@@ -132,20 +134,22 @@ export function MoneyScreen({
   setExtraSpendingCents: (n: number) => void;
   incomeConfirmed: boolean;
   setIncomeConfirmed: (b: boolean) => void;
+  prequal?: Comparison["prequalification"];
 }) {
   const recent = [...bank.transactions].reverse().slice(0, 14);
   return (
     <section className="section">
       <div className="section-head">
         <span className="label">Cost</span>
-        <h2>What The Cost Can Cost Each Month</h2>
-        <span className="tag">{bank.mode === "sandbox" ? "Nessie sandbox" : "Nessie-format fixture"}</span>
+        <h2>What the car can cost each month</h2>
+        <span className="tag">{bank.mode === "sandbox" ? "Capital One Nessie sandbox" : "Simulated bank history"}</span>
       </div>
       <p className="lede">
-        Demo banking: {bank.mode === "sandbox" ? "read live from the Capital One Nessie sandbox" : "synthetic records in Nessie's format"}, not a
-        personal bank account or credit bureau. Window {budget.window.start} to {budget.window.end} (last {budget.window.months} complete months).
+        Based on your last {budget.window.months} complete months of banking ({niceDate(budget.window.start)} to {niceDate(budget.window.end)}).{" "}
+        {bank.mode === "sandbox" ? "Read from the Capital One Nessie sandbox" : "Simulated records"}, not a real bank account or credit bureau.
       </p>
-      <div className="grid-2">
+      {prequal && <PrequalCard prequal={prequal} />}
+      <div className="grid-2" style={prequal ? { marginTop: "1rem" } : undefined}>
         <div className="card">
           <span className="label">Vehicle budget</span>
           <div className="budget-math mono">
@@ -251,7 +255,7 @@ export function CompareScreen({
       <div className="section-head">
         <span className="label">Compare</span>
         <h2>Same driving, every option</h2>
-        <span className="tag">{comparison.horizonMonths} months from {comparison.actionDate}</span>
+        <span className="tag">{comparison.horizonMonths} months from {niceDate(comparison.actionDate)}</span>
       </div>
       {comparison.preparation && (
         <p className="lede">
@@ -287,6 +291,12 @@ export function CompareScreen({
               <Kv k="Equity at horizon" v={usd(o.endingEquityCents)} sub={`value ${usd(o.endingValueCents)} − debt`} />
               <Kv k="Economic cost" v={usd(o.economicCostCents)} sub="cash out + starting − ending equity" />
             </div>
+            {o.credit && (
+              <p className="prequal-badge">
+                {o.credit.status === "prequalified" ? "Pre-qualified" : o.credit.status === "needs_review" ? "Needs review" : "Not pre-qualified"} ·{" "}
+                {(o.credit.aprBps / 100).toFixed(2)}% APR estimate
+              </p>
+            )}
             <p className="tradeoff">{o.tradeoff}</p>
             {o.exclusions.map((x) => (
               <p key={x} className="excl">✕ {x}</p>
@@ -339,6 +349,12 @@ interface ActionStep {
   href?: string;
   checklist: string[];
 }
+
+const STATUS_LABEL: Record<Recommendation["status"], string> = {
+  recommended: "Recommended",
+  needs_information: "Needs a quote to confirm",
+  no_feasible_option: "Nothing fits yet",
+};
 
 export const ACTION_STEPS: Record<NextAction, ActionStep> = {
   request_buyout_quote: {
@@ -393,7 +409,7 @@ export function NextMoveScreen({
       <div className="section-head">
         <span className="label" style={{ fontWeight: 700 }}>Next Step</span>
         <h2>{r.headline}</h2>
-        <span className={`status status-${r.status}`}>{r.status.replaceAll("_", " ")}</span>
+        <span className={`status status-${r.status}`}>{STATUS_LABEL[r.status]}</span>
       </div>
       <div className="grid-2">
         <div className="card">

@@ -46,7 +46,8 @@ describe("validation (domain decision is fixed)", () => {
     ["no citations", { citedEvidenceIds: [] }, "no_citations"],
     ["approval claim", { summary: "Good news: you are pre-approved for the buyout." }, "prohibited_claim"],
     ["internal status code", { summary: "The status is still needs_information." }, "internal_identifier:needs_information"],
-    ["data field name", { summary: "It has a totalMonthly of $609/mo." }, "internal_identifier:totalMonthly"],
+    // The amount is the leader's own figure, so only the field name is wrong.
+    ["data field name", { summary: `It has a totalMonthly of ${top.totalMonthly}.` }, "internal_identifier:totalMonthly"],
     ["too many tradeoffs", { tradeoffs: ["a", "b", "c", "d"] }, "too_long"],
     ["bad shape", { nextAction: "buy_a_boat" }, "bad_shape"],
   ])("rejects %s", (_name, patch, detail) => {

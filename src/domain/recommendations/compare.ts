@@ -5,6 +5,9 @@ import {
   type CatalogVehicle,
   type Cents,
   type Comparison,
+  type CreditProfile,
+  type LoanApplication,
+  type LoanDecision,
   type EvidenceFact,
   type OptionResult,
   type Persona,
@@ -14,7 +17,9 @@ import type { BudgetSnapshot } from "@/domain/finance/budget";
 import { monthlyFuel } from "@/domain/finance/fuel";
 import { leasePayment, monthsBetween, projectLeaseMileage } from "@/domain/finance/lease";
 import { amortize } from "@/domain/finance/loan";
-import { usd } from "@/domain/format";
+import { CREDIT_POLICY } from "@/domain/credit/config";
+import { underwrite } from "@/domain/credit/underwrite";
+import { niceDate, usd } from "@/domain/format";
 import { rankOptions } from "./rank";
 import { recommend } from "./recommend";
 
@@ -29,6 +34,8 @@ export interface CompareInputs {
     cityShare?: number; // 0..1, e.g. from imported drives
     usageSource?: SourceKind; // where monthlyMiles came from when overridden
   };
+  /** When present, every borrowing option is underwritten and priced for this borrower. */
+  credit?: CreditProfile;
 }
 
 interface Draft {
@@ -46,9 +53,10 @@ interface Draft {
   endingValueCents: Cents;
   missingInputs: string[];
   tradeoff: string;
+  credit?: LoanDecision;
 }
 
-export function compareOptions({ persona, budget, catalog, asOf, overrides = {} }: CompareInputs): Comparison {
+export function compareOptions({ persona, budget, catalog, asOf, overrides = {}, credit }: CompareInputs): Comparison {
   const { contract, vehicle, usage, scenario, costs } = persona;
   const H = scenario.horizonMonths;
   const gas = overrides.gasCentsPerGallon ?? scenario.gasCentsPerGallon;
@@ -64,6 +72,9 @@ export function compareOptions({ persona, budget, catalog, asOf, overrides = {} 
   const running = (v: CatalogVehicle, insurance: Cents, maintenance: Cents) =>
     monthlyFuel(v, miles, cityShare, gas).costCents + insurance + maintenance;
   const currentRunning = running(current, costs.insuranceMonthlyCents, costs.maintenanceMonthlyCents);
+  const currentPayment = contract.type === "owned" ? 0 : contract.paymentCents;
+  const uw = (app: LoanApplication): LoanDecision | undefined => (credit ? underwrite(app, credit) : undefined);
+  const aprOf = (d: LoanDecision | undefined, fallbackBps: number) => d?.aprBps ?? fallbackBps;
 
   const evidence: EvidenceFact[] = [
     {
@@ -152,7 +163,8 @@ export function compareOptions({ persona, budget, catalog, asOf, overrides = {} 
       };
     }
     const principal = c.priceCents - c.dueAtSigningCents - base.principalCredit;
-    const loan = amortize(principal, scenario.financeAprBps, scenario.financeTermMonths, H);
+    const decision = uw({ purpose: "finance", vehicleCondition: "new", amountCents: principal, termMonths: scenario.financeTermMonths, collateralValueCents: c.priceCents, replacesPaymentCents: currentPayment });
+    const loan = amortize(principal, aprOf(decision, scenario.financeAprBps), scenario.financeTermMonths, H);
     return {
       optionId: `${base.label}_finance_${c.catalogId}`,
       label: `${base.label === "sell" ? "Sell and finance" : base.label === "return" ? "Return and finance" : "Finance"} ${name}`,
@@ -168,6 +180,7 @@ export function compareOptions({ persona, budget, catalog, asOf, overrides = {} 
       endingValueCents: c.endValueCents,
       missingInputs: base.missing,
       tradeoff: `Builds equity, but leaves ${usd(loan.balanceCents)} owed at the horizon.`,
+      ...(decision && { credit: decision }),
     };
   };
 
@@ -180,7 +193,7 @@ export function compareOptions({ persona, budget, catalog, asOf, overrides = {} 
       note: "Remaining lease payments and running costs until maturity, common to every option.",
     };
     evidence.push(
-      { id: "lease_end_date", label: "Lease maturity", display: contract.maturityDate, source: "synthetic" },
+      { id: "lease_end_date", label: "Lease ends", display: niceDate(contract.maturityDate), source: persona.id.startsWith("u_") ? "user_reported" : "synthetic" },
       {
         id: "projected_mileage",
         label: "Projected miles at lease end",
@@ -213,7 +226,8 @@ export function compareOptions({ persona, budget, catalog, asOf, overrides = {} 
     if (price === null) {
       notConsidered.push({ label: "Buy out the lease", reason: "No purchase option or buyout quote on file" });
     } else {
-      const loan = amortize(price, scenario.financeAprBps, scenario.financeTermMonths, H);
+      const decision = uw({ purpose: "buyout", vehicleCondition: "used", amountCents: price, termMonths: scenario.financeTermMonths, collateralValueCents: currentValue, replacesPaymentCents: currentPayment });
+      const loan = amortize(price, aprOf(decision, scenario.financeAprBps), scenario.financeTermMonths, H);
       evidence.push({
         id: "purchase_option",
         label: quote ? "Buyout quote" : "Contract purchase option (before taxes and fees)",
@@ -235,6 +249,7 @@ export function compareOptions({ persona, budget, catalog, asOf, overrides = {} 
         endingValueCents: scenario.currentVehicleEndValueCents,
         missingInputs: quote?.includesTaxesAndFees ? [] : ["confirmed_buyout_taxes_and_fees"],
         tradeoff: "Keeps a car you know, and no mileage charge applies, but you take on resale risk.",
+        ...(decision && { credit: decision }),
       });
     }
     for (const c of scenario.candidates) drafts.push(candidateDraft(c, returnBase));
@@ -312,8 +327,23 @@ export function compareOptions({ persona, budget, catalog, asOf, overrides = {} 
       missingInputs: ["payoff_statement"],
       tradeoff: "No new paperwork, but the current payment stays.",
     });
-    if (scenario.refinance) {
-      const r = scenario.refinance;
+    // With a credit profile every loan holder gets a refinance priced for them (remaining term, synthetic fee);
+    // without one, the scenario's synthetic refinance terms apply.
+    const refiDecision = uw({
+      purpose: "refinance",
+      vehicleCondition: "used",
+      amountCents: contract.payoffCents,
+      termMonths: contract.remainingMonths,
+      collateralValueCents: currentValue,
+      replacesPaymentCents: contract.paymentCents,
+      currentAprBps: contract.aprBps,
+      feeCents: CREDIT_POLICY.refinanceFeeCents,
+    });
+    const refiTerms = refiDecision
+      ? { aprBps: refiDecision.aprBps, termMonths: contract.remainingMonths, feeCents: CREDIT_POLICY.refinanceFeeCents }
+      : scenario.refinance;
+    if (refiTerms) {
+      const r = refiTerms;
       const loan = amortize(contract.payoffCents, r.aprBps, r.termMonths, H);
       drafts.push({
         optionId: "refinance",
@@ -329,7 +359,13 @@ export function compareOptions({ persona, budget, catalog, asOf, overrides = {} 
         endingDebtCents: loan.balanceCents,
         endingValueCents: scenario.currentVehicleEndValueCents,
         missingInputs: ["payoff_statement", "lender_quote"],
-        tradeoff: `Lower payment, but ${usd(loan.balanceCents - keepLoan.balanceCents)} more owed at the horizon.`,
+        tradeoff:
+          refiDecision?.worthIt === false
+            ? "Doesn't beat your current rate by enough to cover the fees."
+            : loan.balanceCents > keepLoan.balanceCents
+              ? `Lower payment, but ${usd(loan.balanceCents - keepLoan.balanceCents)} more owed at the horizon.`
+              : `Saves ${usd(keepLoan.balanceCents - loan.balanceCents)} owed at the horizon.`,
+        ...(refiDecision && { credit: refiDecision }),
       });
     }
     if (currentValue !== null) {
@@ -360,6 +396,8 @@ export function compareOptions({ persona, budget, catalog, asOf, overrides = {} 
     if (totalMonthly > budget.vehicleBudgetCents) {
       exclusions.push(`${usd(totalMonthly)}/mo exceeds the ${usd(budget.vehicleBudgetCents)} vehicle budget`);
     }
+    if (d.credit?.status === "not_prequalified") exclusions.unshift(`Not pre-qualified: ${d.credit.reasons[0]?.text ?? "outside lending policy"}`);
+    const tradeoff = d.credit?.status === "needs_review" ? `Needs review: ${d.credit.reasons[0]?.text ?? "borderline file"}. ${d.tradeoff}` : d.tradeoff;
     return {
       optionId: d.optionId,
       label: d.label,
@@ -379,9 +417,40 @@ export function compareOptions({ persona, budget, catalog, asOf, overrides = {} 
       feasible: exclusions.length === 0,
       exclusions,
       missingInputs: d.missingInputs,
-      tradeoff: d.tradeoff,
+      tradeoff,
+      ...(d.credit && { credit: d.credit }),
     };
   });
+
+  const financed = options.filter((o) => o.credit && o.kind !== "refinance");
+  const prequalification: Comparison["prequalification"] = {
+    finance: (rankOptions(financed, persona.profile.objective)[0] ?? financed[0])?.credit ?? null,
+    refinance: options.find((o) => o.kind === "refinance")?.credit ?? null,
+  };
+  if (credit) {
+    evidence.push(
+      {
+        id: "credit_score",
+        label: "Credit score",
+        display: credit.score.known ? String(credit.score.value) : "Not provided",
+        source: credit.scoreSource,
+      },
+      {
+        id: "estimated_gross_income",
+        label: "Estimated gross income",
+        display: `${usd(credit.grossMonthlyCents)}/mo`,
+        source: "derived",
+        formula: "recurring take-home income ÷ 0.78",
+      },
+    );
+    const f = prequalification.finance;
+    if (f) {
+      evidence.push(
+        { id: "pti", label: "Car payment ÷ income", display: f.ptiPct === null ? "No income found" : `${f.ptiPct}% (limit 20%)`, source: "derived" },
+        { id: "dti", label: "All debt payments ÷ income", display: f.dtiPct === null ? "No income found" : `${f.dtiPct}% (limit 50%)`, source: "derived" },
+      );
+    }
+  }
 
   const comparison: Omit<Comparison, "recommendation"> = {
     schemaVersion: SCHEMA_VERSION,
@@ -394,6 +463,7 @@ export function compareOptions({ persona, budget, catalog, asOf, overrides = {} 
     notConsidered,
     sensitivity: sensitivity(options, persona.profile.objective),
     evidence,
+    prequalification,
   };
   return { ...comparison, recommendation: recommend(comparison, persona, budget) };
 }

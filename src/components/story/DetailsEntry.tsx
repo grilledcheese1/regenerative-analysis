@@ -1,19 +1,33 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
-import { useSignedInId } from "@/components/auth/auth";
-import { persona } from "@/fixtures/personas";
+import { useRouter } from "next/navigation";
+import { useEffect, useSyncExternalStore } from "react";
+import { useCaseStudyId } from "@/components/auth/caseStudy";
+import { useMyProfile } from "@/components/onboarding/useMyProfile";
+import { PEOPLE, persona } from "@/fixtures/personas";
 import NextMoveApp from "../next-move/NextMoveApp";
 
 const noop = () => () => {};
 const useHydrated = () => useSyncExternalStore(noop, () => true, () => false);
 
-/** /home: the tabbed screens. `?as=<id>` picks the person; otherwise the signed-in person, otherwise the first. */
+/**
+ * /home: the tabbed screens. An open case study (or `?as=<id>`) wins; otherwise the signed-in
+ * user's own profile (no profile yet → onboarding); signed out → the case studies.
+ */
 export default function DetailsEntry({ as }: { as?: string }) {
-  const cookieId = useSignedInId();
+  const router = useRouter();
+  const caseStudyId = useCaseStudyId();
   const hydrated = useHydrated();
-  const id = [as, cookieId].find((x) => x && persona(x)) ?? null;
+  const mine = useMyProfile();
+  const caseId = [as, caseStudyId].find((x) => x && persona(x)) ?? null;
+
+  useEffect(() => {
+    if (hydrated && !caseId && mine.status === "none") router.replace("/onboarding");
+  }, [hydrated, caseId, mine.status, router]);
 
   if (!hydrated) return null;
-  return <NextMoveApp key={id ?? "none"} {...(id ? { initialPersonaId: id } : {})} />;
+  if (caseId) return <NextMoveApp key={caseId} people={PEOPLE} initialPersonaId={caseId} />;
+  if (mine.status === "ready" && mine.persona) return <NextMoveApp key={mine.persona.id} people={[mine.persona]} userBanking={mine.profile!.banking} />;
+  if (mine.status === "signed_out") return <NextMoveApp key="none" people={PEOPLE} />;
+  return null;
 }

@@ -1,4 +1,5 @@
 import type { BankingSnapshot, CatalogVehicle, Comparison, Persona, ScenarioInputs } from "@/contracts";
+import { creditProfile } from "@/domain/credit/profile";
 import { buildBudget, type BudgetSnapshot } from "@/domain/finance/budget";
 import { CATALOG } from "@/fixtures/catalog";
 import { DEMO_AS_OF } from "@/fixtures/personas";
@@ -23,9 +24,11 @@ export function runScenario(
     { ...persona.profile, manualObligations: [...persona.profile.manualObligations, ...extra] },
     asOf,
   );
+  const credit = creditProfile(bank, budget, persona.id.startsWith("u_") ? "user_reported" : "synthetic");
   const comparison = compareOptions({
     persona,
     budget,
+    credit,
     catalog,
     asOf,
     overrides: {

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { ScenarioInputs } from "@/contracts";
+import { creditProfile } from "@/domain/credit/profile";
 import { buildBudget } from "@/domain/finance/budget";
 import { compareOptions } from "@/domain/recommendations/compare";
 import { runScenario } from "@/domain/recommendations/scenario";
@@ -28,6 +29,7 @@ describe("runScenario", () => {
           catalog: CATALOG,
           asOf: DEMO_AS_OF,
           overrides: { gasCentsPerGallon: p.scenario.gasCentsPerGallon, monthlyMiles: p.usage.monthlyMiles },
+          credit: creditProfile(bank, budget, "synthetic"),
         });
 
         const out = runScenario(p, bank, scenarioFor(p, extra));

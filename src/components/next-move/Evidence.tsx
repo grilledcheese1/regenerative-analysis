@@ -25,7 +25,6 @@ export function EvidenceList({ facts, highlight = [] }: { facts: EvidenceFact[];
           <div className="ev-meta">
             <SourceChip source={f.source} />
             {f.formula && <span className="muted mono">{f.formula}</span>}
-            <span className="muted mono">#{f.id}</span>
           </div>
         </li>
       ))}

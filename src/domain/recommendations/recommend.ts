@@ -78,6 +78,10 @@ export function recommend(
           : `Replacing is not feasible now: ${alt.exclusions[0]?.toLowerCase()}.`,
       );
     }
+  } else if (top.credit?.status === "needs_review") {
+    nextAction = "compare_confirmed_offers";
+    status = "needs_information";
+    lines.push(`The loan needs a lender's review: ${top.credit.reasons[0]?.text.toLowerCase() ?? "borderline file"}.`);
   } else if (flips || top.missingInputs.length > 0) {
     nextAction = "compare_confirmed_offers";
     status = "needs_information";

@@ -2,7 +2,8 @@
 
 import type { CatalogVehicle, Comparison, Persona } from "@/contracts";
 import type { BudgetSnapshot } from "@/domain/finance/budget";
-import { usd } from "@/domain/format";
+import { niceDate, usd } from "@/domain/format";
+import PrequalCard from "../next-move/credit/PrequalCard";
 import { SourceChip } from "../next-move/Evidence";
 import { StaggerItem, StaggerList } from "./motion";
 import StorySection from "./StorySection";
@@ -50,7 +51,7 @@ export default function Stand({
       <StaggerList className="in-rows" delay={0.15}>
         {c.type === "lease" && (
           <>
-            <Row label="Lease" value={`Ends ${c.maturityDate}`} note={`${usd(c.paymentCents)}/mo · ${c.totalAllowedMiles.toLocaleString()} miles allowed`} />
+            <Row label="Lease" value={`Ends ${niceDate(c.maturityDate)}`} note={`${usd(c.paymentCents)}/mo · ${c.totalAllowedMiles.toLocaleString()} miles allowed`} />
             <Row label="Projected miles" value={ev("projected_mileage") ?? "Unknown"} note={`Possible overage charge ${ev("mileage_overage") ?? "unknown"}`} warn={ev("mileage_overage") !== undefined && ev("mileage_overage") !== "$0"} />
           </>
         )}
@@ -69,6 +70,9 @@ export default function Stand({
           Income estimate from {budget.incomeDeposits} payroll deposits looks right <SourceChip source={incomeConfirmed ? "user_reported" : "derived"} />
         </span>
       </label>
+      <div style={{ marginTop: "1.25rem" }}>
+        <PrequalCard prequal={comparison.prequalification} />
+      </div>
       <p className="story__hint">Scroll to see your commute</p>
     </StorySection>
   );

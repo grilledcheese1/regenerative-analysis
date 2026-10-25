@@ -25,4 +25,11 @@ next-env.d.ts
 /test-results/
 /playwright-report/
 
+# OS / editor
+.DS_Store
+.idea/
+
+# demo account store (dev)
+/.data/
+
 ai-assistant.md
