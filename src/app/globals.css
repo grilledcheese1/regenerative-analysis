@@ -975,12 +975,13 @@ input:focus-visible {
 }
 
 @media (max-width: 640px) {
-  .header {
+  /* :has(+ .tabs) limits these to the Next Move header; the Regen dashboard header is untouched. */
+  .header:has(+ .tabs) {
     flex-wrap: wrap;
     gap: 0.6rem;
   }
 
-  .header select {
+  .header:has(+ .tabs) select {
     width: 100%;
     max-width: 100%;
   }

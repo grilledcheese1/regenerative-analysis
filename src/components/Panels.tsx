@@ -133,12 +133,12 @@ export function SavingsCard({ savings: s, gapDollars, gasPrice, tripsPerDay, set
       </div>
       <div className="slider">
         <span>Gas price</span>
-        <input type="range" id="gas-price" name="gas-price" min={2} max={5} step={0.05} value={gasPrice} onChange={(e) => setGasPrice(+e.target.value)} />
+        <input type="range" min={2} max={5} step={0.05} value={gasPrice} onChange={(e) => setGasPrice(+e.target.value)} />
         <span className="mono">${gasPrice.toFixed(2)}</span>
       </div>
       <div className="slider">
         <span>Trips / day</span>
-        <input type="range" id="trips-per-day" name="trips-per-day" min={1} max={8} step={1} value={tripsPerDay} onChange={(e) => setTripsPerDay(+e.target.value)} />
+        <input type="range" min={1} max={8} step={1} value={tripsPerDay} onChange={(e) => setTripsPerDay(+e.target.value)} />
         <span className="mono">{tripsPerDay}</span>
       </div>
       <div className="stat-row" style={{ marginTop: "0.75rem" }}>
@@ -154,7 +154,6 @@ export function SavingsCard({ savings: s, gapDollars, gasPrice, tripsPerDay, set
 export function CoachTip({ a, driver, condition }: { a: TripAnalysis; driver: DriverProfileName; condition: Condition }) {
   const [state, setState] = useState<{ tip: string; source: "claude" | "rules" } | null>(null);
   const [loading, setLoading] = useState(false);
-  const [unavailable, setUnavailable] = useState<string | null>(null);
 
   const summary = {
     driver,
@@ -172,15 +171,7 @@ export function CoachTip({ a, driver, condition }: { a: TripAnalysis; driver: Dr
     try {
       const res = await fetch("/api/coach", { method: "POST", body: JSON.stringify(summary) });
       const json = await res.json();
-      if (!res.ok || !json.tip) {
-        setUnavailable(
-          json.error?.code === "provider_not_configured"
-            ? "Coaching tip unavailable (no AI key configured)"
-            : "Coaching tip unavailable (AI provider error)",
-        );
-        throw new Error(json.error?.message);
-      }
-      setUnavailable(null);
+      if (!res.ok || !json.tip) throw new Error(json.error);
       setState({ tip: json.tip, source: "claude" });
     } catch {
       setState({ tip: ruleTip(a, condition), source: "rules" });
@@ -201,7 +192,7 @@ export function CoachTip({ a, driver, condition }: { a: TripAnalysis; driver: Dr
         </button>
         {state && (
           <span className="credit">
-            {state.source === "claude" ? "Written by Claude from the evidence" : `Rule-based fallback · ${unavailable ?? "AI unavailable"}`}
+            {state.source === "claude" ? "Written by Claude from the evidence" : "Rule-based fallback · no API key"}
           </span>
         )}
       </div>

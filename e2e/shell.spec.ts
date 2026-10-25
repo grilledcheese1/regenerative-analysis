@@ -1,9 +1,20 @@
-import { expect, test } from "@playwright/test";
-import { openNextMove, selectPersona, tab } from "./helpers";
+import { expect, test, type Page } from "@playwright/test";
 
 const TABS = ["Home", "Drives", "Money", "Compare", "Next Move", "Settings"];
 
-// Shell smoke tests (owned by the shell stream). Other streams add their own e2e/<stream>.spec.ts.
+// Shell tests (owned by the shell stream). Other streams add their own e2e/<stream>.spec.ts.
+
+async function openNextMove(page: Page) {
+  await page.goto("/next-move");
+  await expect(page.getByText("Banking loaded (fixture)")).toBeVisible();
+}
+
+const tab = (page: Page, name: string) => page.getByRole("navigation", { name: "Screens" }).getByRole("button", { name });
+
+async function selectPersona(page: Page, name: RegExp) {
+  await page.getByLabel("Demo customer").selectOption({ label: (await page.getByLabel("Demo customer").locator("option", { hasText: name }).textContent())! });
+  await expect(page.getByText("Banking loaded (fixture)")).toBeVisible();
+}
 
 test("Regen Coach stays at / and Next Move lives at /next-move", async ({ page }) => {
   await page.goto("/");
