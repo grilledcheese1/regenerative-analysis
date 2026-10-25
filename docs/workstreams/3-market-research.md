@@ -125,7 +125,7 @@ import { bankingSnapshots, fieldErrors } from "@/server/records"; // fieldErrors
 | `ImportDrive` (1) | `src/components/next-move/import/ImportDrive.tsx` | `{ personaId, vehicleLabel, onProfile(p: DrivingProfile \| null) }` | Drives tab, above the replay; remounts per persona | `onProfile(p)` sets Compare's monthly miles (if `p.monthlyMiles.known`), city share (if known) and usage source; the header tag becomes "Driving · imported". `onProfile(null)` reverts to the persona estimate |
 | `useBankingSync` and `BankingSyncBar` (2) | `src/components/next-move/banking/` | hook `useBankingSync(personaId): BankingSyncState`; bar takes `BankingSyncState` | The shell calls the hook; the bar sits under the tabs | The shell reads `bank`, `mode` and `stale` (header tag "Banking · fixture / Nessie sandbox / stale sandbox read") and sends `mode` to the explanation API |
 | `MarketResearch` (3) | `src/components/next-move/market/MarketResearch.tsx` | `{ catalogId, label }` | Inside every Compare option card whose `kind` is `lease_new` or `purchase_new` | Nothing else; the component owns its whole UI, including any disclosure |
-| `DealerList` (3) | `src/components/next-move/market/DealerList.tsx` | `{ near: string }` | Next Move card, when `nextAction === "compare_confirmed_offers"` | Nothing else |
+| `DealerList` (3) | `src/components/next-move/market/DealerList.tsx` | `{ near: string }` | Next Move card, when `nextAction` is `compare_confirmed_offers` or `request_buyout_quote` (no persona reaches the first, so dealers also serve Maria's buyout quote) | Nothing else |
 | `AiExplanation` (4, done) | `src/components/next-move/explain/AiExplanation.tsx` | `{ request, recommendation, evidence, onCite }` | Next Move card | Highlights cited evidence |
 
 Today the stubs render nothing, or reproduce current behavior in the banking hook's case. **Replace the body; keep the file path, the default or named export and the props.**
@@ -137,7 +137,7 @@ Today the stubs render nothing, or reproduce current behavior in the banking hoo
 | `NEXT_PUBLIC_MAPBOX_TOKEN` | 4 (map) |
 | `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL` (the committed `.env` sets `claude-sonnet-5-5`), `AI_DAILY_CAP` | 4 |
 | `NESSIE_API_KEY`, `NESSIE_BASE_URL`, `NESSIE_CUSTOMERS`, `NESSIE_SEED_ALLOW` (dev only; never in Vercel) | 2 |
-| `SERPAPI_API_KEY`, `MARKET_DAILY_CAP` | 3 |
+| `SERPAPI_API_KEY`, `MARKET_DAILY_CAP` (default 20; the free plan allows 250 searches a month) | 3 |
 | `IMPORT_MAX_BYTES` | 1 |
 
 ### 0.9 Merging: any time, any order
@@ -310,7 +310,7 @@ Use `page.route("**/api/market/**", …)` for deterministic responses. Put live 
 
 ## 4. Done checklist
 
-- [ ] Provider, cache, cap and routes, with tests M1–M9.
-- [ ] `src/fixtures/market-cache.json` captured with real `retrievedAt` (once a key is available).
-- [ ] `MarketResearch` and `DealerList` implemented in place of the stubs; R1–R4 pass.
-- [ ] Demo line handed to stream 4: "Advertised listings via SerpAPI, retrieved at …; these are not offers, and the comparison uses its own scenario price."
+- [x] Provider, cache, cap and routes, with tests M1–M9.
+- [x] `src/fixtures/market-cache.json` captured with real `retrievedAt` (once a key is available).
+- [x] `MarketResearch` and `DealerList` implemented in place of the stubs; R1–R4 pass.
+- [x] Demo line handed to stream 4: "Advertised listings via SerpAPI, retrieved at …; these are not offers, and the comparison uses its own scenario price."
