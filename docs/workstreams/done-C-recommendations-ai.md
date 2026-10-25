@@ -1,3 +1,5 @@
+> **Status: done** (commit `b8194ba`, wired into the shell by the parallel scaffold). Kept as the reference for what the recommendations API and explanation do. **Its schedule, ownership table and handoffs are superseded:** see `1-drive-imports.md` … `4-shell-and-ship.md` §0, where stream 4 now owns this code.
+
 # Workstream C — Server platform, recommendations API and grounded AI explanation
 
 **Owner:** _(name)_ · **Branch:** `ws/c-recommendation-ai` · **Version:** 1, 2026-10-24
