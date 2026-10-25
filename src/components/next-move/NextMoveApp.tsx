@@ -11,10 +11,10 @@ import AskNextMove from "@/components/next-move/assistant/AskNextMove";
 import DrivesView from "@/components/DrivesView";
 import { MotionProvider } from "@/components/story/motion";
 import { ScrollProgress } from "@/components/story/SectionRail";
-import type { CompareRequest, DrivingProfile, ScenarioInputs, SourceKind } from "@/contracts";
+import type { CompareRequest, DrivingProfile, Persona, ScenarioInputs, SourceKind, TripRecord, UserBanking } from "@/contracts";
 import { runScenario } from "@/domain/recommendations/scenario";
 import { catalogVehicle } from "@/fixtures/catalog";
-import type { Persona, UserBanking } from "@/contracts";
+
 import BankingSyncBar from "./banking/BankingSyncBar";
 import { useBankingSync } from "./banking/useBankingSync";
 import ImportDrive from "./import/ImportDrive";
@@ -65,6 +65,9 @@ export default function NextMoveApp({ people, initialPersonaId, userBanking = nu
   const [usageSource, setUsageSource] = useState<SourceKind | null>(null);
   // Evidence ids the AI explanation cited, highlighted in the evidence list.
   const [highlight, setHighlight] = useState<string[]>([]);
+  // Confirmed imported drives, and which one to open in the replay.
+  const [driveTrips, setDriveTrips] = useState<TripRecord[]>([]);
+  const [driveFocus, setDriveFocus] = useState<{ tripId: string; nonce: number } | null>(null);
 
   const selectPersona = (id: string) => {
     const p = findPersona(id)!;
@@ -177,8 +180,16 @@ export default function NextMoveApp({ people, initialPersonaId, userBanking = nu
             )}
             {tab === "drives" && (
               <>
-                <ImportDrive key={`${persona.id}-${dataKey}`} personaId={persona.id} vehicleLabel={`${vehicle.modelYear} ${vehicle.model}`} onProfile={onProfile} usage={{ fromDrives: usageSource !== null, monthlyMiles, estimateMiles: persona.usage.monthlyMiles }} />
-                <DrivesView key={`replay-${persona.id}`} initialRouteId={persona.usage.routeId} vehicleName={`${vehicle.modelYear} ${vehicle.model}`} hybrid={vehicle.powertrain === "hybrid"} />
+                <ImportDrive
+                  key={`${persona.id}-${dataKey}`}
+                  personaId={persona.id}
+                  vehicleLabel={`${vehicle.modelYear} ${vehicle.model}`}
+                  onProfile={onProfile}
+                  usage={{ fromDrives: usageSource !== null, monthlyMiles, estimateMiles: persona.usage.monthlyMiles }}
+                  onTrips={setDriveTrips}
+                  onAnalyze={(tripId) => setDriveFocus({ tripId, nonce: Date.now() })}
+                />
+                <DrivesView key={`replay-${persona.id}`} initialRouteId={persona.usage.routeId} vehicleName={`${vehicle.modelYear} ${vehicle.model}`} hybrid={vehicle.powertrain === "hybrid"} userTrips={driveTrips} focus={driveFocus} />
               </>
             )}
             {tab === "money" && (

@@ -17,6 +17,10 @@ export interface ImportDriveProps {
   onProfile: (p: DrivingProfile | null) => void;
   /** What the comparison uses right now, so the form can say so. Omitted where there is no comparison yet. */
   usage?: UsageStatus;
+  /** Confirmed trips changed (loaded, confirmed or cleared). */
+  onTrips?: (trips: TripRecord[]) => void;
+  /** Replay a confirmed trip through the regen analysis. Omitted where there is no replay (onboarding). */
+  onAnalyze?: (tripId: string) => void;
 }
 
 interface ApiError {
@@ -40,8 +44,15 @@ const segmentsLine = (breaks: number[]) =>
   breaks.length ? `${breaks.length + 1} pieces, split at ${breaks.length} ${breaks.length === 1 ? "gap" : "gaps"}` : "1 continuous segment";
 
 /** Drive import card at the top of the Drives tab: upload or sample → honest preview → confirm → profile. */
-export default function ImportDrive({ personaId, vehicleLabel, onProfile, usage }: ImportDriveProps) {
+export default function ImportDrive({ personaId, vehicleLabel, onProfile, usage, onTrips, onAnalyze }: ImportDriveProps) {
   const [trips, setTrips] = useState<TripRecord[]>([]);
+  const tripsRef = useRef(onTrips);
+  useEffect(() => {
+    tripsRef.current = onTrips;
+  }, [onTrips]);
+  useEffect(() => {
+    tripsRef.current?.(trips);
+  }, [trips]);
   const [preview, setPreview] = useState<ImportPreview | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const [failure, setFailure] = useState<Failure | null>(null);
@@ -133,6 +144,7 @@ export default function ImportDrive({ personaId, vehicleLabel, onProfile, usage 
       setSelected(body.tripIds[0] ?? null);
       setPreview(null);
       setAnnounce(`Trip confirmed and assigned to ${vehicleLabel}.`);
+      if (body.tripIds[0]) onAnalyze?.(body.tripIds[0]);
     } catch {
       fail("Couldn't reach the server.", () => void confirm(p));
     } finally {
@@ -306,6 +318,11 @@ export default function ImportDrive({ personaId, vehicleLabel, onProfile, usage 
                   <strong className="mono">{miles(t.summary.distanceMeters)}</strong>
                   <SourceChip source={t.source.mode} />
                   <span className="muted small">{supportsLine(t.quality)}</span>
+                  {onAnalyze && t.quality.routeAvailable && (
+                    <button type="button" className="btn" onClick={() => onAnalyze(t.tripId)}>
+                      Replay &amp; analyze
+                    </button>
+                  )}
                 </li>
               ))}
             </ul>

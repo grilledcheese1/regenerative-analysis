@@ -94,3 +94,23 @@ test("re-importing a confirmed file says it was already imported", async ({ page
   await expect(page.getByTestId("import-preview").getByText(/^Already imported on/)).toBeVisible();
   await expect(confirmedTrips(page)).toHaveCount(1);
 });
+
+test("an imported drive opens in the replay with a full regen analysis", async ({ page }) => {
+  await openDrives(page);
+  await page.getByLabel("Import a drive").setInputFiles("docs/demo/drives/demo-drive-1-commute.gpx");
+  await expect(page.getByTestId("import-preview")).toBeVisible();
+  await page.getByLabel("I was driving (not a passenger)").check();
+  await page.getByRole("button", { name: "Confirm", exact: true }).click();
+  // Confirming opens the drive in the replay: the driven route, scored by the regen model.
+  await expect(page.getByRole("heading", { name: /^Your drive, Oct 22, 2026/ })).toBeVisible();
+  await expect(page.getByText("Your route · modeled car")).toBeVisible();
+  await expect(page.locator("#drive-route")).toHaveValue(/^trip:/);
+  await expect(page.getByText("Route, elevation, speeds and stops from your imported GPS file.")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Where the braking energy went" })).toBeVisible();
+
+  // Switching away and back through the list works too.
+  await page.locator("#drive-route").selectOption({ index: 1 });
+  await expect(page.getByText("Real route · modeled car")).toBeVisible();
+  await confirmedTrips(page).first().getByRole("button", { name: "Replay & analyze" }).click();
+  await expect(page.getByText("Your route · modeled car")).toBeVisible();
+});

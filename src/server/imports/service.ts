@@ -2,6 +2,8 @@ import "server-only";
 import { PARSER_VERSION, unknown, type ImportFormat, type ImportPreview, type TripQuality, type TripRecord, type TripSummary } from "@/contracts";
 import { analyzeFile, analyzeTracks, parseFile } from "@/domain/driving/analyze";
 import { CSV_HEADER } from "@/domain/driving/parse-csv";
+import { routeFromTrack } from "@/domain/driving/replay";
+import type { DemoRoute } from "@/lib/mock/route";
 import { ownedStore } from "@/server/store";
 
 // production: private owner-scoped object storage, 14-day retention (engineering guide).
@@ -10,6 +12,8 @@ export type ImportJob = ImportPreview & { bytes?: Uint8Array };
 
 export const imports = ownedStore<ImportJob>("imports", { maxPerOwner: 50 });
 export const trips = ownedStore<TripRecord>("trips", { maxPerOwner: 200 });
+/** Replay routes built from each confirmed trip's full track (the trip record keeps only a preview line). */
+export const tripRoutes = ownedStore<DemoRoute>("trip_routes", { maxPerOwner: 200 });
 
 const DEFAULT_MAX_BYTES = 4 * 1024 * 1024;
 export const maxImportBytes = () => {
@@ -169,6 +173,8 @@ export function confirmImport(owner: string, job: ImportJob): string[] {
       driverConfirmed: true,
       createdAt,
     });
+    const route = routeFromTrack(a.segments, "Your drive");
+    if (route) tripRoutes.put(owner, tripId, route);
     tripIds.push(tripId);
   }
   imports.put(owner, job.importId, { ...job, state: "confirmed", tripIds, bytes: undefined });
