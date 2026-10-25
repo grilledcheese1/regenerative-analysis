@@ -20,3 +20,7 @@ next-env.d.ts
 .env.local
 .env*.local
 .gstack/
+
+# playwright
+/test-results/
+/playwright-report/

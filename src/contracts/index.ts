@@ -249,3 +249,6 @@ export interface Comparison {
 }
 
 export * from "./explain";
+export * from "./driving";
+export * from "./banking-sync";
+export * from "./market";
