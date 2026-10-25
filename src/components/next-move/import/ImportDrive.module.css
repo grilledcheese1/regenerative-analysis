@@ -1,0 +1,232 @@
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+/* Visually hidden but focusable; the visible <label> is the control. */
+.file {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  overflow: hidden;
+}
+
+.file:focus-visible + .samples summary,
+.actions label:has(+ .file:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.actions :global(.as-label) {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.samples {
+  position: relative;
+}
+
+.samples summary {
+  display: inline-flex;
+  align-items: center;
+  list-style: none;
+}
+
+.samples summary::-webkit-details-marker {
+  display: none;
+}
+
+.samples ul {
+  position: absolute;
+  z-index: 5;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 300px;
+  margin: 0;
+  padding: 0.6rem 0.8rem;
+  list-style: none;
+  display: grid;
+  gap: 0.45rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.25);
+}
+
+.header {
+  overflow-wrap: anywhere;
+}
+
+.live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+.error {
+  border-color: color-mix(in srgb, var(--seg-bad) 50%, var(--border));
+  background: color-mix(in srgb, var(--seg-bad) 8%, transparent);
+}
+
+.previewCard {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.previewGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
+  gap: 1rem 1.5rem;
+  align-items: start;
+}
+
+.preview {
+  width: 100%;
+  height: auto;
+  background: color-mix(in srgb, var(--border) 25%, transparent);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.track {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.start {
+  fill: var(--accent);
+}
+
+.end {
+  fill: var(--panel);
+  stroke: var(--text);
+  stroke-width: 2;
+}
+
+.supports {
+  margin: 0 0 0.6rem;
+  font-weight: 600;
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 0.3rem 1rem;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.facts dt {
+  color: var(--muted);
+}
+
+.facts dd {
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.findings {
+  margin: 0.75rem 0 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+  color: var(--text-2);
+}
+
+.confirmRow {
+  margin-top: 0.75rem;
+}
+
+.confirmRow p {
+  margin: 0 0 0.5rem;
+}
+
+.h3 {
+  margin: 1.25rem 0 0.5rem;
+  font-size: 1rem;
+}
+
+.trips {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.trips li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 1rem;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 0.88rem;
+}
+
+.trips li.selected {
+  border-color: var(--accent);
+}
+
+.weekly {
+  margin-top: 1rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+}
+
+.fields label {
+  display: grid;
+  gap: 4px;
+  font-size: 0.8rem;
+}
+
+.fields input {
+  width: 9rem;
+  min-height: 40px;
+  padding: 0 0.6rem;
+  font: inherit;
+  font-family: var(--font-mono);
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.formula {
+  margin: 0.9rem 0 0.4rem;
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 700px) {
+  .previewGrid {
+    grid-template-columns: 1fr;
+  }
+
+  /* In flow on phones, so the menu never runs off the screen edge. */
+  .samples ul {
+    position: static;
+    min-width: 0;
+    margin-top: 6px;
+    box-shadow: none;
+  }
+}

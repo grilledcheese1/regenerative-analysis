@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="Next Move sample generator" xmlns="http://www.topografix.com/GPX/1/1">
+  <metadata><name>Sparse track, no timestamps (synthetic)</name><desc>Synthetic sample generated from a cached Austin route for the Next Move demo. Not a recorded drive.</desc></metadata>
+  <trk>
+    <name>Sparse track, no timestamps (synthetic)</name>
+    <trkseg>
+      <trkpt lat="30.2864223" lon="-97.7393726"><ele>189.9</ele></trkpt>
+      <trkpt lat="30.2870120" lon="-97.7402911"><ele>187.1</ele></trkpt>
+      <trkpt lat="30.2883090" lon="-97.7404074"><ele>186.3</ele></trkpt>
+      <trkpt lat="30.2896513" lon="-97.7402803"><ele>183.0</ele></trkpt>
+      <trkpt lat="30.2895822" lon="-97.7414370"><ele>182.6</ele></trkpt>
+      <trkpt lat="30.2882352" lon="-97.7415573"><ele>184.0</ele></trkpt>
+      <trkpt lat="30.2868899" lon="-97.7416507"><ele>182.1</ele></trkpt>
+      <trkpt lat="30.2855467" lon="-97.7417703"><ele>181.3</ele></trkpt>
+      <trkpt lat="30.2842018" lon="-97.7419087"><ele>177.8</ele></trkpt>
+      <trkpt lat="30.2828554" lon="-97.7420377"><ele>172.1</ele></trkpt>
+      <trkpt lat="30.2815417" lon="-97.7418473"><ele>168.6</ele></trkpt>
+      <trkpt lat="30.2802404" lon="-97.7421377"><ele>168.4</ele></trkpt>
+      <trkpt lat="30.2789553" lon="-97.7426122"><ele>170.4</ele></trkpt>
+      <trkpt lat="30.2776691" lon="-97.7430824"><ele>170.0</ele></trkpt>
+      <trkpt lat="30.2763827" lon="-97.7435579"><ele>166.8</ele></trkpt>
+      <trkpt lat="30.2750995" lon="-97.7440336"><ele>166.7</ele></trkpt>
+      <trkpt lat="30.2738111" lon="-97.7444998"><ele>169.4</ele></trkpt>
+      <trkpt lat="30.2725257" lon="-97.7449759"><ele>168.9</ele></trkpt>
+      <trkpt lat="30.2712418" lon="-97.7454547"><ele>165.2</ele></trkpt>
+      <trkpt lat="30.2699560" lon="-97.7459334"><ele>156.7</ele></trkpt>
+      <trkpt lat="30.2686736" lon="-97.7464125"><ele>149.7</ele></trkpt>
+      <trkpt lat="30.2673905" lon="-97.7468938"><ele>146.9</ele></trkpt>
+      <trkpt lat="30.2661029" lon="-97.7473688"><ele>145.0</ele></trkpt>
+      <trkpt lat="30.2648204" lon="-97.7478606"><ele>138.1</ele></trkpt>
+      <trkpt lat="30.2635608" lon="-97.7477298"><ele>134.1</ele></trkpt>
+      <trkpt lat="30.2622772" lon="-97.7482114"><ele>130.7</ele></trkpt>
+      <trkpt lat="30.2609950" lon="-97.7487014"><ele>135.9</ele></trkpt>
+      <trkpt lat="30.2597585" lon="-97.7493222"><ele>136.3</ele></trkpt>
+      <trkpt lat="30.2586509" lon="-97.7484652"><ele>137.6</ele></trkpt>
+      <trkpt lat="30.2576436" lon="-97.7474270"><ele>141.2</ele></trkpt>
+      <trkpt lat="30.2565177" lon="-97.7471261"><ele>142.4</ele></trkpt>
+      <trkpt lat="30.2552345" lon="-97.7476137"><ele>148.2</ele></trkpt>
+      <trkpt lat="30.2539482" lon="-97.7480805"><ele>152.8</ele></trkpt>
+      <trkpt lat="30.2526629" lon="-97.7485439"><ele>158.3</ele></trkpt>
+      <trkpt lat="30.2513758" lon="-97.7490119"><ele>155.7</ele></trkpt>
+      <trkpt lat="30.2500896" lon="-97.7494852"><ele>161.2</ele></trkpt>
+      <trkpt lat="30.2491473" lon="-97.7497009"><ele>164.0</ele></trkpt>
+    </trkseg>
+  </trk>
+</gpx>
