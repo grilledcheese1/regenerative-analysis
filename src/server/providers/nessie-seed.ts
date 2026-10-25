@@ -1,6 +1,7 @@
 import "server-only";
 import { buildBudget } from "@/domain/finance/budget";
 import { nessieFixture } from "@/fixtures/banking";
+import type { NessieAccountBundle } from "./nessie-normalize";
 import { DEMO_AS_OF, persona } from "@/fixtures/personas";
 import { fetchCustomer, fixtureSnapshot, nessieGet, nessiePost } from "./nessie";
 import { z } from "zod";
@@ -39,6 +40,12 @@ export function planPersona(personaId: string, runId: string): PersonaPlan {
   const p = persona(personaId);
   const bundles = nessieFixture(personaId);
   if (!p || !bundles) throw new Error(`Unknown persona ${personaId}`);
+  const first = p.profile.displayName.split(" ")[0] || personaId;
+  return planBundles(personaId, bundles, { first_name: first, last_name: `NextMoveDemo-${runId}` });
+}
+
+/** The writes needed to reproduce any set of Nessie-shaped bundles under a new customer. Pure. */
+export function planBundles(personaId: string, bundles: NessieAccountBundle[], name: { first_name: string; last_name: string }): PersonaPlan {
   const warnings: string[] = [];
   const whole = (amount: number, what: string) => {
     if (!Number.isInteger(amount)) warnings.push(`${what} ${amount} would be truncated by Nessie`);
@@ -77,8 +84,7 @@ export function planPersona(personaId: string, runId: string): PersonaPlan {
     };
   });
 
-  const first = p.profile.displayName.split(" ")[0] || personaId;
-  return { personaId, customer: { first_name: first, last_name: `NextMoveDemo-${runId}`, address: ADDRESS }, accounts, warnings };
+  return { personaId, customer: { ...name, address: ADDRESS }, accounts, warnings };
 }
 
 export const planCounts = (plan: PersonaPlan) => {
@@ -104,6 +110,17 @@ const COMPARED = ["recurringIncomeCents", "otherMonthlySpendingCents", "vehicleB
 
 /** Executes a plan against the live sandbox, then reads it back and compares budgets with the fixture. */
 export async function seedPersona(plan: PersonaPlan): Promise<{ customerId: string; written: Record<string, number>; diff: BudgetDiff }> {
+  const { customerId, written } = await writePlan(plan);
+  const p = persona(plan.personaId)!;
+  const live = buildBudget(await fetchCustomer(customerId), p.profile, DEMO_AS_OF);
+  const fixture = buildBudget(fixtureSnapshot(plan.personaId)!, p.profile, DEMO_AS_OF);
+  const diff: BudgetDiff = {};
+  for (const k of COMPARED) if (live[k] !== fixture[k]) diff[k] = { fixture: fixture[k], sandbox: live[k] };
+  return { customerId, written, diff };
+}
+
+/** Creates the customer, its accounts and every record in the plan. Throws on the first failed write. */
+export async function writePlan(plan: PersonaPlan): Promise<{ customerId: string; written: Record<string, number> }> {
   const merchantId = await demoMerchantId();
   const customerId = (await nessiePost("/customers", plan.customer))._id;
   const written: Record<string, number> = { customers: 1 };
@@ -122,10 +139,5 @@ export async function seedPersona(plan: PersonaPlan): Promise<{ customerId: stri
     }),
   );
 
-  const p = persona(plan.personaId)!;
-  const live = buildBudget(await fetchCustomer(customerId), p.profile, DEMO_AS_OF);
-  const fixture = buildBudget(fixtureSnapshot(plan.personaId)!, p.profile, DEMO_AS_OF);
-  const diff: BudgetDiff = {};
-  for (const k of COMPARED) if (live[k] !== fixture[k]) diff[k] = { fixture: fixture[k], sandbox: live[k] };
-  return { customerId, written, diff };
+  return { customerId, written };
 }
