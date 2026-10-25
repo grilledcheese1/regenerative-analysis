@@ -87,7 +87,7 @@ test("R5 dealers appear with Maria's buyout-quote next step", async ({ page }) =
     }),
   );
   await page.goto("/next-move");
-  await page.getByRole("navigation", { name: "Screens" }).getByRole("button", { name: "Next Move", exact: true }).click();
+  await page.getByRole("navigation", { name: "Screens" }).getByRole("button", { name: "Regentic", exact: true }).click();
   await expect(page.getByText("Toyota dealers near Austin")).toBeVisible();
   await expect(page.getByRole("link", { name: "Round Rock Toyota" })).toHaveAttribute("rel", /noopener/);
   await expect(page.getByText(/doesn't request one for you/)).toBeVisible();

@@ -1,9 +1,12 @@
 "use client";
 
+import { AnimatePresence, motion, type Variants } from "motion/react";
+import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useMemo, useState } from "react";
 import SignIn from "@/components/auth/SignIn";
 import DrivesView from "@/components/DrivesView";
+import { MotionProvider } from "@/components/story/motion";
 import type { CompareRequest, DrivingProfile, ScenarioInputs, SourceKind } from "@/contracts";
 import { runScenario } from "@/domain/recommendations/scenario";
 import { catalogVehicle } from "@/fixtures/catalog";
@@ -14,15 +17,26 @@ import ImportDrive from "./import/ImportDrive";
 import { CompareScreen, HomeScreen, MoneyScreen, NextMoveScreen } from "./screens";
 import { SettingsScreen } from "./settings/SettingsScreen";
 
+// Horizontal travel of the tab slide, in px. Reduced-motion users get a plain fade (MotionConfig below).
+const SLIDE_PX = 40;
+// Old screen slides out the way it came, then the new one slides in from the other side (mode="wait").
+const SCREEN: Variants = {
+  enter: (dir: number) => ({ opacity: 0, x: dir * SLIDE_PX }),
+  center: { opacity: 1, x: 0, transition: { duration: 0.26, ease: "easeOut" } },
+  exit: (dir: number) => ({ opacity: 0, x: dir * -SLIDE_PX, transition: { duration: 0.16, ease: "easeIn" } }),
+};
 const TABS = ["home", "drives", "money", "compare", "next", "settings"] as const;
 type Tab = (typeof TABS)[number];
-const TAB_LABEL: Record<Tab, string> = { home: "Home", drives: "Drives", money: "Money", compare: "Compare", next: "Next Move", settings: "Settings" };
+const TAB_LABEL: Record<Tab, string> = { home: "Home", drives: "Drives", money: "Cost", compare: "Compare", next: "Regentic", settings: "Settings" };
 
 export default function NextMoveApp({ initialPersonaId }: { initialPersonaId?: string }) {
   const [personaId, setPersonaId] = useState(initialPersonaId && findPersona(initialPersonaId) ? initialPersonaId : PEOPLE[0].id);
   const persona = findPersona(personaId)!;
   const vehicle = catalogVehicle(persona.vehicle.catalogId);
-  const [tab, setTab] = useState<Tab>("home");
+  const [nav, setNav] = useState<{ tab: Tab; dir: 1 | -1 }>({ tab: "home", dir: 1 });
+  const tab = nav.tab;
+  // Slide direction follows tab order: later tabs enter from the right, earlier ones from the left.
+  const setTab = useCallback((t: Tab) => setNav((n) => ({ tab: t, dir: TABS.indexOf(t) < TABS.indexOf(n.tab) ? -1 : 1 })), []);
   const banking = useBankingSync(personaId);
   const { bank } = banking;
   const [dataKey, setDataKey] = useState(0); // bumped by "Delete my demo data" to remount data-holding children
@@ -81,14 +95,12 @@ export default function NextMoveApp({ initialPersonaId }: { initialPersonaId?: s
     [personaId, banking.mode, scenario],
   );
 
-  const bankingTag = banking.stale ? "stale sandbox read" : banking.mode === "sandbox" ? "Nessie sandbox" : "fixture";
-
   return (
-    <>
+    <MotionProvider>
       <header className="header">
         <div className="wordmark">
-          <span className="dot" />
-          Next<em>Move</em>
+          <Image src="/regentic-logo.png" alt="" width={310} height={286} className="wordmark__logo" priority />
+          <span>Regen<em>tic</em></span>
         </div>
         <select id="persona" name="persona" value={personaId} onChange={(e) => selectPersona(e.target.value)} aria-label="Demo customer">
           {PEOPLE.map((p) => (
@@ -99,21 +111,19 @@ export default function NextMoveApp({ initialPersonaId }: { initialPersonaId?: s
         </select>
         <Link href="/next-move" className="linkish">Story view</Link>
         <SignIn />
-        <div className="modes" aria-label="Data sources">
-          <span className="tag">Banking · {bankingTag}</span>
-          <span className="tag">Driving · {usageSource ? "imported" : "modeled"}</span>
-          <span className="tag">Offers · synthetic</span>
-        </div>
       </header>
       <nav className="tabs" aria-label="Screens">
         {TABS.map((t) => (
           <button key={t} className={t === tab ? "on" : ""} onClick={() => setTab(t)} aria-current={t === tab ? "page" : undefined}>
             {TAB_LABEL[t]}
+            {t === tab && <motion.span layoutId="tab-underline" className="tab-underline" transition={{ type: "spring", stiffness: 500, damping: 40 }} />}
           </button>
         ))}
       </nav>
       <main>
         <BankingSyncBar {...banking} />
+        <AnimatePresence mode="wait" initial={false} custom={nav.dir}>
+        <motion.div key={tab} custom={nav.dir} variants={SCREEN} initial="enter" animate="center" exit="exit">
         {tab === "settings" ? (
           <SettingsScreen
             persona={persona}
@@ -132,7 +142,7 @@ export default function NextMoveApp({ initialPersonaId }: { initialPersonaId?: s
             {!incomeConfirmed && tab !== "drives" && (
               <p className="notice">
                 Income is estimated from recurring deposits and not yet confirmed.{" "}
-                <button className="linkish" onClick={() => setTab("money")}>Confirm it on Money</button>
+                <button className="linkish" onClick={() => setTab("money")}>Confirm it on Cost</button>
               </p>
             )}
             {tab === "home" && (
@@ -162,7 +172,9 @@ export default function NextMoveApp({ initialPersonaId }: { initialPersonaId?: s
             )}
           </>
         )}
+        </motion.div>
+        </AnimatePresence>
       </main>
-    </>
+    </MotionProvider>
   );
 }

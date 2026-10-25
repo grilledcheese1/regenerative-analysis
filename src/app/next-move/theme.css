@@ -86,7 +86,13 @@ body:has(.nm) {
 
 .nm .wordmark em {
   color: var(--text);
-  font-weight: 600;
+  font-weight: inherit;
+}
+
+/* Regentic logo mark, replaces the red square in the header */
+.nm .wordmark__logo {
+  width: auto;
+  height: 34px;
 }
 
 /* Small red square, like Toyota's logo block */
@@ -136,8 +142,13 @@ body:has(.nm) {
 .nm .tabs button.on {
   color: var(--text);
   font-weight: 800;
-  border-bottom-color: var(--text);
   box-shadow: none;
+}
+
+.nm .tab-underline {
+  bottom: -3px;
+  height: 3px;
+  background: var(--text);
 }
 
 /* ---------- Labels, badges, chips ---------- */

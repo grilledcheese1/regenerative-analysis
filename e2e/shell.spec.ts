@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 
-const TABS = ["Home", "Drives", "Money", "Compare", "Next Move", "Settings"];
+const TABS = ["Home", "Drives", "Cost", "Compare", "Regentic", "Settings"];
 
 // Shell tests (owned by the shell stream). Other streams add their own e2e/<stream>.spec.ts.
 
@@ -22,14 +22,14 @@ test("Regen Coach stays at / and Next Move lives at /next-move", async ({ page }
   await expect(page.getByLabel("Demo customer")).toHaveCount(0);
 
   await page.goto("/next-move");
-  await expect(page).toHaveTitle("Next Move");
+  await expect(page).toHaveTitle("Regentic");
   await expect(page.getByLabel("Demo customer")).toBeVisible();
 });
 
 test("Maria's journey reaches the next step with an explanation", async ({ page }) => {
   await page.goto("/next-move");
   await expect(page.getByText("Banking loaded (fixture)")).toBeVisible();
-  await page.getByRole("button", { name: "Next Move", exact: true }).click();
+  await page.getByRole("button", { name: "Regentic", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Leading option: Buy out the 2024 Camry Hybrid LE" })).toBeVisible();
   const cta = page.getByRole("link", { name: /Open Toyota Financial Services lease-end options/ });
   await expect(cta).toHaveAttribute("href", /^https:\/\/www\.toyotafinancial\.com\//);
@@ -41,20 +41,20 @@ test("Maria's journey reaches the next step with an explanation", async ({ page 
 test("Kai has no feasible option", async ({ page }) => {
   await page.goto("/next-move");
   await page.getByLabel("Demo customer").selectOption({ label: "Kai · financed RAV4, tight budget" });
-  await page.getByRole("button", { name: "Next Move", exact: true }).click();
+  await page.getByRole("button", { name: "Regentic", exact: true }).click();
   await expect(page.getByRole("heading", { name: "No option fits these constraints" })).toBeVisible();
 });
 
 test("E2 changed input changes the result (Maria)", async ({ page }) => {
   await openNextMove(page);
-  await tab(page, "Next Move").click();
+  await tab(page, "Regentic").click();
   const before = await page.locator("section.section h2").first().textContent();
   const stepBefore = await page.locator(".action").textContent();
-  await tab(page, "Money").click();
+  await tab(page, "Cost").click();
   await page.getByLabel("New monthly expense").fill("30000");
   await tab(page, "Home").click();
   await expect(page.locator(".kv", { hasText: "Vehicle budget" })).toContainText("$600");
-  await tab(page, "Next Move").click();
+  await tab(page, "Regentic").click();
   const after = await page.locator("section.section h2").first().textContent();
   const stepAfter = await page.locator(".action").textContent();
   expect(`${after}|${stepAfter}`).not.toBe(`${before}|${stepBefore}`);
@@ -63,14 +63,14 @@ test("E2 changed input changes the result (Maria)", async ({ page }) => {
 test("E3 keep preferred (Devon)", async ({ page }) => {
   await openNextMove(page);
   await selectPersona(page, /Devon/);
-  await tab(page, "Next Move").click();
+  await tab(page, "Regentic").click();
   await expect(page.getByText("Keep the current car")).toBeVisible();
 });
 
 test("E4 no feasible option (Kai)", async ({ page }) => {
   await openNextMove(page);
   await selectPersona(page, /Kai/);
-  await tab(page, "Next Move").click();
+  await tab(page, "Regentic").click();
   await expect(page.getByRole("heading", { name: "No option fits these constraints" })).toBeVisible();
   await expect(page.getByText("Review the budget").first()).toBeVisible();
 });
@@ -86,7 +86,7 @@ test("E5 sliders recompute", async ({ page }) => {
 
 test("E6 evidence visible", async ({ page }) => {
   await openNextMove(page);
-  await tab(page, "Next Move").click();
+  await tab(page, "Regentic").click();
   const row = page.locator(".evidence-list li", { hasText: "Monthly vehicle budget" });
   await expect(row).toContainText("Derived");
   await expect(row.locator(".ev-meta .mono").first()).not.toBeEmpty();
@@ -94,11 +94,11 @@ test("E6 evidence visible", async ({ page }) => {
 
 test("E7 persona switch resets", async ({ page }) => {
   await openNextMove(page);
-  await tab(page, "Money").click();
+  await tab(page, "Cost").click();
   await page.getByLabel("New monthly expense").fill("30000");
   await selectPersona(page, /Devon/);
   await selectPersona(page, /Maria/);
-  await tab(page, "Money").click();
+  await tab(page, "Cost").click();
   await expect(page.locator(".budget-math .total").first()).toContainText("$900");
 });
 
@@ -108,9 +108,9 @@ test("E7 persona switch resets", async ({ page }) => {
 test("E8 income confirmation clears the notice on every tab", async ({ page }) => {
   await openNextMove(page);
   await expect(page.getByText("Income is estimated from recurring deposits")).toBeVisible();
-  await tab(page, "Money").click();
+  await tab(page, "Cost").click();
   await page.getByLabel(/Income estimate .* looks right/).check();
-  for (const name of ["Home", "Compare", "Next Move"]) {
+  for (const name of ["Home", "Compare", "Regentic"]) {
     await tab(page, name).click();
     await expect(page.getByText("Income is estimated from recurring deposits")).toHaveCount(0);
   }

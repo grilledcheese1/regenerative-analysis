@@ -30,7 +30,7 @@ export default function SignIn({ label, variant = "ghost" }: { label?: string; v
   const choose = (id: string) => {
     signIn(id);
     dialog.current?.close();
-    router.push("/next-move");
+    router.push("/home");
   };
 
   return (
