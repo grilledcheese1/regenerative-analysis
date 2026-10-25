@@ -19,7 +19,7 @@ const STOP_S = 20;
 const JITTER_M = 2;
 
 // 2026-10-20 in America/Chicago is CDT (UTC−5), written as UTC.
-const at = (hh, mm) => Date.UTC(2026, 9, 20, hh + 5, mm);
+const at = (hh, mm, day = 20) => Date.UTC(2026, 9, day, hh + 5, mm);
 
 // Seeded LCG so the jitter is the same on every run.
 function lcg(seed) {
@@ -158,8 +158,22 @@ files["sparse-no-time.gpx"] = gpx(
   files["gap-and-noise.gpx"] = gpx("Gap and noisy timestamps (synthetic)", [[...noisy, ...after]]);
 }
 
-mkdirSync(OUT, { recursive: true });
-for (const [name, body] of Object.entries(files)) {
-  writeFileSync(path.join(OUT, name), body);
-  console.log(`${name}: ${(body.match(/<trkpt/g) ?? []).length} points, ${(body.length / 1024).toFixed(0)} KiB`);
-}
+// Demo files to import by hand (docs/demo/drives/), so they come in as the user's own drives
+// rather than built-in samples. Different days, routes and seeds from the samples above.
+const demo = {
+  "demo-drive-1-commute.gpx": gpx("Weekday commute: Mount Bonnell to Deep Eddy (synthetic)", [jitter(drive(line(route("hills")), at(8, 5, 22)), 11)]),
+  "demo-drive-2-errand.gpx": gpx(
+    "Evening errand: South Congress to UT Tower (synthetic)",
+    [jitter(drive(line(route("mixed"), { reverse: true }), at(18, 20, 23), { factor: 0.9 }), 12)],
+  ),
+};
+
+const write = (dir, set) => {
+  mkdirSync(dir, { recursive: true });
+  for (const [name, body] of Object.entries(set)) {
+    writeFileSync(path.join(dir, name), body);
+    console.log(`${path.relative(ROOT, path.join(dir, name))}: ${(body.match(/<trkpt/g) ?? []).length} points, ${(body.length / 1024).toFixed(0)} KiB`);
+  }
+};
+write(OUT, files);
+write(path.join(ROOT, "docs", "demo", "drives"), demo);
