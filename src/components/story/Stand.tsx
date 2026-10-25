@@ -3,6 +3,7 @@
 import type { CatalogVehicle, Comparison, Persona } from "@/contracts";
 import type { BudgetSnapshot } from "@/domain/finance/budget";
 import { usd } from "@/domain/format";
+import PrequalCard from "../next-move/credit/PrequalCard";
 import { SourceChip } from "../next-move/Evidence";
 import { StaggerItem, StaggerList } from "./motion";
 import StorySection from "./StorySection";
@@ -69,6 +70,9 @@ export default function Stand({
           Income estimate from {budget.incomeDeposits} payroll deposits looks right <SourceChip source={incomeConfirmed ? "user_reported" : "derived"} />
         </span>
       </label>
+      <div style={{ marginTop: "1.25rem" }}>
+        <PrequalCard prequal={comparison.prequalification} />
+      </div>
       <p className="story__hint">Scroll to see your commute</p>
     </StorySection>
   );

@@ -34,7 +34,11 @@ const MODEL_REASON: Record<keyof GermanInput, (p: CreditProfile, app: LoanApplic
   A5: (_p, a, bad) => reason("amount", bad ? "Large amount for this profile" : "Modest loan amount", "Amount", usd(a.amountCents), "derived"),
   A6: (p, _a, bad) => reason("savings", bad ? "Little in savings" : `Savings of ${usd(p.savingsCents)}`, "Savings balance", usd(p.savingsCents), "observed"),
   A8: (_p, _a, bad) => reason("installment", bad ? "Payment is a large share of income" : "Payment is a small share of income", "Payment-to-income", "", "derived"),
-  A16: (p, _a, bad) => reason("loans", bad ? "Several open loans" : "Few open loans", "Open loans", String(p.loans.filter((l) => l.amountCents > 0).length), "observed"),
+  A16: (p, _a, bad) => {
+    const open = p.loans.filter((l) => l.amountCents > 0).length;
+    const text = bad ? (open > 1 ? `${open} open loans` : open === 1 ? "Already carrying an auto loan" : "No open loans on file") : open === 0 ? "No other open loans" : "Few open loans";
+    return reason("loans", text, "Open loans", String(open), "observed");
+  },
 };
 
 /**

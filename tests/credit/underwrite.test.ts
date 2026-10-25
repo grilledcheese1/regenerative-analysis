@@ -96,3 +96,12 @@ describe("underwrite", () => {
     expect(d.reasons.slice(0, 3).map((r) => r.code).sort()).toEqual(["pti", "score", "term"].sort());
   });
 });
+
+describe("reason copy", () => {
+  it("never calls a single open loan 'several'", () => {
+    const one = { ...prime, loans: [{ ...prime.loans[0], type: "auto", amountCents: 2000000, monthlyPaymentCents: 50000 }] };
+    const d = underwrite({ ...car, termMonths: 84 }, { ...one, checkingCents: -5000, savingsCents: 0 });
+    const r = d.reasons.find((x) => x.code === "loans");
+    if (r) expect(r.text).not.toMatch(/several/i);
+  });
+});

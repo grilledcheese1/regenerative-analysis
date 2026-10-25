@@ -184,6 +184,7 @@ export default function NextMoveApp({ people, initialPersonaId, userBanking = nu
                 setExtraSpendingCents={setExtraSpendingCents}
                 incomeConfirmed={incomeConfirmed}
                 setIncomeConfirmed={setIncomeConfirmed}
+                prequal={comparison.prequalification}
               />
             )}
             {tab === "compare" && (

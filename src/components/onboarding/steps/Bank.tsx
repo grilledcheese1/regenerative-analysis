@@ -3,7 +3,10 @@
 import { useEffect, useMemo, useState } from "react";
 import type { BankingSnapshot, UserBanking } from "@/contracts";
 import type { BudgetSnapshot } from "@/domain/finance/budget";
+import PrequalCard from "@/components/next-move/credit/PrequalCard";
 import { localConnection } from "@/domain/onboarding/connection";
+import { buildUserPersona } from "@/domain/onboarding/persona";
+import { runScenario } from "@/domain/recommendations/scenario";
 import { fmtUsd, Money, Num } from "../fields";
 import s from "../onboarding.module.css";
 import type { StepProps } from "./types";
@@ -59,6 +62,12 @@ export default function Bank({ a, set, errors, accountId, specKey, connection, o
   };
 
   const current = connection && connection.specKey === specKey ? connection : null;
+  // The demo moment: as soon as the bank is connected, underwrite with what it returned.
+  const prequal = useMemo(() => {
+    if (!current) return null;
+    const p = buildUserPersona(accountId, a);
+    return runScenario(p, current.snapshot, { gasCentsPerGallon: p.scenario.gasCentsPerGallon, monthlyMiles: a.driving.monthlyMiles, extraMonthlySpendingCents: 0, incomeConfirmed: true }).comparison.prequalification;
+  }, [current, accountId, a]);
   const stale = connection && !current;
   return (
     <>
@@ -129,6 +138,11 @@ export default function Bank({ a, set, errors, accountId, specKey, connection, o
           )}
         </aside>
       </div>
+      {prequal && (
+        <div style={{ marginTop: "1.5rem" }}>
+          <PrequalCard prequal={prequal} />
+        </div>
+      )}
     </>
   );
 }

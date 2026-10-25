@@ -11,6 +11,7 @@ import type { HeroSlide } from "./HomeHero";
 import HomeHeroClient from "./HomeHeroClient";
 import DealerList from "./market/DealerList";
 import MarketResearch from "./market/MarketResearch";
+import PrequalCard from "./credit/PrequalCard";
 
 const CATEGORY_LABEL: Record<string, string> = {
   vehicle_payment: "Car payment",
@@ -122,6 +123,7 @@ export function MoneyScreen({
   setExtraSpendingCents,
   incomeConfirmed,
   setIncomeConfirmed,
+  prequal,
 }: {
   bank: BankingSnapshot;
   budget: BudgetSnapshot;
@@ -129,6 +131,7 @@ export function MoneyScreen({
   setExtraSpendingCents: (n: number) => void;
   incomeConfirmed: boolean;
   setIncomeConfirmed: (b: boolean) => void;
+  prequal?: Comparison["prequalification"];
 }) {
   const recent = [...bank.transactions].reverse().slice(0, 14);
   return (
@@ -142,7 +145,8 @@ export function MoneyScreen({
         Demo banking: {bank.mode === "sandbox" ? "read live from the Capital One Nessie sandbox" : "synthetic records in Nessie's format"}, not a
         personal bank account or credit bureau. Window {budget.window.start} to {budget.window.end} (last {budget.window.months} complete months).
       </p>
-      <div className="grid-2">
+      {prequal && <PrequalCard prequal={prequal} />}
+      <div className="grid-2" style={prequal ? { marginTop: "1rem" } : undefined}>
         <div className="card">
           <span className="label">Vehicle budget</span>
           <div className="budget-math mono">
@@ -284,6 +288,12 @@ export function CompareScreen({
               <Kv k="Equity at horizon" v={usd(o.endingEquityCents)} sub={`value ${usd(o.endingValueCents)} − debt`} />
               <Kv k="Economic cost" v={usd(o.economicCostCents)} sub="cash out + starting − ending equity" />
             </div>
+            {o.credit && (
+              <p className="prequal-badge">
+                {o.credit.status === "prequalified" ? "Pre-qualified" : o.credit.status === "needs_review" ? "Needs review" : "Not pre-qualified"} ·{" "}
+                {(o.credit.aprBps / 100).toFixed(2)}% APR estimate
+              </p>
+            )}
             <p className="tradeoff">{o.tradeoff}</p>
             {o.exclusions.map((x) => (
               <p key={x} className="excl">✕ {x}</p>
