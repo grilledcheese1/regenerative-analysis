@@ -1,11 +1,6 @@
-import type { Metadata } from "next";
-import NextMoveApp from "@/components/next-move/NextMoveApp";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = {
-  title: "Next Move",
-  description: "Vehicle ownership decisions from your driving, contract and budget.",
-};
-
+// Next Move moved to /; keep old links working.
 export default function NextMovePage() {
-  return <NextMoveApp />;
+  redirect("/");
 }

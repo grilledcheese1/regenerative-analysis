@@ -1,5 +1,0 @@
-{
-  "tip": "Regen is off on this conventional-car baseline, so every stop turned into brake heat. Regen could recover up to about 0.87 kWh on this route. Turn regen on and ease off the pedal early before stops to see the difference.",
-  "basedOn": "regen off, mud road",
-  "source": "fallback"
-}

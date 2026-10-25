@@ -5,7 +5,7 @@ const TABS = ["Home", "Drives", "Money", "Compare", "Next Move", "Settings"];
 // Shell tests (owned by the shell stream). Other streams add their own e2e/<stream>.spec.ts.
 
 async function openNextMove(page: Page) {
-  await page.goto("/next-move");
+  await page.goto("/");
   await expect(page.getByText("Banking loaded (fixture)")).toBeVisible();
 }
 
@@ -16,18 +16,18 @@ async function selectPersona(page: Page, name: RegExp) {
   await expect(page.getByText("Banking loaded (fixture)")).toBeVisible();
 }
 
-test("Regen Coach stays at / and Next Move lives at /next-move", async ({ page }) => {
+test("Next Move lives at / and /next-move redirects there", async ({ page }) => {
   await page.goto("/");
-  await expect(page).toHaveTitle("Regen Coach");
-  await expect(page.getByLabel("Demo customer")).toHaveCount(0);
+  await expect(page).toHaveTitle("Next Move");
+  await expect(page.getByLabel("Demo customer")).toBeVisible();
 
   await page.goto("/next-move");
-  await expect(page).toHaveTitle("Next Move");
+  await expect(page).toHaveURL(/\/$/);
   await expect(page.getByLabel("Demo customer")).toBeVisible();
 });
 
 test("Maria's journey reaches the next step with an explanation", async ({ page }) => {
-  await page.goto("/next-move");
+  await page.goto("/");
   await expect(page.getByText("Banking loaded (fixture)")).toBeVisible();
   await page.getByRole("button", { name: "Next Move", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Leading option: Buy out the 2024 Camry Hybrid LE" })).toBeVisible();
@@ -39,7 +39,7 @@ test("Maria's journey reaches the next step with an explanation", async ({ page 
 });
 
 test("Kai has no feasible option", async ({ page }) => {
-  await page.goto("/next-move");
+  await page.goto("/");
   await page.getByLabel("Demo customer").selectOption({ label: "Kai · financed RAV4, tight budget" });
   await page.getByRole("button", { name: "Next Move", exact: true }).click();
   await expect(page.getByRole("heading", { name: "No option fits these constraints" })).toBeVisible();

@@ -3,7 +3,7 @@ import { expect, test, type Page } from "@playwright/test";
 // Drive imports (stream 1). Each test gets a fresh browser context, so a fresh demo owner.
 
 async function openDrives(page: Page) {
-  await page.goto("/next-move");
+  await page.goto("/");
   await expect(page.getByText("Banking loaded (fixture)")).toBeVisible();
   await page.getByRole("button", { name: "Drives", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Your drives" })).toBeVisible();

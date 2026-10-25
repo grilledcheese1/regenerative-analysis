@@ -1,8 +1,0 @@
-{
-  "_note": "SIMULATED / ESTIMATE. brakeDecelMs2 is typical service-braking deceleration; coastFraction is the share of kinetic energy shed by lifting off instead of braking (anticipation); speedFactor scales cruising speed (drag).",
-  "profiles": {
-    "smooth":     {"brakeDecelMs2": 1.1, "coastFraction": 0.35, "downhillBrakeFraction": 0.35, "speedFactor": 0.97},
-    "mixed":      {"brakeDecelMs2": 2.0, "coastFraction": 0.20, "downhillBrakeFraction": 0.50, "speedFactor": 1.00},
-    "aggressive": {"brakeDecelMs2": 3.2, "coastFraction": 0.05, "downhillBrakeFraction": 0.65, "speedFactor": 1.08}
-  }
-}

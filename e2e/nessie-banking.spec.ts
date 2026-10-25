@@ -21,14 +21,14 @@ async function mockSync(page: Page, sandbox: (body: { mode: string }, route: Rou
 }
 
 test("N1 fixture by default", async ({ page }) => {
-  await page.goto("/next-move");
+  await page.goto("/");
   await expect(page.getByText("Banking loaded (fixture)")).toBeVisible();
   await expect(header(page)).toContainText("Banking · fixture");
 });
 
 test("N2 sandbox sync is disabled with a reason when not configured", async ({ page }) => {
   await sandboxReady(page, false);
-  await page.goto("/next-move");
+  await page.goto("/");
   const button = page.getByRole("button", { name: "Sync from Nessie sandbox" });
   await expect(button).toBeDisabled();
   await expect(button).toHaveAttribute("title", /NESSIE_API_KEY and NESSIE_CUSTOMERS/);
@@ -39,7 +39,7 @@ test("N3 a failed sandbox read keeps the earlier data and says so", async ({ pag
   await mockSync(page, (_b, route) =>
     route.fulfill({ status: 502, json: { error: { code: "provider_error", message: "Nessie returned HTTP 503", retryable: true, requestId: "req_x" } } }),
   );
-  await page.goto("/next-move");
+  await page.goto("/");
   await expect(page.getByText("Banking loaded (fixture)")).toBeVisible();
   const budget = await page.getByText(/^\$[\d,]+$/).first().textContent();
   await page.getByRole("button", { name: "Sync from Nessie sandbox" }).click();
@@ -61,7 +61,7 @@ test("N4 a failure offers the last sandbox read, which is labeled stale", async 
           json: { error: { code: "provider_error", message: "Nessie did not respond", retryable: true, requestId: "req_x" }, cachedSandboxAvailable: { retrievedAt: earlier.retrievedAt } },
         }),
   );
-  await page.goto("/next-move");
+  await page.goto("/");
   await page.getByRole("button", { name: "Sync from Nessie sandbox" }).click();
   const useCached = page.getByRole("button", { name: /Use last sandbox read/ });
   await expect(useCached).toBeVisible();
@@ -72,7 +72,7 @@ test("N4 a failure offers the last sandbox read, which is labeled stale", async 
 
 test("N5 live sandbox sync (E2E_LIVE=1)", async ({ page }) => {
   test.skip(!process.env.E2E_LIVE, "set E2E_LIVE=1 with Nessie keys to run against the real sandbox");
-  await page.goto("/next-move");
+  await page.goto("/");
   await page.getByRole("button", { name: "Sync from Nessie sandbox" }).click();
   await expect(header(page)).toContainText("Banking · Nessie sandbox", { timeout: 30_000 });
   await expect(page.getByText(/Banking loaded \(Nessie sandbox · retrieved/)).toBeVisible();

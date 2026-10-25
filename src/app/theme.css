@@ -1,6 +1,5 @@
 /*
- * Next Move theme, modeled on toyota.com. Scoped under .nm (set in ./layout.tsx);
- * the Regen Coach dashboard at / is untouched.
+ * Next Move theme, modeled on toyota.com. Scoped under .nm (set in the root layout).
  *
  * What it borrows from Toyota's site: a rounded geometric sans, large centered section
  * headings, centered underline tabs, black and outline pill buttons, text links with a

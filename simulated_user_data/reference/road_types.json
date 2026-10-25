@@ -1,8 +1,0 @@
-{
-  "_note": "SIMULATED / ESTIMATE. stopsPerKm counts full stops and large slowdowns; stopSpeedMs is the speed shed per event; avgSpeedMs includes stops, rmsSpeedMs is used for drag.",
-  "roadTypes": {
-    "urban":    {"avgSpeedMs": 9.5,  "rmsSpeedMs": 12.0, "stopsPerKm": 1.8,  "stopSpeedMs": 11, "stopWaitS": 25},
-    "suburban": {"avgSpeedMs": 16.0, "rmsSpeedMs": 18.0, "stopsPerKm": 0.6,  "stopSpeedMs": 16, "stopWaitS": 20},
-    "highway":  {"avgSpeedMs": 28.0, "rmsSpeedMs": 29.5, "stopsPerKm": 0.02, "stopSpeedMs": 27, "stopWaitS": 10}
-  }
-}
