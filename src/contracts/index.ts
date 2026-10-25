@@ -252,3 +252,4 @@ export * from "./explain";
 export * from "./driving";
 export * from "./banking-sync";
 export * from "./market";
+export * from "./assistant";

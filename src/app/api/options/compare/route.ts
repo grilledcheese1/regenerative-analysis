@@ -1,12 +1,10 @@
 import { z } from "zod";
-import type { BankingSnapshot, CompareResponse } from "@/contracts";
-import { MODEL_VERSION } from "@/contracts";
+import type { CompareResponse } from "@/contracts";
 import { runScenario } from "@/domain/recommendations/scenario";
 import { persona } from "@/fixtures/personas";
-import { canonicalJson, sha256Hex } from "@/server/hash";
+import { comparisonIdFor, loadBank } from "@/server/compare";
 import { apiError, newRequestId, withIdempotency } from "@/server/http";
-import { fixtureSnapshot } from "@/server/providers/nessie";
-import { bankingSnapshots, comparisons, fieldErrors } from "@/server/records";
+import { comparisons, fieldErrors } from "@/server/records";
 import { ownerId } from "@/server/session";
 
 const SOURCE_KINDS = ["observed", "user_reported", "derived", "modeled", "synthetic"] as const;
@@ -42,21 +40,12 @@ export async function POST(request: Request) {
     const p = persona(req.personaId);
     if (!p) return apiError(400, "invalid_request", "Unknown persona", false, requestId, { personaId: "No such demo customer" });
 
-    let bank: BankingSnapshot | null | undefined;
-    if (req.bankingMode === "fixture") bank = fixtureSnapshot(req.personaId);
-    else bank = bankingSnapshots.get(owner, `${req.personaId}:sandbox`);
+    const bank = loadBank(owner, req.personaId, req.bankingMode);
     if (!bank) {
       return apiError(409, "banking_not_loaded_resync", "Sync banking for this customer, then retry", true, requestId);
     }
 
-    // Fixture records are static, so their load time doesn't make a new comparison; a sandbox
-    // read is identified by when it was retrieved.
-    const bankIdentity = {
-      customerId: bank.customerId,
-      mode: bank.mode,
-      retrievedAt: bank.mode === "fixture" ? null : bank.retrievedAt,
-    };
-    const comparisonId = "cmp_" + sha256Hex(canonicalJson({ req, bank: bankIdentity, MODEL_VERSION })).slice(0, 16);
+    const comparisonId = comparisonIdFor(req, bank);
 
     const existing = comparisons.get(owner, comparisonId);
     if (existing) {

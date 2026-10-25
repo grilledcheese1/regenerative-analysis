@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useMemo, useState } from "react";
 import SignIn from "@/components/auth/SignIn";
+import AskNextMove from "@/components/next-move/assistant/AskNextMove";
 import DrivesView from "@/components/DrivesView";
 import { MotionProvider } from "@/components/story/motion";
 import { ScrollProgress } from "@/components/story/SectionRail";
@@ -29,6 +30,10 @@ const SCREEN: Variants = {
 const TABS = ["home", "drives", "money", "compare", "next", "settings"] as const;
 type Tab = (typeof TABS)[number];
 const TAB_LABEL: Record<Tab, string> = { home: "Home", drives: "Drives", money: "Cost", compare: "Compare", next: "Next Step", settings: "Settings" };
+
+/** id → label for the evidence and options an assistant answer can cite. */
+const assistantLabels = (c: { evidence: { id: string; label: string }[]; options: { optionId: string; label: string }[] }) =>
+  Object.fromEntries([...c.evidence.map((e) => [e.id, e.label]), ...c.options.map((o) => [o.optionId, o.label])]);
 
 export default function NextMoveApp({ initialPersonaId }: { initialPersonaId?: string }) {
   const [personaId, setPersonaId] = useState(initialPersonaId && findPersona(initialPersonaId) ? initialPersonaId : PEOPLE[0].id);
@@ -111,6 +116,7 @@ export default function NextMoveApp({ initialPersonaId }: { initialPersonaId?: s
             </option>
           ))}
         </select>
+        <span className="persona-line">{persona.summary}</span>
         <Link href="/next-move" className="linkish">Story view</Link>
         <SignIn />
       </header>
@@ -177,6 +183,7 @@ export default function NextMoveApp({ initialPersonaId }: { initialPersonaId?: s
         </motion.div>
         </AnimatePresence>
       </main>
+      {comparison && <AskNextMove key={personaId} request={compareRequest} tab={tab} labels={assistantLabels(comparison)} onCite={setHighlight} />}
     </MotionProvider>
   );
 }
