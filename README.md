@@ -37,6 +37,12 @@ npm run test:e2e
   send a file to review but never declines alone. Rates start from Experian Q3 2025 tier averages. Sex, age, marital
   status and nationality are not used. Credit scores live on Nessie loan records: user reported in onboarding,
   synthetic for case studies. Every result is an estimate, not an offer or a credit decision.
+- **Lease terms:** lease options come in 12, 24, 36 and 48 months (synthetic rates and residuals, money factor adjusted
+  for the credit tier), compared by average monthly cost over each term's own length including what's due at signing,
+  fees and expected mileage charges (12,000 mi/year, 15¢/mi). Every option ranks by average monthly cost; NHTSA recall
+  and complaint counts (`scripts/fetch-reliability.mjs`, observed, by model year) break ties under $25/mo, and terms
+  past Toyota's 3-year / 36,000-mile basic warranty say so. Jordan, mid-lease, shows a switch that pays: trade-in equity
+  toward a cheaper lease, every line of the math shown.
 - **Your profile:** onboarding answers become a regular persona. "Connect your banking" seeds a new Capital One Nessie
   sandbox customer with four months of history built from your answers and reads it back; without a key (or when Nessie
   fails) the same history is created locally and the screen says so. Toyota Insurance is a simulated connection.
