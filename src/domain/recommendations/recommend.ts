@@ -1,7 +1,7 @@
-import type { Comparison, NextAction, Persona, Recommendation } from "@/contracts";
+import type { Comparison, NextAction, OptionResult, Persona, Recommendation } from "@/contracts";
 import type { BudgetSnapshot } from "@/domain/finance/budget";
 import { usd } from "@/domain/format";
-import { rankOptions } from "./rank";
+import { rankWithTieBreak } from "./rank";
 
 export const NEXT_ACTION_LABEL: Record<NextAction, string> = {
   keep_current_plan: "Keep the current plan",
@@ -22,7 +22,7 @@ export function recommend(
   persona: Persona,
   budget: BudgetSnapshot,
 ): Recommendation {
-  const ranked = rankOptions(c.options, persona.profile.objective);
+  const { ranked, tieBreak } = rankWithTieBreak(c.options, persona.profile.objective);
   const top = ranked[0];
 
   if (!top) {
@@ -51,12 +51,31 @@ export function recommend(
 
   const runnerUp = ranked[1];
   const flips = c.sensitivity.some((s) => s.flipsRanking);
-  const gap = runnerUp ? runnerUp.economicCostCents - top.economicCostCents : 0;
+  const byMonthly = persona.profile.objective === "lowest_monthly";
+  const key = (o: OptionResult) => (byMonthly ? o.totalMonthlyCents : o.avgMonthlyCostCents);
+  const lease = top.lease ? top.lease.terms.find((t) => t.termMonths === top.lease!.chosenTermMonths)! : null;
   const lines = [
-    `${top.label} has the lowest modeled cost over ${c.horizonMonths} months: ${usd(top.economicCostCents)} after counting ${usd(top.endingEquityCents)} of ending equity.`,
+    byMonthly
+      ? `${top.label} has the lowest monthly total: ${usd(top.totalMonthlyCents)}/mo.`
+      : lease
+        ? `${top.label} has the lowest average monthly cost: ${usd(top.avgMonthlyCostCents)}/mo over its ${lease.termMonths}-month term, counting what's due at signing, fees and expected mileage charges.`
+        : `${top.label} has the lowest average monthly cost: ${usd(top.avgMonthlyCostCents)}/mo over ${c.horizonMonths} months, after counting ${usd(top.endingEquityCents)} of ending equity.`,
     `It costs ${usd(top.totalMonthlyCents)}/mo including fuel, insurance and maintenance, leaving ${usd(top.monthlyRemainingCents)} of the ${usd(budget.vehicleBudgetCents)} vehicle budget.`,
   ];
-  if (runnerUp) lines.push(`Next best is ${runnerUp.label}, ${usd(gap)} more over the horizon.`);
+  if (lease) {
+    const alt = top.lease!.terms.filter((t) => t.termMonths !== lease.termMonths).sort((a, b) => a.avgMonthlyCostCents - b.avgMonthlyCostCents)[0];
+    if (alt) lines.push(`${lease.termMonths}-month term: ${usd(lease.avgMonthlyCostCents)}/mo on average; ${alt.termMonths} months would cost ${usd(alt.avgMonthlyCostCents - lease.avgMonthlyCostCents)} more a month.`);
+  }
+  if (top.switchMath) lines.push(`That's ${usd(top.switchMath.savingsPerMonthCents)}/mo less than continuing the lease (${usd(top.switchMath.continueAvgMonthlyCents)}/mo).`);
+  if (tieBreak && tieBreak.winner === top.optionId) {
+    const loser = c.options.find((o) => o.optionId === tieBreak.loser)!;
+    lines.push(
+      `${top.label} and ${loser.label} are less than $25 a month apart, so reliability decided: NHTSA lists ${top.reliability!.complaints} owner complaints for its model year against ${loser.reliability!.complaints}.`,
+    );
+  } else if (runnerUp) {
+    lines.push(`Next best is ${runnerUp.label}, ${usd(key(runnerUp) - key(top))}/mo more ${byMonthly ? "each month" : "on average"}.`);
+  }
+  if (top.warranty) lines.push(top.warranty);
   if (flips) lines.push("The ranking changes if ending vehicle values move by 10%, so treat it as a close call.");
 
   let nextAction: NextAction;
