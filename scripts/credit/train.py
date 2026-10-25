@@ -64,7 +64,10 @@ out = {
     "dataset": "UCI Statlog (German Credit Data), Hofmann 1994, https://archive.ics.uci.edu/dataset/144",
     "license": "CC BY 4.0",
     "excluded": EXCLUDED,
-    "dmPerUsd": 1.0,
+    # Calibration: map today's typical car loan (~$30,000 over 60 months) onto the dataset's typical
+    # car loan (new A40: 3,063 DM over 18.5 months; used A41: 5,370 DM over 26.1 months).
+    "dmPerUsd": 0.12,
+    "durationScale": 0.4,
     "features": features,
     "weights": [float(w) for w in model.coef_[0]],
     "intercept": float(model.intercept_[0]),

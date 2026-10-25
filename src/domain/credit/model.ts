@@ -25,7 +25,8 @@ export interface CreditModel {
   dataset: string;
   license: string;
   excluded: string[];
-  dmPerUsd: number;
+  dmPerUsd: number; // amounts and balance bands: DM = USD × dmPerUsd
+  durationScale: number; // dataset months = loan term × durationScale
   features: Feature[];
   weights: number[];
   intercept: number;

@@ -16,7 +16,8 @@
   "A18",
   "A19"
  ],
- "dmPerUsd": 1.0,
+ "dmPerUsd": 0.12,
+ "durationScale": 0.4,
  "features": [
   {
    "name": "A1",
