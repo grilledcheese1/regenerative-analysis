@@ -292,14 +292,16 @@ export function CompareScreen({
               <Kv k="Economic cost" v={usd(o.economicCostCents)} sub="cash out + starting − ending equity" />
               <Kv k="Average per month" v={usd(o.avgMonthlyCostCents)} sub={o.lease ? `over the ${o.lease.chosenTermMonths}-month term` : `over ${comparison.horizonMonths} months, equity counted`} />
             </div>
-            {o.lease && <TermPicker lease={o.lease} />}
+            {o.lease && <TermPicker key={`${o.optionId}-${o.lease.chosenTermMonths}`} lease={o.lease} />}
             {o.switchMath && <SwitchMath m={o.switchMath} />}
             {o.reliability && <ReliabilityBadge r={o.reliability} />}
             {o.warranty && <p className="muted small">{o.warranty}</p>}
             {o.credit && (
               <p className="prequal-badge">
                 {o.credit.status === "prequalified" ? "Pre-qualified" : o.credit.status === "needs_review" ? "Needs review" : "Not pre-qualified"} ·{" "}
-                {(o.credit.aprBps / 100).toFixed(2)}% APR estimate
+                {o.lease
+                  ? `${o.lease.terms.find((t) => t.termMonths === o.lease!.chosenTermMonths)!.aprEquivalentPct.toFixed(1)}% APR equivalent (lease)`
+                  : `${(o.credit.aprBps / 100).toFixed(2)}% APR estimate`}
               </p>
             )}
             <p className="tradeoff">{o.tradeoff}</p>

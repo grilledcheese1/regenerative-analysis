@@ -546,7 +546,8 @@ export function compareOptions({ persona, budget, catalog, asOf, overrides = {},
     };
   });
 
-  const financed = options.filter((o) => o.credit && o.kind !== "refinance");
+  // "Finance your next car" is about loans: leases carry their own decision on their card.
+  const financed = options.filter((o) => o.credit && o.kind !== "refinance" && !o.lease);
   const prequalification: Comparison["prequalification"] = {
     finance: (rankOptions(financed, persona.profile.objective)[0] ?? financed[0])?.credit ?? null,
     refinance: options.find((o) => o.kind === "refinance")?.credit ?? null,
@@ -600,8 +601,8 @@ function sensitivity(options: OptionResult[], objective: Persona["profile"]["obj
     const shifted = options.map((o) => {
       const dv = Math.round(o.endingValueCents * f);
       const economicCostCents = o.economicCostCents - dv;
-      // Leases end with no car (value 0), so only the horizon-based average moves.
-      const avgMonthlyCostCents = o.lease ? o.avgMonthlyCostCents : Math.round(economicCostCents / horizonMonths);
+      // Shift each average by the value change only: leases and "continue" keep their own-period averages.
+      const avgMonthlyCostCents = o.lease ? o.avgMonthlyCostCents : o.avgMonthlyCostCents - Math.round(dv / horizonMonths);
       return { ...o, endingValueCents: o.endingValueCents + dv, endingEquityCents: o.endingEquityCents + dv, economicCostCents, avgMonthlyCostCents };
     });
     const top = rankOptions(shifted, objective)[0];

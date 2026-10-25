@@ -59,7 +59,7 @@ function Row({ o, rank, lead, maxCost }: { o: OptionResult; rank: number; lead: 
         {open && (
           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.2, ease: "easeOut" }} style={{ overflow: "hidden" }}>
             <Detail o={o} />
-            {o.lease && <TermPicker lease={o.lease} compact />}
+            {o.lease && <TermPicker key={`${o.optionId}-${o.lease.chosenTermMonths}`} lease={o.lease} compact />}
             {o.switchMath && <SwitchMath m={o.switchMath} />}
             {o.missingInputs.length > 0 && <p className="muted small">Needs: {o.missingInputs.map((m) => m.replaceAll("_", " ")).join(", ")}</p>}
           </motion.div>

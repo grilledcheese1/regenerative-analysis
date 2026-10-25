@@ -69,8 +69,12 @@ export function recommend(
   if (top.switchMath) lines.push(`That's ${usd(top.switchMath.savingsPerMonthCents)}/mo less than continuing the lease (${usd(top.switchMath.continueAvgMonthlyCents)}/mo).`);
   if (tieBreak && tieBreak.winner === top.optionId) {
     const loser = c.options.find((o) => o.optionId === tieBreak.loser)!;
+    const w = top.reliability!;
+    const l = loser.reliability!;
+    // Quote whichever count decided: complaints, or recalls when complaints were equal.
+    const [n, other, noun] = w.complaints !== l.complaints ? [w.complaints!, l.complaints!, "owner complaint"] : [w.recalls!, l.recalls!, "recall"];
     lines.push(
-      `${top.label} and ${loser.label} are less than $25 a month apart, so reliability decided: NHTSA lists ${top.reliability!.complaints} owner complaints for its model year against ${loser.reliability!.complaints}.`,
+      `${top.label} and ${loser.label} are less than $25 a month apart, so reliability decided: NHTSA lists ${n} ${noun}${n === 1 ? "" : "s"} for its model year against ${other}.`,
     );
   } else if (runnerUp) {
     lines.push(`Next best is ${runnerUp.label}, ${usd(key(runnerUp) - key(top))}/mo more ${byMonthly ? "each month" : "on average"}.`);

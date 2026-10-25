@@ -1,36 +1,36 @@
 {
- "source": "NHTSA recalls and complaints APIs (api.nhtsa.gov), by make, model and model year",
+ "source": "NHTSA recalls and complaints APIs (api.nhtsa.gov), by make, exact model name and model year",
  "cars": {
   "camry_hybrid_le_2024": {
    "catalogId": "camry_hybrid_le_2024",
-   "nhtsaModel": "2024 Toyota Camry",
+   "nhtsaModel": "2024 Toyota CAMRY",
    "recalls": 1,
    "complaints": 52,
-   "retrievedAt": "2026-10-25T15:33:57.420Z",
+   "retrievedAt": "2026-10-25T15:53:59.061Z",
    "source": "observed"
   },
   "camry_hev_le_2025": {
    "catalogId": "camry_hev_le_2025",
-   "nhtsaModel": "2025 Toyota Camry",
-   "recalls": 0,
-   "complaints": 0,
-   "retrievedAt": "2026-10-25T15:33:57.420Z",
+   "nhtsaModel": "2025 Toyota CAMRY HYBRID",
+   "recalls": 6,
+   "complaints": 173,
+   "retrievedAt": "2026-10-25T15:53:59.061Z",
    "source": "observed"
   },
   "corolla_hybrid_2025": {
    "catalogId": "corolla_hybrid_2025",
-   "nhtsaModel": "2025 Toyota Corolla",
-   "recalls": 0,
-   "complaints": 31,
-   "retrievedAt": "2026-10-25T15:33:57.420Z",
+   "nhtsaModel": "2025 Toyota COROLLA HYBRID",
+   "recalls": 1,
+   "complaints": 1,
+   "retrievedAt": "2026-10-25T15:53:59.061Z",
    "source": "observed"
   },
   "corolla_2016": {
    "catalogId": "corolla_2016",
-   "nhtsaModel": "2016 Toyota Corolla",
+   "nhtsaModel": "2016 Toyota COROLLA",
    "recalls": 1,
    "complaints": 215,
-   "retrievedAt": "2026-10-25T15:33:57.420Z",
+   "retrievedAt": "2026-10-25T15:53:59.061Z",
    "source": "observed"
   },
   "rav4_awd_2021": {
@@ -38,15 +38,15 @@
    "nhtsaModel": "2021 Toyota RAV4",
    "recalls": 1,
    "complaints": 389,
-   "retrievedAt": "2026-10-25T15:33:57.420Z",
+   "retrievedAt": "2026-10-25T15:53:59.061Z",
    "source": "observed"
   },
   "rav4_hybrid_awd_2025": {
    "catalogId": "rav4_hybrid_awd_2025",
-   "nhtsaModel": "2025 Toyota RAV4",
-   "recalls": 3,
-   "complaints": 90,
-   "retrievedAt": "2026-10-25T15:33:57.420Z",
+   "nhtsaModel": "2025 Toyota RAV4 HYBRID",
+   "recalls": 2,
+   "complaints": 5,
+   "retrievedAt": "2026-10-25T15:53:59.061Z",
    "source": "observed"
   }
  }
