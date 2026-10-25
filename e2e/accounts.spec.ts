@@ -1,30 +1,15 @@
 import { expect, test, type Page } from "@playwright/test";
+import { finishOnboardingWithDefaults, noOverflow, signUp } from "./helpers";
 
 // Demo accounts and the one-identity header (accounts plan).
-
-const email = (tag: string) => `felix+${tag}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}@example.com`;
-
-async function signUp(page: Page, address = email("su")) {
-  await page.goto("/");
-  await page.getByRole("button", { name: "Create an account" }).click();
-  const dlg = page.getByRole("dialog");
-  await dlg.getByLabel("Name").fill("Felix");
-  await dlg.getByLabel("Email").fill(address);
-  await dlg.getByLabel("Password").fill("password123");
-  await dlg.getByRole("button", { name: "Create account", exact: true }).last().click();
-  await expect(page).toHaveURL(/\/onboarding$/);
-  return address;
-}
 
 const kaiRow = (scope: ReturnType<Page["getByRole"]>) =>
   scope.locator(".signin__row").filter({ has: scope.page().locator(".signin__name", { hasText: /^Kai$/ }) });
 
-const noOverflow = async (page: Page) =>
-  expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(0);
 
 test("sign up, land on onboarding, sign out", async ({ page }) => {
   await signUp(page);
-  await page.goto("/home");
+  await finishOnboardingWithDefaults(page);
   const me = page.getByRole("button", { name: "Felix ▾" });
   await expect(me).toBeVisible();
   await expect(page.getByText("Signed in as")).toHaveCount(0);
@@ -38,7 +23,7 @@ test("sign up, land on onboarding, sign out", async ({ page }) => {
 
 test("wrong password shows one generic message", async ({ page }) => {
   const address = await signUp(page);
-  await page.goto("/home");
+  await finishOnboardingWithDefaults(page);
   await page.getByRole("button", { name: "Felix ▾" }).click();
   await page.getByRole("menuitem", { name: "Sign out" }).click();
   await page.getByRole("button", { name: "Sign in" }).first().click();
@@ -68,7 +53,7 @@ test("signing up closes an open case study", async ({ page }) => {
   await expect(page).toHaveURL(/\/home$/);
   await page.getByRole("button", { name: "Exit case study" }).click();
   await signUp(page);
-  await page.goto("/home");
+  await finishOnboardingWithDefaults(page);
   await expect(page.getByLabel("Demo customer")).toHaveCount(0);
   await page.getByRole("button", { name: "Felix ▾" }).click();
   await page.getByRole("menuitem", { name: "Explore a case study" }).click();

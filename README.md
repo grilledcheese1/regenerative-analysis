@@ -4,8 +4,11 @@ Next Move helps a driver decide what to do about their car: keep it, buy out a l
 builds an affordable monthly budget from banking data, compares every option over the same horizon, and explains the
 leading one with the evidence behind each number. The Drives tab replays modeled hybrid drives on real Austin routes.
 
-- `/` sign in as one of 29 simulated people, then the scroll story (where you stand, commute, options, hybrid value, next move)
-- `/home` the tabbed screens (Home, Drives, Cost, Compare, Next Step, Settings); `?as=<id>` picks the person
+- `/` create a demo account, sign in, or explore one of 29 simulated case studies; then the scroll story (where you stand,
+  commute, options, hybrid value, next move)
+- `/onboarding` a new account's setup: car, how you pay, insurance, driving, goals and banking; `?edit=1` changes answers
+- `/home` the tabbed screens (Home, Drives, Cost, Compare, Next Step, Settings) for your own profile or an open case
+  study; `?as=<id>` opens a case study
 - `/next-move` redirects to `/`
 
 ## Run it
@@ -25,6 +28,12 @@ npm run test:e2e
   bank connection or a credit bureau. The header always says which one is loaded.
 - **Driving:** a modeled replay on cached real routes. GPS can't measure battery recovery, so regen figures are modeled.
   Imported drives and synthetic samples are labeled as such.
+- **Accounts:** demo accounts (email and password, hashed with scrypt) live in server memory, plus `.data/accounts.json`
+  outside production. A restart or another server instance forgets them; a signed-in browser stays signed in and re-sends
+  its profile, but signing in again needs a new account. Not real authentication.
+- **Your profile:** onboarding answers become a regular persona. "Connect your banking" seeds a new Capital One Nessie
+  sandbox customer with four months of history built from your answers and reads it back; without a key (or when Nessie
+  fails) the same history is created locally and the screen says so. Toyota Insurance is a simulated connection.
 - **Offers:** synthetic scenario inputs. Market listings, when shown, are advertised prices, not offers.
 - **AI:** Claude only explains a decision the code already computed; it never decides.
 - Every number carries a source (observed, user reported, derived, modeled, synthetic). Unknown values are shown as unknown, never 0.
@@ -47,6 +56,7 @@ See `.env.example` for comments. All optional; missing ones fall back to fixture
 
 | Variable | Purpose |
 | --- | --- |
+| `AUTH_SECRET` | Signs the demo account session cookie. Required in production |
 | `NEXT_PUBLIC_MAPBOX_TOKEN` | Map tiles (blank = static route preview) |
 | `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL`, `AI_DAILY_CAP` | Claude explanations |
 | `NESSIE_API_KEY`, `NESSIE_BASE_URL`, `NESSIE_CUSTOMERS` | Nessie sandbox banking |

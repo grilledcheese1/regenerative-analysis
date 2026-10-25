@@ -120,7 +120,7 @@ const noopSelect = () => {};
 /** Slide 2. A simulated replay of the person's route on the keyless map, with their regen score against the others. */
 export default function Commute({ persona, drive, hybrid }: { persona: Persona; drive: Drive; hybrid: boolean }) {
   const { route, style, a } = drive;
-  const rank = useMemo(() => peerRank(persona.id), [persona.id]);
+  const rank = useMemo(() => peerRank(persona), [persona]);
   const stops = useMemo(() => stopCoords(route), [route]);
   const miles = (route.points[route.points.length - 1].s / 1609.34).toFixed(1);
 
