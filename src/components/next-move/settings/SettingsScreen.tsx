@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { BankingSyncState, ConsentPurpose, ConsentState, Maybe, Persona, SourceKind } from "@/contracts";
 import { usd } from "@/domain/format";
 import { SourceChip } from "../Evidence";
+import { Card, Pill, SectionHead } from "../ui/parts";
 
 const CONSENT_ROWS: { purpose: ConsentPurpose; label: string }[] = [
   { purpose: "driving_analysis", label: "Use my imported drives for personal analysis" },
@@ -29,9 +30,8 @@ function VehicleCard({ persona }: { persona: Persona }) {
   const v = persona.vehicle;
   const c = persona.contract;
   return (
-    <div className="card">
-      <span className="label">Vehicle and contract</span>
-      <ul className="plain">
+    <Card icon="car" title="Vehicle and contract">
+      <ul className="plain nm-rows nm-rows--lined">
         <Row k="Odometer" v={`${v.odometerMiles.toLocaleString()} mi (as of ${v.odometerObservedAt})`} source="user_reported" />
         <Row k="Estimated value" v={maybeText(v.estimatedValueCents, (n) => usd(n))} source={v.valuationSource} />
         {c.type === "lease" && (
@@ -54,7 +54,7 @@ function VehicleCard({ persona }: { persona: Persona }) {
         {c.type === "owned" && <Row k="Contract" v="Owned outright" source="synthetic" />}
       </ul>
       <p className="muted small">Editing vehicle and contract details is planned. The demo uses synthetic contracts.</p>
-    </div>
+    </Card>
   );
 }
 
@@ -126,15 +126,11 @@ export function SettingsScreen({
 
   return (
     <section className="section">
-      <div className="section-head">
-        <span className="label">Settings</span>
-        <h2>What this demo knows and what it may use</h2>
-      </div>
+      <SectionHead kicker="Settings" title="What this demo knows and what it may use" />
       <div className="grid-2">
         <VehicleCard persona={persona} />
-        <div className="card">
-          <span className="label">Connections</span>
-          <ul className="plain">
+        <Card icon="link" title="Connections">
+          <ul className="plain nm-rows nm-rows--lined">
             <li>
               <span>Banking</span>
               <span className="mono muted">
@@ -153,24 +149,23 @@ export function SettingsScreen({
           <ul className="plain" style={{ marginTop: "1rem" }}>
             <li>
               <span>Toyota vehicle records</span>
-              <span className="chip">Planned integration</span>
+              <Pill>Planned integration</Pill>
             </li>
           </ul>
           <button className="btn" disabled title="Requires a verified data format and permission">
             Connect Toyota records
           </button>
           <p className="muted small">Requires a verified data format and permission.</p>
-          <ul className="plain">
+          <ul className="plain nm-rows nm-rows--lined">
             <li>
               <span>Insurer sharing</span>
-              <span className="chip">Planned integration</span>
+              <Pill>Planned integration</Pill>
             </li>
           </ul>
-        </div>
+        </Card>
       </div>
       <div className="grid-2" style={{ marginTop: "1rem" }}>
-        <div className="card">
-          <span className="label">Permissions</span>
+        <Card icon="shield" title="Permissions">
           {CONSENT_ROWS.map((r) => (
             <label key={r.purpose} className="check">
               <input
@@ -200,11 +195,10 @@ export function SettingsScreen({
           <p className="muted small">
             Turning a permission off stops future use; it doesn&apos;t erase what&apos;s already here. Use Delete below for that.
           </p>
-        </div>
-        <div className="card">
-          <span className="label">Delete my demo data</span>
+        </Card>
+        <Card icon="trash" title="Delete my demo data">
           <p className="muted small">Removes imported drives, trips and banking snapshots held for this browser session.</p>
-          <button className="btn" onClick={() => dialog.current?.showModal()}>
+          <button className="btn primary" onClick={() => dialog.current?.showModal()}>
             Delete my demo data
           </button>
           {deleted && <p role="status">{deleted}</p>}
@@ -221,7 +215,7 @@ export function SettingsScreen({
               </button>
             </div>
           </dialog>
-        </div>
+        </Card>
       </div>
     </section>
   );

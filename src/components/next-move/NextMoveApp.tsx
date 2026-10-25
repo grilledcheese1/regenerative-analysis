@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import SignIn from "@/components/auth/SignIn";
 import DrivesView from "@/components/DrivesView";
 import type { CompareRequest, DrivingProfile, ScenarioInputs, SourceKind } from "@/contracts";
@@ -11,18 +11,43 @@ import { PEOPLE, persona as findPersona } from "@/fixtures/personas";
 import BankingSyncBar from "./banking/BankingSyncBar";
 import { useBankingSync } from "./banking/useBankingSync";
 import ImportDrive from "./import/ImportDrive";
+import "./nextmove.css";
 import { CompareScreen, HomeScreen, MoneyScreen, NextMoveScreen } from "./screens";
 import { SettingsScreen } from "./settings/SettingsScreen";
+import Icon, { type IconName } from "./ui/Icon";
 
 const TABS = ["home", "drives", "money", "compare", "next", "settings"] as const;
 type Tab = (typeof TABS)[number];
 const TAB_LABEL: Record<Tab, string> = { home: "Home", drives: "Drives", money: "Money", compare: "Compare", next: "Next Move", settings: "Settings" };
+const TAB_ICON: Record<Tab, IconName> = { home: "home", drives: "car", money: "money", compare: "bars", next: "pointer", settings: "gear" };
+
+// Light is the default; the choice lives in localStorage and is read as an external store so SSR never mismatches.
+type NmTheme = "light" | "dark";
+const themeListeners = new Set<() => void>();
+const readTheme = (): NmTheme => {
+  try {
+    return localStorage.getItem("nm-theme") === "dark" ? "dark" : "light";
+  } catch {
+    return "light";
+  }
+};
+const writeTheme = (t: NmTheme) => {
+  try {
+    localStorage.setItem("nm-theme", t);
+  } catch {}
+  themeListeners.forEach((l) => l());
+};
+const subscribeTheme = (l: () => void) => {
+  themeListeners.add(l);
+  return () => themeListeners.delete(l);
+};
 
 export default function NextMoveApp({ initialPersonaId }: { initialPersonaId?: string }) {
   const [personaId, setPersonaId] = useState(initialPersonaId && findPersona(initialPersonaId) ? initialPersonaId : PEOPLE[0].id);
   const persona = findPersona(personaId)!;
   const vehicle = catalogVehicle(persona.vehicle.catalogId);
   const [tab, setTab] = useState<Tab>("home");
+  const theme = useSyncExternalStore(subscribeTheme, readTheme, () => "light" as NmTheme);
   const banking = useBankingSync(personaId);
   const { bank } = banking;
   const [dataKey, setDataKey] = useState(0); // bumped by "Delete my demo data" to remount data-holding children
@@ -81,38 +106,69 @@ export default function NextMoveApp({ initialPersonaId }: { initialPersonaId?: s
     [personaId, banking.mode, scenario],
   );
 
+  // Paint the page behind the app in the same theme, and switch themes without every color transition firing at once.
+  useEffect(() => {
+    const root = document.documentElement;
+    root.classList.add("nm-page");
+    root.dataset.nmTheme = theme;
+    return () => {
+      root.classList.remove("nm-page");
+      delete root.dataset.nmTheme;
+    };
+  }, [theme]);
+  const toggleTheme = () => {
+    const root = document.documentElement;
+    root.classList.add("nm-no-transition");
+    writeTheme(theme === "dark" ? "light" : "dark");
+    requestAnimationFrame(() => requestAnimationFrame(() => root.classList.remove("nm-no-transition")));
+  };
+
   const bankingTag = banking.stale ? "stale sandbox read" : banking.mode === "sandbox" ? "Nessie sandbox" : "fixture";
 
   return (
-    <>
-      <header className="header">
+    <div className="nm" data-nm-theme={theme}>
+      <header className="header nm-header">
         <div className="wordmark">
           <span className="dot" />
           Next<em>Move</em>
         </div>
-        <select id="persona" name="persona" value={personaId} onChange={(e) => selectPersona(e.target.value)} aria-label="Demo customer">
-          {PEOPLE.map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.summary}
-            </option>
-          ))}
-        </select>
-        <Link href="/next-move" className="linkish">Story view</Link>
-        <SignIn />
+        <label className="nm-select">
+          <Icon name="car" size={20} />
+          <select id="persona" name="persona" value={personaId} onChange={(e) => selectPersona(e.target.value)} aria-label="Demo customer">
+            {PEOPLE.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.summary}
+              </option>
+            ))}
+          </select>
+          <Icon name="chevron" size={16} className="nm-select__chev" />
+        </label>
         <div className="modes" aria-label="Data sources">
           <span className="tag">Banking · {bankingTag}</span>
           <span className="tag">Driving · {usageSource ? "imported" : "modeled"}</span>
           <span className="tag">Offers · synthetic</span>
         </div>
+        <div className="nm-header__end">
+          <Link href="/next-move" className="nm-link">Story view</Link>
+          <SignIn />
+          <button type="button" className="nm-iconbtn" onClick={toggleTheme} aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}>
+            <Icon name={theme === "dark" ? "sun" : "moon"} size={18} />
+          </button>
+          <Link href="/" className="nm-back">
+            <Icon name="back" size={18} />
+            Regen Coach
+          </Link>
+        </div>
       </header>
-      <nav className="tabs" aria-label="Screens">
+      <nav className="tabs nm-tabs" aria-label="Screens">
         {TABS.map((t) => (
           <button key={t} className={t === tab ? "on" : ""} onClick={() => setTab(t)} aria-current={t === tab ? "page" : undefined}>
+            <Icon name={TAB_ICON[t]} size={20} />
             {TAB_LABEL[t]}
           </button>
         ))}
       </nav>
-      <main>
+      <main className="nm-main">
         <BankingSyncBar {...banking} />
         {tab === "settings" ? (
           <SettingsScreen
@@ -163,6 +219,6 @@ export default function NextMoveApp({ initialPersonaId }: { initialPersonaId?: s
           </>
         )}
       </main>
-    </>
+    </div>
   );
 }

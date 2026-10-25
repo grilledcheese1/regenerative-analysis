@@ -17,8 +17,8 @@ export default function BankingSyncBar({ bank, stale, staleSince, loading, error
           : "Banking loaded (fixture)";
 
   return (
-    <div className="sync-bar">
-      <span className={stale ? "excl" : "muted"}>{status}</span>
+    <div className="sync-bar nm-sync">
+      <span className={`nm-sync__status${stale ? " is-stale" : ""}`}><i className="nm-sync__dot" aria-hidden="true" />{status}</span>
       <button className="btn" disabled={loading} onClick={() => sync("fixture")}>
         Use fixture
       </button>
