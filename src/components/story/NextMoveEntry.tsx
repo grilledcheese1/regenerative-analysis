@@ -17,16 +17,18 @@ export default function NextMoveEntry({ as }: { as?: string }) {
   const cookieId = useSignedInId();
   const hydrated = useHydrated();
   const id = [as, cookieId].find((x) => x && persona(x)) ?? null;
+  // Carry the persona to /home, which otherwise only knows the cookie.
+  const homeHref = id ? `/home?as=${encodeURIComponent(id)}` : "/next-move";
 
   return (
     <>
       <header className="header">
-        <Link href={id ? "/home" : "/next-move"} className="wordmark" aria-label="Regentic home" style={{ color: "inherit", textDecoration: "none" }}>
+        <Link href={homeHref} className="wordmark" aria-label="Regentic home" style={{ color: "inherit", textDecoration: "none" }}>
           <Image src="/regentic-logo.png" alt="" width={310} height={286} className="wordmark__logo" priority />
           <span>Regen<em>tic</em></span>
         </Link>
         <nav className="story-nav" aria-label="Views">
-          {id && <Link href="/home" className="linkish">Details view</Link>}
+          {id && <Link href={homeHref} className="linkish">Details view</Link>}
           {id && <SignIn variant="ghost" />}
         </nav>
       </header>

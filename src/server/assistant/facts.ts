@@ -31,6 +31,9 @@ export interface AssistantFacts extends EvidenceBundle {
   whatIf?: WhatIfBlock;
 }
 
+/** Text that quotes a figure derived from the customer's banking: budget, income, cash available, reserve. */
+const BANKING_TEXT = /\b(budget|income|available|reserve|afford\w*|savings|deposits?)\b/i;
+
 export const factsHash = (f: AssistantFacts) => sha256Hex(canonicalJson(f));
 
 export function buildFacts(record: ComparisonRecord, opts: { bankingAnalysisOff: boolean; whatIf?: WhatIfBlock }): AssistantFacts {
@@ -46,10 +49,22 @@ export function buildFacts(record: ComparisonRecord, opts: { bankingAnalysisOff:
     ...(opts.whatIf && { whatIf: opts.whatIf }),
   };
   if (opts.bankingAnalysisOff) {
-    // Without consent no banking-derived figure reaches the answer.
+    // Without consent no banking-derived figure reaches the answer: the budget, income and cash evidence,
+    // every per-option "budget left", and any sentence in the decision text that quotes them.
     const banking = new Set(["vehicle_budget", "recurring_income", "available_upfront_cash"]);
     facts.evidence = facts.evidence.filter((e) => !banking.has(e.id));
-    facts.options = facts.options.map((o) => ({ ...o, budgetLeft: "not shown" }));
+    facts.templateLines = facts.templateLines.filter((line) => !BANKING_TEXT.test(line));
+    facts.options = facts.options.map((o) => ({
+      ...o,
+      budgetLeft: "not shown",
+      exclusions: o.exclusions.filter((x) => !BANKING_TEXT.test(x)),
+    }));
+    if (facts.whatIf) {
+      facts.whatIf = {
+        ...facts.whatIf,
+        after: { ...facts.whatIf.after, options: facts.whatIf.after.options.map((o) => ({ ...o, budgetLeft: "not shown" })) },
+      };
+    }
   }
   return facts;
 }

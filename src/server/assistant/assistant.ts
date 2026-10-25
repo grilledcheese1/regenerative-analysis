@@ -31,11 +31,17 @@ export interface AnswerContext {
   bankingAnalysisOff: boolean;
 }
 
+/** A positive whole number, or the fallback for a blank, invalid or non-positive value. */
+const positiveInt = (value: number | string | undefined, fallback: number) => {
+  const n = typeof value === "string" ? (value.trim() === "" ? NaN : Number(value)) : value;
+  return n !== undefined && Number.isFinite(n) && n >= 1 ? Math.floor(n) : fallback;
+};
+
 const normalizeQuestion = (q: string) => q.trim().toLowerCase().replace(/\s+/g, " ");
 
 export function createAssistant(opts: AssistantOptions = {}) {
   const providers = opts.providers ?? selectProviders();
-  const dailyCap = opts.dailyCap ?? Number(process.env.ASSISTANT_DAILY_CAP ?? 100);
+  const dailyCap = positiveInt(opts.dailyCap ?? process.env.ASSISTANT_DAILY_CAP, 100);
   const now = opts.now ?? (() => new Date());
   const log = opts.log ?? ((line) => console.info(JSON.stringify({ at: "assistant", ...line })));
 
@@ -169,10 +175,11 @@ const g = globalThis as typeof globalThis & { __nmAssistant?: Assistant; __nmAss
 export const defaultAssistant = () => (g.__nmAssistant ??= createAssistant());
 
 /** In-memory sliding window per owner. Returns true when the request may proceed. */
-export function allowRequest(owner: string, perMinute = Number(process.env.ASSISTANT_RATE_PER_MIN ?? 10), at = Date.now()): boolean {
+export function allowRequest(owner: string, perMinute?: number, at = Date.now()): boolean {
+  const limit = positiveInt(perMinute ?? process.env.ASSISTANT_RATE_PER_MIN, 10);
   const map = (g.__nmAssistantRate ??= new Map<string, number[]>());
   const recent = (map.get(owner) ?? []).filter((t: number) => at - t < 60_000);
-  if (recent.length >= perMinute) {
+  if (recent.length >= limit) {
     map.set(owner, recent);
     return false;
   }

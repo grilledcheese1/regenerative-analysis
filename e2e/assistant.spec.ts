@@ -9,7 +9,7 @@ async function openAssistant(page: Page) {
   await page.goto("/home?as=maria");
   await expect(page.getByText("Banking loaded (fixture)")).toBeVisible();
   await tab(page, "Compare").click();
-  await page.getByRole("button", { name: "Ask Next Move" }).click();
+  await page.getByRole("button", { name: "Ask Me Anything!" }).click();
   await expect(panel(page)).toBeVisible();
 }
 
@@ -57,7 +57,7 @@ test("A4 Esc closes, focus returns, and nothing scrolls sideways or logs errors"
   expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(0);
   await page.keyboard.press("Escape");
   await expect(panel(page)).toHaveCount(0);
-  await expect(page.getByRole("button", { name: "Ask Next Move" })).toBeFocused();
+  await expect(page.getByRole("button", { name: "Ask Me Anything!" })).toBeFocused();
   expect(errors).toEqual([]);
 });
 
@@ -65,5 +65,5 @@ test("A5 the assistant is hidden on Settings", async ({ page }) => {
   await page.goto("/home?as=maria");
   await expect(page.getByText("Banking loaded (fixture)")).toBeVisible();
   await tab(page, "Settings").click();
-  await expect(page.getByRole("button", { name: "Ask Next Move" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Ask Me Anything!" })).toHaveCount(0);
 });
