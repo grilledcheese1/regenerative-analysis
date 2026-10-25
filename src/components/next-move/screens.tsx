@@ -8,9 +8,6 @@ import { EvidenceList, SourceChip } from "./Evidence";
 import AiExplanation from "./explain/AiExplanation";
 import DealerList from "./market/DealerList";
 import MarketResearch from "./market/MarketResearch";
-import CarArt from "./ui/CarArt";
-import Icon from "./ui/Icon";
-import { Card, KpiTile, Ledger, Pill, SectionHead } from "./ui/parts";
 
 const CATEGORY_LABEL: Record<string, string> = {
   vehicle_payment: "Car payment",
@@ -19,7 +16,15 @@ const CATEGORY_LABEL: Record<string, string> = {
   vehicle_maintenance: "Maintenance",
 };
 
-const ACCOUNT_ICON = { Checking: "bank", Savings: "piggy", "Credit Card": "card" } as const;
+function Kv({ k, v, sub }: { k: string; v: string; sub?: string }) {
+  return (
+    <div className="kv">
+      <span className="muted">{k}</span>
+      <strong className="mono">{v}</strong>
+      {sub && <span className="muted kv-sub">{sub}</span>}
+    </div>
+  );
+}
 
 // ---------- Home ----------
 
@@ -41,68 +46,47 @@ export function HomeScreen({
   const payment = c.type === "owned" ? 0 : c.paymentCents;
   const running = current?.monthlyRunningCents ?? 0;
   const total = payment + running;
-  const remaining = budget.vehicleBudgetCents - total;
   const r = comparison.recommendation;
   return (
-    <section className="section nm-home">
-      <div className="nm-hero">
-        <CarArt catalogId={persona.vehicle.catalogId} className="nm-hero__car" />
-        <SectionHead
-          kicker="Home"
-          title={`${persona.profile.displayName}’s ${vehicle.modelYear} ${vehicle.model}`}
-          pill={<Pill>{c.type === "owned" ? "Owned outright" : c.type === "loan" ? "Financed" : "Leased"}</Pill>}
-          lede={persona.situation}
-        />
+    <section className="section">
+      <div className="section-head">
+        <span className="label">Home</span>
+        <h2>{persona.profile.displayName}&apos;s {vehicle.modelYear} {vehicle.model}</h2>
+        <span className="tag">{c.type === "owned" ? "Owned outright" : c.type === "loan" ? "Financed" : "Leased"}</span>
       </div>
-      <div className="grid-2 nm-home__grid">
-        <Card icon="calendar" title="This month">
-          <div className="nm-tiles nm-tiles--2">
-            <KpiTile icon="card" label={c.type === "lease" ? "Lease payment" : c.type === "loan" ? "Loan payment" : "Payment"} value={usd(payment)} />
-            <KpiTile icon="fuel" label="Fuel, insurance, maintenance" value={usd(running)} sub="estimated" />
-            <KpiTile icon="pie" label="Total vehicle expense" value={usd(total)} />
-            <KpiTile icon="money" label="Vehicle budget" value={usd(budget.vehicleBudgetCents)} sub="from banking data" />
-            <KpiTile icon="bars" label="Budget remaining" value={usd(remaining)} tone={remaining < 0 ? "bad" : "good"} />
-            <KpiTile icon="gauge" label="Monthly miles" value={`${persona.usage.monthlyMiles.toLocaleString()} mi`} sub="confirm" />
+      <p className="lede">{persona.situation}</p>
+      <div className="grid-2">
+        <div className="card">
+          <span className="label">This month</span>
+          <div className="kv-grid">
+            <Kv k={c.type === "lease" ? "Lease payment" : c.type === "loan" ? "Loan payment" : "Payment"} v={usd(payment)} />
+            <Kv k="Fuel, insurance, maintenance" v={usd(running)} sub="estimated" />
+            <Kv k="Total vehicle expense" v={usd(total)} />
+            <Kv k="Vehicle budget" v={usd(budget.vehicleBudgetCents)} sub="from banking data" />
+            <Kv k="Budget remaining" v={usd(budget.vehicleBudgetCents - total)} />
+            <Kv k="Monthly miles" v={`${persona.usage.monthlyMiles.toLocaleString()} mi`} sub="confirm" />
           </div>
-        </Card>
-        <Card icon="target" title="Upcoming decision">
-          <div className="nm-decision">
-            <span className="nm-decision__icon">
-              <Icon name="calendar" size={28} />
-            </span>
-            <div>
-              {c.type === "lease" ? (
-                <>
-                  <strong className="nm-decision__title">Lease matures {c.maturityDate}.</strong>
-                  <p>
-                    Projected {comparison.evidence.find((e) => e.id === "projected_mileage")?.display} miles; possible charge{" "}
-                    {comparison.evidence.find((e) => e.id === "mileage_overage")?.display}.
-                  </p>
-                </>
-              ) : c.type === "loan" ? (
-                <>
-                  <strong className="nm-decision__title">{c.remainingMonths} payments left.</strong>
-                  <p>
-                    A {(c.aprBps / 100).toFixed(2)}% loan. Payoff estimate {usd(c.payoffCents)}.
-                  </p>
-                </>
-              ) : (
-                <>
-                  <strong className="nm-decision__title">No payment due.</strong>
-                  <p>The question is whether replacing the car is worth it.</p>
-                </>
-              )}
-              <div className={`status status-${r.status}`}>
-                {r.status === "recommended" && <Icon name="check" size={16} />}
-                {r.headline}
-              </div>
-            </div>
-          </div>
-          <button className="btn primary nm-cta" onClick={onReview}>
-            Review next move
-            <Icon name="arrow" size={18} />
+        </div>
+        <div className="card next-preview">
+          <span className="label">Upcoming decision</span>
+          {c.type === "lease" ? (
+            <p>
+              Lease matures <strong>{c.maturityDate}</strong>. Projected{" "}
+              {comparison.evidence.find((e) => e.id === "projected_mileage")?.display} miles; possible charge{" "}
+              {comparison.evidence.find((e) => e.id === "mileage_overage")?.display}.
+            </p>
+          ) : c.type === "loan" ? (
+            <p>
+              {c.remainingMonths} payments left on a {(c.aprBps / 100).toFixed(2)}% loan. Payoff estimate {usd(c.payoffCents)}.
+            </p>
+          ) : (
+            <p>No payment due. The question is whether replacing the car is worth it.</p>
+          )}
+          <div className={`status status-${r.status}`}>{r.headline}</div>
+          <button className="btn primary" onClick={onReview}>
+            Review next move →
           </button>
-        </Card>
+        </div>
       </div>
     </section>
   );
@@ -128,31 +112,28 @@ export function MoneyScreen({
   const recent = [...bank.transactions].reverse().slice(0, 14);
   return (
     <section className="section">
-      <SectionHead
-        kicker="Money"
-        title="What the car can cost each month"
-        pill={<Pill>{bank.mode === "sandbox" ? "Nessie sandbox" : "Nessie-format fixture"}</Pill>}
-        lede={
-          <>
-            Demo banking: {bank.mode === "sandbox" ? "read live from the Capital One Nessie sandbox" : "synthetic records in Nessie's format"}, not a
-            personal bank account or credit bureau. Window {budget.window.start} to {budget.window.end} (last {budget.window.months} complete months).
-          </>
-        }
-      />
+      <div className="section-head">
+        <span className="label">Money</span>
+        <h2>What the car can cost each month</h2>
+        <span className="tag">{bank.mode === "sandbox" ? "Nessie sandbox" : "Nessie-format fixture"}</span>
+      </div>
+      <p className="lede">
+        Demo banking: {bank.mode === "sandbox" ? "read live from the Capital One Nessie sandbox" : "synthetic records in Nessie's format"}, not a
+        personal bank account or credit bureau. Window {budget.window.start} to {budget.window.end} (last {budget.window.months} complete months).
+      </p>
       <div className="grid-2">
-        <Card icon="calendar" title="Vehicle budget">
-          <Ledger
-            rows={[
-              { k: "Recurring income", v: usd(budget.recurringIncomeCents) },
-              { k: "− Other spending", v: usd(budget.otherMonthlySpendingCents) },
-              { k: "− Savings goal", v: usd(budget.monthlySavingsGoalCents) },
-              { k: "− Buffer", v: usd(budget.monthlyBufferCents) },
-            ]}
-            total={{ k: "= Vehicle budget", v: usd(budget.vehicleBudgetCents), tone: budget.vehicleBudgetCents < 0 ? "bad" : undefined }}
-          />
+        <div className="card">
+          <span className="label">Vehicle budget</span>
+          <div className="budget-math mono">
+            <div><span>Recurring income</span><span>{usd(budget.recurringIncomeCents)}</span></div>
+            <div><span>− Other spending</span><span>{usd(budget.otherMonthlySpendingCents)}</span></div>
+            <div><span>− Savings goal</span><span>{usd(budget.monthlySavingsGoalCents)}</span></div>
+            <div><span>− Buffer</span><span>{usd(budget.monthlyBufferCents)}</span></div>
+            <div className="total"><span>= Vehicle budget</span><span className={budget.vehicleBudgetCents < 0 ? "neg" : undefined}>{usd(budget.vehicleBudgetCents)}</span></div>
+          </div>
           <label className="check">
             <input type="checkbox" id="income-confirmed" name="income-confirmed" checked={incomeConfirmed} onChange={(e) => setIncomeConfirmed(e.target.checked)} />
-            Income estimate from {budget.incomeDeposits} payroll deposits looks right.
+            Income estimate from {budget.incomeDeposits} payroll deposits looks right
           </label>
           <div className="slider">
             <span>New monthly expense</span>
@@ -169,72 +150,58 @@ export function MoneyScreen({
             />
             <span className="mono">{usd(extraSpendingCents)}</span>
           </div>
-          <h3 className="nm-card__title nm-card__title--sub">
-            <Icon name="coins" size={22} />
-            <span className="label">Cash for the decision</span>
-          </h3>
-          <Ledger
-            rows={[
-              { k: "Checking + savings", v: usd(budget.liquidCashCents) },
-              { k: "− Protected reserve", v: usd(budget.protectedCashReserveCents) },
-            ]}
-            total={{ k: "= Available upfront", v: usd(budget.availableUpfrontCashCents), tone: budget.availableUpfrontCashCents < 0 ? "bad" : undefined }}
-          />
-        </Card>
-        <div className="nm-stack">
-          <Card icon="target" title="Left out of the budget, and why">
-            <ul className="plain nm-rows">
-              {budget.excluded.map((e) => (
-                <li key={e.reason}>
-                  <span>{e.reason}</span>
-                  <span className="mono">{e.count} · {usd(e.cents)}</span>
-                </li>
-              ))}
-            </ul>
-          </Card>
-          <Card icon="car" title="Observed vehicle spending">
-            <ul className="plain nm-rows">
-              {Object.entries(budget.observedVehicleMonthlyCents).map(([k, v]) => (
-                <li key={k}>
-                  <span>{CATEGORY_LABEL[k] ?? k}</span>
-                  <span className="mono">{usd(v ?? 0)}/mo</span>
-                </li>
-              ))}
-            </ul>
-            <p className="muted small">Vehicle costs are compared per option, so they are kept out of &ldquo;other spending&rdquo;.</p>
-          </Card>
+          <span className="label" style={{ marginTop: "1rem", display: "block" }}>Cash for the decision</span>
+          <div className="budget-math mono">
+            <div><span>Checking + savings</span><span>{usd(budget.liquidCashCents)}</span></div>
+            <div><span>− Protected reserve</span><span>{usd(budget.protectedCashReserveCents)}</span></div>
+            <div className="total"><span>= Available upfront</span><span className={budget.availableUpfrontCashCents < 0 ? "neg" : undefined}>{usd(budget.availableUpfrontCashCents)}</span></div>
+          </div>
+        </div>
+        <div className="card">
+          <span className="label">Left out of the budget, and why</span>
+          <ul className="plain">
+            {budget.excluded.map((e) => (
+              <li key={e.reason}>
+                <span>{e.reason}</span>
+                <span className="mono muted">{e.count} · {usd(e.cents)}</span>
+              </li>
+            ))}
+          </ul>
+          <span className="label" style={{ marginTop: "1rem", display: "block" }}>Observed vehicle spending</span>
+          <ul className="plain">
+            {Object.entries(budget.observedVehicleMonthlyCents).map(([k, v]) => (
+              <li key={k}>
+                <span>{CATEGORY_LABEL[k] ?? k}</span>
+                <span className="mono">{usd(v ?? 0)}/mo</span>
+              </li>
+            ))}
+          </ul>
+          <p className="muted small">Vehicle costs are compared per option, so they are kept out of &ldquo;other spending&rdquo;.</p>
         </div>
       </div>
-      <Card icon="doc" title="Accounts and recent activity" className="nm-accounts-card">
-        <div className="nm-account-tiles">
+      <div className="card" style={{ marginTop: "1rem" }}>
+        <span className="label">Accounts and recent activity</span>
+        <div className="accounts">
           {bank.accounts.map((a) => (
-            <KpiTile key={a.accountId} icon={ACCOUNT_ICON[a.type as keyof typeof ACCOUNT_ICON] ?? "bank"} label={`${a.nickname} (${a.type})`} value={usd(a.balanceCents)} />
+            <Kv key={a.accountId} k={`${a.nickname} (${a.type})`} v={usd(a.balanceCents)} />
           ))}
         </div>
-        <div className="nm-table-wrap">
+        <div style={{ overflowX: "auto" }}>
           <table className="compare txns">
-            <thead>
-              <tr>
-                <th scope="col">Date</th>
-                <th scope="col">Description</th>
-                <th scope="col">Type · Status</th>
-                <th scope="col">Amount</th>
-              </tr>
-            </thead>
             <tbody>
               {recent.map((t) => (
                 <tr key={t.transactionId}>
                   <td className="mono muted">{t.effectiveAt}</td>
                   <td>{t.description}</td>
                   <td className="muted">{t.type} · {t.status}</td>
-                  <td className={`mono nm-amt${t.type === "deposit" ? " is-in" : ""}`}>{t.type === "deposit" ? "+" : "−"}{usd(t.amountCents, 2)}</td>
+                  <td className="mono">{t.type === "deposit" ? "+" : "−"}{usd(t.amountCents, 2)}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
         <p className="muted small">Retrieved {new Date(bank.retrievedAt).toLocaleString()} · source {bank.mode}</p>
-      </Card>
+      </div>
     </section>
   );
 }
@@ -257,13 +224,17 @@ export function CompareScreen({
   const leader = comparison.recommendation.selectedOptionId;
   return (
     <section className="section">
-      <SectionHead
-        kicker="Compare"
-        title="Same driving, every option"
-        pill={<Pill>{comparison.horizonMonths} months from {comparison.actionDate}</Pill>}
-        lede={comparison.preparation ? `Until then: ${comparison.preparation.months} months, ${usd(comparison.preparation.cashCents)}. ${comparison.preparation.note}` : undefined}
-      />
-      <div className="toolbar nm-toolbar">
+      <div className="section-head">
+        <span className="label">Compare</span>
+        <h2>Same driving, every option</h2>
+        <span className="tag">{comparison.horizonMonths} months from {comparison.actionDate}</span>
+      </div>
+      {comparison.preparation && (
+        <p className="lede">
+          Until then: {comparison.preparation.months} months, {usd(comparison.preparation.cashCents)}. {comparison.preparation.note}
+        </p>
+      )}
+      <div className="toolbar">
         <div className="slider">
           <span>Gas price</span>
           <input type="range" id="gas-price" name="gas-price" min={200} max={500} step={10} value={gasCents} onChange={(e) => setGasCents(+e.target.value)} aria-label="Gas price" />
@@ -275,35 +246,28 @@ export function CompareScreen({
           <span className="mono">{monthlyMiles}</span>
         </div>
       </div>
-      <div className="options nm-options">
+      <div className="options">
         {comparison.options.map((o) => (
-          <article key={o.optionId} className={`card nm-card option${o.optionId === leader ? " leader" : ""}${o.feasible ? "" : " excluded"}`}>
+          <article key={o.optionId} className={`card option${o.optionId === leader ? " leader" : ""}${o.feasible ? "" : " excluded"}`}>
             <header>
               <h3>{o.label}</h3>
               {o.optionId === leader ? <span className="chip chip-lead">Leading</span> : !o.feasible && <span className="chip chip-out">Excluded</span>}
             </header>
-            <div className="nm-tiles nm-tiles--2">
-              <KpiTile iconSide="left" icon="dollar" label="Upfront cash" value={usd(o.upfrontCashCents)} />
-              <KpiTile iconSide="left" icon="card" label="Payment" value={`${usd(o.monthlyPaymentCents)}/mo`} />
-              <KpiTile iconSide="left" icon="clock" label="Total monthly" value={`${usd(o.totalMonthlyCents)}/mo`} sub="payment + fuel, insurance, maintenance" />
-              <KpiTile iconSide="left" icon="bars" label="Budget left" value={usd(o.monthlyRemainingCents)} tone={o.monthlyRemainingCents < 0 ? "bad" : o.optionId === leader ? "good" : undefined} />
-              <KpiTile iconSide="left" icon="coins" label="Cash out over horizon" value={usd(o.netCashOutflowCents)} />
-              <KpiTile iconSide="left" icon="card" label="Debt at horizon" value={usd(o.endingDebtCents)} />
-              <KpiTile iconSide="left" icon="house" label="Equity at horizon" value={usd(o.endingEquityCents)} sub={`value ${usd(o.endingValueCents)} − debt`} />
-              <KpiTile iconSide="left" icon="bars" label="Economic cost" value={usd(o.economicCostCents)} sub="cash out + starting − ending equity" />
+            <div className="kv-grid">
+              <Kv k="Upfront cash" v={usd(o.upfrontCashCents)} />
+              <Kv k="Payment" v={`${usd(o.monthlyPaymentCents)}/mo`} />
+              <Kv k="Total monthly" v={`${usd(o.totalMonthlyCents)}/mo`} sub="payment + fuel, insurance, maintenance" />
+              <Kv k="Budget left" v={usd(o.monthlyRemainingCents)} />
+              <Kv k="Cash out over horizon" v={usd(o.netCashOutflowCents)} />
+              <Kv k="Debt at horizon" v={usd(o.endingDebtCents)} />
+              <Kv k="Equity at horizon" v={usd(o.endingEquityCents)} sub={`value ${usd(o.endingValueCents)} − debt`} />
+              <Kv k="Economic cost" v={usd(o.economicCostCents)} sub="cash out + starting − ending equity" />
             </div>
-            <div className="nm-tradeoff">
-              <span className="nm-tile__icon"><Icon name="doc" size={20} /></span>
-              <div>
-                <p className="tradeoff">{o.tradeoff}</p>
-                {o.exclusions.map((x) => (
-                  <p key={x} className="excl">
-                    <Icon name="alert" size={16} /> {x}
-                  </p>
-                ))}
-                {o.missingInputs.length > 0 && <p className="muted small">Needs: {o.missingInputs.map((m) => m.replaceAll("_", " ")).join(", ")}</p>}
-              </div>
-            </div>
+            <p className="tradeoff">{o.tradeoff}</p>
+            {o.exclusions.map((x) => (
+              <p key={x} className="excl">✕ {x}</p>
+            ))}
+            {o.missingInputs.length > 0 && <p className="muted small">Needs: {o.missingInputs.map((m) => m.replaceAll("_", " ")).join(", ")}</p>}
             {o.catalogId && (o.kind === "lease_new" || o.kind === "purchase_new" || o.kind === "sell_replace") && (
               <MarketResearch catalogId={o.catalogId} label={o.label} />
             )}
@@ -311,8 +275,9 @@ export function CompareScreen({
         ))}
       </div>
       <div className="grid-2" style={{ marginTop: "1rem" }}>
-        <Card icon="bars" title="Sensitivity">
-          <ul className="plain nm-rows">
+        <div className="card">
+          <span className="label">Sensitivity</span>
+          <ul className="plain">
             {comparison.sensitivity.length === 0 && <li className="muted">No feasible option to test.</li>}
             {comparison.sensitivity.map((s) => (
               <li key={s.label}>
@@ -321,9 +286,10 @@ export function CompareScreen({
               </li>
             ))}
           </ul>
-        </Card>
-        <Card icon="info" title="Not compared">
-          <ul className="plain nm-rows">
+        </div>
+        <div className="card">
+          <span className="label">Not compared</span>
+          <ul className="plain">
             {comparison.notConsidered.length === 0 && <li className="muted">Every relevant action is compared.</li>}
             {comparison.notConsidered.map((n) => (
               <li key={n.label}>
@@ -332,7 +298,7 @@ export function CompareScreen({
               </li>
             ))}
           </ul>
-        </Card>
+        </div>
       </div>
       <p className="muted small" style={{ marginTop: "1rem" }}>
         Prices, rates, premiums and ending values are synthetic scenario inputs, not offers or approvals. Fuel uses
@@ -400,9 +366,14 @@ export function NextMoveScreen({
   const facts = comparison.evidence.filter((e) => r.evidenceIds.includes(e.id));
   return (
     <section className="section">
-      <SectionHead kicker="Next move" title={r.headline} pill={<span className={`status status-${r.status}`}>{r.status.replaceAll("_", " ")}</span>} />
+      <div className="section-head">
+        <span className="label">Next move</span>
+        <h2>{r.headline}</h2>
+        <span className={`status status-${r.status}`}>{r.status.replaceAll("_", " ")}</span>
+      </div>
       <div className="grid-2">
-        <Card icon="bulb" title="Why">
+        <div className="card">
+          <span className="label">Why</span>
           <ul className="why">
             {r.explanation.map((l) => (
               <li key={l}>{l}</li>
@@ -411,23 +382,19 @@ export function NextMoveScreen({
           {r.missingInputs.length > 0 && (
             <p className="muted small">Missing: {r.missingInputs.map((m) => m.replaceAll("_", " ")).join(", ")}</p>
           )}
-          <div className="action nm-nextstep">
-            <h4 className="nm-card__title nm-card__title--sub">
-              <Icon name="calendar" size={22} />
-              <span className="label">Next step · {NEXT_ACTION_LABEL[r.nextAction]}</span>
-            </h4>
+          <div className="action">
+            <span className="label">Next step · {NEXT_ACTION_LABEL[r.nextAction]}</span>
             <ol>
               {step.checklist.map((c) => (
                 <li key={c}>{c}</li>
               ))}
             </ol>
             {step.href ? (
-              <a className="btn primary nm-cta" href={step.href} target="_blank" rel="noreferrer">
-                {step.cta}
-                <Icon name="arrow" size={18} />
+              <a className="btn primary" href={step.href} target="_blank" rel="noreferrer">
+                {step.cta} ↗
               </a>
             ) : (
-              <span className="btn primary as-label nm-cta">{step.cta}</span>
+              <span className="btn primary as-label">{step.cta}</span>
             )}
             <p className="muted small">
               {step.href
@@ -437,25 +404,24 @@ export function NextMoveScreen({
           </div>
           {/* Dealers can quote a purchase, a new lease or a lease buyout. */}
           {(r.nextAction === "compare_confirmed_offers" || r.nextAction === "request_buyout_quote") && <DealerList near="Austin, TX" />}
-        </Card>
-        <Card icon="bars" title="Evidence">
+          <AiExplanation request={compareRequest} recommendation={r} evidence={comparison.evidence} onCite={onCite} />
+        </div>
+        <div className="card">
+          <span className="label">Evidence</span>
           <EvidenceList facts={facts} highlight={highlight} />
           <p className="muted small" style={{ marginTop: "0.75rem" }}>
             <SourceChip source="synthetic" /> values are invented scenario inputs for the demo.
           </p>
-        </Card>
+        </div>
       </div>
-      <div className="nm-explain">
-        <Icon name="info" size={20} />
-        <AiExplanation request={compareRequest} recommendation={r} evidence={comparison.evidence} onCite={onCite} />
-      </div>
-      <Card icon="link" title="Planned integration" className="roadmap">
+      <div className="card roadmap" style={{ marginTop: "1rem" }}>
+        <span className="label">Planned integration</span>
         <p>
           A future Toyota Insure Connect partnership could enrich these recommendations with authorized vehicle data.
           That requires a verified data interface and permitted uses; nothing in this demo imports Toyota records or
           returns an insurance offer.
         </p>
-      </Card>
+      </div>
     </section>
   );
 }
