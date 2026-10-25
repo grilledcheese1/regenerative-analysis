@@ -1,0 +1,100 @@
+{
+  "userId": "user_011",
+  "alias": "Ivy (Austin, TX)",
+  "simulated": true,
+  "archetype": "typical",
+  "regionId": "austin_tx",
+  "home": {
+    "lat": 30.33553,
+    "lon": -97.81999
+  },
+  "work": {
+    "lat": 30.29145,
+    "lon": -97.81974
+  },
+  "commute": {
+    "oneWayKm": 23.6,
+    "workDaysPerWeek": 3,
+    "roadMix": {
+      "urban": 0.196,
+      "suburban": 0.417,
+      "highway": 0.386
+    }
+  },
+  "longTripRate": 0.13,
+  "vehicle": {
+    "vehicleId": "hyundai_ioniq5_2025",
+    "modelYear": 2018,
+    "ageYears": 7,
+    "odometerKm": 188412,
+    "estimatedValueUsd": 14700,
+    "batteryHealth": 0.871
+  },
+  "driver": {
+    "style": "smooth",
+    "jitterDecelMs2": -0.17,
+    "usesCruiseControl": false,
+    "ecoMode": false,
+    "highwayCruiseMs": 30.1,
+    "speedLimitMs": 31.3
+  },
+  "load": {
+    "typicalExtraMassKg": 80,
+    "crrMult": 1.07,
+    "unpavedShare": 0.102,
+    "roofRack": false,
+    "towing": null
+  },
+  "tires": {
+    "type": "summer",
+    "pressureDriftPct": 8
+  },
+  "charging": {
+    "access": "home",
+    "hasHomeCharger": true,
+    "mix": {
+      "home": 0.88,
+      "publicL2": 0.04,
+      "publicDC": 0.08
+    },
+    "touPlan": false,
+    "offPeakShare": 0.72,
+    "plugInHabit": 0.75
+  },
+  "income": {
+    "band": "low",
+    "householdUsd": 59366
+  },
+  "preferences": {
+    "bodyStyles": [
+      "suv",
+      "truck",
+      "hatchback"
+    ],
+    "excludeMakes": [],
+    "budgetCapUsd": 44000,
+    "needsTowingKg": 0,
+    "minRangeKm": 350
+  },
+  "finance": {
+    "fuelBudgetUsdPerMonth": 99,
+    "priceSensitivity": 0.32,
+    "insurer": "Allstate",
+    "insuranceUserFactor": 1.03,
+    "registrationMonth": 11,
+    "loyalty": {
+      "program": "Grocery fuel points",
+      "discountPerGal": 0.1
+    },
+    "loan": {
+      "lender": "Chase Auto",
+      "aprPct": 7.97,
+      "termMonths": 60,
+      "monthsRemaining": 3,
+      "monthlyPaymentUsd": 728,
+      "balanceUsd": 2154
+    }
+  },
+  "annualDrift": 0.999,
+  "lifeEvents": []
+}

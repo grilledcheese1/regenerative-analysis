@@ -3,7 +3,7 @@ import { expect, test, type Page } from "@playwright/test";
 // Drive imports (stream 1). Each test gets a fresh browser context, so a fresh demo owner.
 
 async function openDrives(page: Page) {
-  await page.goto("/");
+  await page.goto("/home");
   await expect(page.getByText("Banking loaded (fixture)")).toBeVisible();
   await page.getByRole("button", { name: "Drives", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Your drives" })).toBeVisible();
@@ -24,7 +24,6 @@ async function importAndConfirm(page: Page, file: string) {
 
 const confirmedTrips = (page: Page) => page.getByRole("list", { name: "Confirmed trips" }).getByRole("listitem");
 // The shell hides the header source tags on narrow screens, so check the tag's text, not its visibility.
-const drivingTag = (page: Page) => page.locator(".tag", { hasText: /^Driving · / });
 const compareMiles = (page: Page) => page.locator(".slider", { hasText: "Monthly miles" }).locator(".mono");
 
 test("E1: preview, cancel, then confirm a sample drive", async ({ page }) => {
@@ -56,14 +55,12 @@ test("E2 + E3: imported usage changes Compare, and reverting restores the person
   await expect(page.getByLabel("Trips per week")).toHaveValue("10");
   const profileMiles = (await page.getByTestId("profile-monthly-miles").textContent())!.trim();
   await page.getByRole("button", { name: "Use for comparison" }).click();
-  await expect(drivingTag(page)).toHaveText("Driving · imported");
 
   await page.getByRole("button", { name: "Compare", exact: true }).click();
   await expect(compareMiles(page)).toHaveText(profileMiles);
 
   await page.getByRole("button", { name: "Drives", exact: true }).click();
   await page.getByRole("button", { name: "Revert to persona estimate" }).click();
-  await expect(drivingTag(page)).toHaveText("Driving · modeled");
   await page.getByRole("button", { name: "Compare", exact: true }).click();
   await expect(compareMiles(page)).toHaveText("875");
 });

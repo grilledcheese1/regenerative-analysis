@@ -1,0 +1,99 @@
+{
+  "userId": "user_024",
+  "alias": "Theo (Seattle, WA)",
+  "simulated": true,
+  "archetype": "stop_and_go",
+  "regionId": "seattle_wa",
+  "home": {
+    "lat": 47.6899,
+    "lon": -122.33603
+  },
+  "work": {
+    "lat": 47.63721,
+    "lon": -122.38125
+  },
+  "commute": {
+    "oneWayKm": 14,
+    "workDaysPerWeek": 5,
+    "roadMix": {
+      "urban": 1,
+      "suburban": 0,
+      "highway": 0
+    }
+  },
+  "longTripRate": 0.25,
+  "vehicle": {
+    "vehicleId": "chevy_bolt_2025",
+    "modelYear": 2025,
+    "ageYears": 0,
+    "odometerKm": 11482,
+    "estimatedValueUsd": 29000,
+    "batteryHealth": 1
+  },
+  "driver": {
+    "style": "smooth",
+    "jitterDecelMs2": 0.14,
+    "usesCruiseControl": true,
+    "ecoMode": false,
+    "highwayCruiseMs": 27.1,
+    "speedLimitMs": 31.3
+  },
+  "load": {
+    "typicalExtraMassKg": 80,
+    "crrMult": 1.012,
+    "unpavedShare": 0.051,
+    "roofRack": false,
+    "towing": null
+  },
+  "tires": {
+    "type": "summer",
+    "pressureDriftPct": 8
+  },
+  "charging": {
+    "access": "none",
+    "hasHomeCharger": false,
+    "mix": {
+      "publicDC": 1
+    },
+    "touPlan": false,
+    "offPeakShare": 0.62,
+    "plugInHabit": 0.08
+  },
+  "income": {
+    "band": "mid",
+    "householdUsd": 65647
+  },
+  "preferences": {
+    "bodyStyles": [
+      "hatchback",
+      "suv",
+      "sedan"
+    ],
+    "excludeMakes": [],
+    "budgetCapUsd": 53000,
+    "needsTowingKg": 0,
+    "minRangeKm": 0
+  },
+  "finance": {
+    "fuelBudgetUsdPerMonth": 230,
+    "priceSensitivity": 0.73,
+    "insurer": "Allstate",
+    "insuranceUserFactor": 0.91,
+    "registrationMonth": 9,
+    "loyalty": {
+      "program": "Grocery fuel points",
+      "discountPerGal": 0.1
+    },
+    "loan": {
+      "lender": "Capital One Auto",
+      "aprPct": 8.28,
+      "termMonths": 60,
+      "monthsRemaining": 60,
+      "monthlyPaymentUsd": 506,
+      "balanceUsd": 24795
+    }
+  },
+  "annualDrift": 0.887,
+  "lifeEvents": [],
+  "stopDensityMult": 1.7
+}

@@ -1,0 +1,96 @@
+{
+  "userId": "user_005",
+  "alias": "Zoe (Phoenix, AZ)",
+  "simulated": true,
+  "archetype": "typical",
+  "regionId": "phoenix_az",
+  "home": {
+    "lat": 33.47662,
+    "lon": -112.06715
+  },
+  "work": {
+    "lat": 33.42311,
+    "lon": -112.10078
+  },
+  "commute": {
+    "oneWayKm": 11.2,
+    "workDaysPerWeek": 3,
+    "roadMix": {
+      "urban": 0.327,
+      "suburban": 0.326,
+      "highway": 0.347
+    }
+  },
+  "longTripRate": 0.41,
+  "vehicle": {
+    "vehicleId": "toyota_camry_hybrid_xse_2025",
+    "modelYear": 2018,
+    "ageYears": 7,
+    "odometerKm": 68033,
+    "estimatedValueUsd": 17800,
+    "batteryHealth": 0.864
+  },
+  "driver": {
+    "style": "aggressive",
+    "jitterDecelMs2": 0.33,
+    "usesCruiseControl": false,
+    "ecoMode": false,
+    "highwayCruiseMs": 31.4,
+    "speedLimitMs": 31.3
+  },
+  "load": {
+    "typicalExtraMassKg": 350,
+    "crrMult": 0.96,
+    "unpavedShare": 0.03,
+    "roofRack": false,
+    "towing": null
+  },
+  "tires": {
+    "type": "all_season",
+    "pressureDriftPct": 10
+  },
+  "charging": {
+    "access": "workplace",
+    "hasHomeCharger": false,
+    "mix": {
+      "home": 0,
+      "workplace": 0.5,
+      "publicL2": 0.15,
+      "publicDC": 0.35
+    },
+    "touPlan": false,
+    "offPeakShare": 0.63,
+    "plugInHabit": 0.59
+  },
+  "income": {
+    "band": "low",
+    "householdUsd": 52504
+  },
+  "preferences": {
+    "bodyStyles": [
+      "sedan",
+      "truck"
+    ],
+    "excludeMakes": [],
+    "budgetCapUsd": 55000,
+    "needsTowingKg": 0,
+    "minRangeKm": 350
+  },
+  "finance": {
+    "fuelBudgetUsdPerMonth": 80,
+    "priceSensitivity": 0.1,
+    "insurer": "GEICO",
+    "insuranceUserFactor": 0.94,
+    "registrationMonth": 8,
+    "loyalty": null,
+    "loan": null
+  },
+  "annualDrift": 1.089,
+  "lifeEvents": [
+    {
+      "type": "job_change",
+      "fromMonth": 6,
+      "newOneWayKm": 11.7
+    }
+  ]
+}

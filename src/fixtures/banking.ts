@@ -1,4 +1,5 @@
 import type { NessieAccountBundle } from "@/server/providers/nessie-normalize";
+import generated from "./people.generated.json";
 
 // Synthetic bank history in Nessie's record shapes (dollars), July through October 22 2026.
 // Each persona exercises the normalization rules: an internal transfer, a credit card and
@@ -19,7 +20,7 @@ interface Spec {
   monthly: Monthly;
 }
 
-const SPECS: Record<string, Spec> = {
+const CURATED_SPECS: Record<string, Spec> = {
   maria: {
     checking: 3800,
     savings: 5700,
@@ -98,6 +99,9 @@ const SPECS: Record<string, Spec> = {
     },
   },
 };
+
+// Bank histories for the generated people live beside them (scripts/build-people.ts).
+const SPECS: Record<string, Spec> = { ...CURATED_SPECS, ...(generated.bankingSpecs as unknown as Record<string, Spec>) };
 
 const MONTHS = ["2026-07", "2026-08", "2026-09", "2026-10"];
 const LAST_DAY_SEEN = "2026-10-22";

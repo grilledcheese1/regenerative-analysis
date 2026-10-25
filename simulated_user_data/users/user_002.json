@@ -1,0 +1,114 @@
+{
+  "userId": "user_002",
+  "alias": "Noah (Denver, CO)",
+  "simulated": true,
+  "archetype": "typical",
+  "regionId": "denver_co",
+  "home": {
+    "lat": 39.75791,
+    "lon": -104.92607
+  },
+  "work": {
+    "lat": 39.77305,
+    "lon": -105.04126
+  },
+  "commute": {
+    "oneWayKm": 24.3,
+    "workDaysPerWeek": 0,
+    "roadMix": {
+      "urban": 0.394,
+      "suburban": 0.243,
+      "highway": 0.363
+    }
+  },
+  "longTripRate": 0.4,
+  "vehicle": {
+    "vehicleId": "toyota_sienna_hybrid_2025",
+    "modelYear": 2024,
+    "ageYears": 1,
+    "odometerKm": 25246,
+    "estimatedValueUsd": 35200,
+    "batteryHealth": 0.978
+  },
+  "driver": {
+    "style": "smooth",
+    "jitterDecelMs2": -0.02,
+    "usesCruiseControl": true,
+    "ecoMode": false,
+    "highwayCruiseMs": 27.4,
+    "speedLimitMs": 31.3
+  },
+  "load": {
+    "typicalExtraMassKg": 350,
+    "crrMult": 1.101,
+    "unpavedShare": 0.056,
+    "roofRack": false,
+    "towing": null
+  },
+  "tires": {
+    "type": "winter_seasonal",
+    "pressureDriftPct": 13
+  },
+  "charging": {
+    "access": "home",
+    "hasHomeCharger": true,
+    "mix": {
+      "home": 0.88,
+      "publicL2": 0.04,
+      "publicDC": 0.08
+    },
+    "touPlan": true,
+    "offPeakShare": 0.88,
+    "plugInHabit": 0.82
+  },
+  "income": {
+    "band": "mid",
+    "householdUsd": 65618
+  },
+  "preferences": {
+    "bodyStyles": [
+      "minivan"
+    ],
+    "excludeMakes": [
+      "Mazda"
+    ],
+    "budgetCapUsd": 32000,
+    "needsTowingKg": 0,
+    "minRangeKm": 0
+  },
+  "finance": {
+    "fuelBudgetUsdPerMonth": 118,
+    "priceSensitivity": 0.41,
+    "insurer": "GEICO",
+    "insuranceUserFactor": 1.08,
+    "registrationMonth": 4,
+    "loyalty": {
+      "program": "Grocery fuel points",
+      "discountPerGal": 0.1
+    },
+    "loan": {
+      "lender": "Capital One Auto",
+      "aprPct": 5.17,
+      "termMonths": 72,
+      "monthsRemaining": 54,
+      "monthlyPaymentUsd": 553,
+      "balanceUsd": 26615
+    }
+  },
+  "annualDrift": 1.016,
+  "lifeEvents": [
+    {
+      "type": "move",
+      "fromMonth": 9,
+      "newRegionId": "boston_ma",
+      "newHome": {
+        "lat": 42.33915,
+        "lon": -71.13848
+      },
+      "newWork": {
+        "lat": 42.39799,
+        "lon": -71.03836
+      }
+    }
+  ]
+}

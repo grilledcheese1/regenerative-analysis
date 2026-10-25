@@ -1,0 +1,108 @@
+{
+  "userId": "user_001",
+  "alias": "Ava (Austin, TX)",
+  "simulated": true,
+  "archetype": "typical",
+  "regionId": "austin_tx",
+  "home": {
+    "lat": 30.27425,
+    "lon": -97.77628
+  },
+  "work": {
+    "lat": 30.33113,
+    "lon": -97.70068
+  },
+  "commute": {
+    "oneWayKm": 21.3,
+    "workDaysPerWeek": 5,
+    "roadMix": {
+      "urban": 0.535,
+      "suburban": 0.462,
+      "highway": 0.003
+    }
+  },
+  "longTripRate": 0.43,
+  "vehicle": {
+    "vehicleId": "toyota_camry_hybrid_xse_awd_2025",
+    "modelYear": 2021,
+    "ageYears": 4,
+    "odometerKm": 137228,
+    "estimatedValueUsd": 23800,
+    "batteryHealth": 0.919
+  },
+  "driver": {
+    "style": "aggressive",
+    "jitterDecelMs2": 0,
+    "usesCruiseControl": true,
+    "ecoMode": true,
+    "highwayCruiseMs": 24.7,
+    "speedLimitMs": 31.3
+  },
+  "load": {
+    "typicalExtraMassKg": 80,
+    "crrMult": 0.979,
+    "unpavedShare": 0.114,
+    "roofRack": false,
+    "towing": null
+  },
+  "tires": {
+    "type": "summer",
+    "pressureDriftPct": 6
+  },
+  "charging": {
+    "access": "workplace",
+    "hasHomeCharger": false,
+    "mix": {
+      "home": 0,
+      "workplace": 0.5,
+      "publicL2": 0.15,
+      "publicDC": 0.35
+    },
+    "touPlan": false,
+    "offPeakShare": 0.76,
+    "plugInHabit": 0.41
+  },
+  "income": {
+    "band": "low",
+    "householdUsd": 31541
+  },
+  "preferences": {
+    "bodyStyles": [
+      "sedan",
+      "suv"
+    ],
+    "excludeMakes": [
+      "Kia"
+    ],
+    "budgetCapUsd": 34000,
+    "needsTowingKg": 0,
+    "minRangeKm": 0
+  },
+  "finance": {
+    "fuelBudgetUsdPerMonth": 284,
+    "priceSensitivity": 0.51,
+    "insurer": "GEICO",
+    "insuranceUserFactor": 0.95,
+    "registrationMonth": 3,
+    "loyalty": {
+      "program": "Grocery fuel points",
+      "discountPerGal": 0.1
+    },
+    "loan": {
+      "lender": "Chase Auto",
+      "aprPct": 5,
+      "termMonths": 72,
+      "monthsRemaining": 21,
+      "monthlyPaymentUsd": 489,
+      "balanceUsd": 9810
+    }
+  },
+  "annualDrift": 1.097,
+  "lifeEvents": [
+    {
+      "type": "job_change",
+      "fromMonth": 6,
+      "newOneWayKm": 3
+    }
+  ]
+}

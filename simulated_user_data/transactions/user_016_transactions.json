@@ -1,0 +1,302 @@
+{
+  "userId": "user_016",
+  "simulated": true,
+  "transactions": [
+    {
+      "txId": "user_016-tx-0001",
+      "date": "2026-01-01",
+      "merchant": "State Farm",
+      "mcc": 6300,
+      "category": "insurance",
+      "amountUsd": 185.29
+    },
+    {
+      "txId": "user_016-tx-0002",
+      "date": "2026-01-01",
+      "merchant": "Kroger",
+      "mcc": 5411,
+      "category": "non_driving",
+      "amountUsd": 101.04
+    },
+    {
+      "txId": "user_016-tx-0003",
+      "date": "2026-01-02",
+      "merchant": "E-ZPass",
+      "mcc": 4784,
+      "category": "tolls",
+      "amountUsd": 7.76
+    },
+    {
+      "txId": "user_016-tx-0004",
+      "date": "2026-01-04",
+      "merchant": "Starbucks",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 28.46
+    },
+    {
+      "txId": "user_016-tx-0005",
+      "date": "2026-01-07",
+      "merchant": "Target",
+      "mcc": 5311,
+      "category": "non_driving",
+      "amountUsd": 76.92
+    },
+    {
+      "txId": "user_016-tx-0006",
+      "date": "2026-01-10",
+      "merchant": "Kroger",
+      "mcc": 5411,
+      "category": "non_driving",
+      "amountUsd": 62.69
+    },
+    {
+      "txId": "user_016-tx-0007",
+      "date": "2026-01-11",
+      "merchant": "Mister Car Wash",
+      "mcc": 7542,
+      "category": "car_wash",
+      "amountUsd": 17.38
+    },
+    {
+      "txId": "user_016-tx-0008",
+      "date": "2026-01-13",
+      "merchant": "Chipotle",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 99.88
+    },
+    {
+      "txId": "user_016-tx-0009",
+      "date": "2026-04-01",
+      "merchant": "State Farm",
+      "mcc": 6300,
+      "category": "insurance",
+      "amountUsd": 182.07
+    },
+    {
+      "txId": "user_016-tx-0010",
+      "date": "2026-04-01",
+      "merchant": "Target",
+      "mcc": 5311,
+      "category": "non_driving",
+      "amountUsd": 49.79
+    },
+    {
+      "txId": "user_016-tx-0011",
+      "date": "2026-04-04",
+      "merchant": "Amazon",
+      "mcc": 5942,
+      "category": "non_driving",
+      "amountUsd": 24.85
+    },
+    {
+      "txId": "user_016-tx-0012",
+      "date": "2026-04-07",
+      "merchant": "Kroger",
+      "mcc": 5411,
+      "category": "non_driving",
+      "amountUsd": 107.33
+    },
+    {
+      "txId": "user_016-tx-0013",
+      "date": "2026-04-10",
+      "merchant": "ParkMobile",
+      "mcc": 7523,
+      "category": "parking",
+      "amountUsd": 3.33
+    },
+    {
+      "txId": "user_016-tx-0014",
+      "date": "2026-04-10",
+      "merchant": "Amazon",
+      "mcc": 5942,
+      "category": "refund",
+      "amountUsd": -62.18
+    },
+    {
+      "txId": "user_016-tx-0015",
+      "date": "2026-04-10",
+      "merchant": "Kroger",
+      "mcc": 5411,
+      "category": "non_driving",
+      "amountUsd": 55.95
+    },
+    {
+      "txId": "user_016-tx-0016",
+      "date": "2026-04-13",
+      "merchant": "Starbucks",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 20.75
+    },
+    {
+      "txId": "user_016-tx-0017",
+      "date": "2026-07-01",
+      "merchant": "State Farm",
+      "mcc": 6300,
+      "category": "insurance",
+      "amountUsd": 182.77
+    },
+    {
+      "txId": "user_016-tx-0018",
+      "date": "2026-07-01",
+      "merchant": "Target",
+      "mcc": 5311,
+      "category": "non_driving",
+      "amountUsd": 58.83
+    },
+    {
+      "txId": "user_016-tx-0019",
+      "date": "2026-07-04",
+      "merchant": "Spotify",
+      "mcc": 5815,
+      "category": "non_driving",
+      "amountUsd": 118.08
+    },
+    {
+      "txId": "user_016-tx-0020",
+      "date": "2026-07-07",
+      "merchant": "Chipotle",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 45.43
+    },
+    {
+      "txId": "user_016-tx-0021",
+      "date": "2026-07-10",
+      "merchant": "Spotify",
+      "mcc": 5815,
+      "category": "non_driving",
+      "amountUsd": 75.31
+    },
+    {
+      "txId": "user_016-tx-0022",
+      "date": "2026-07-12",
+      "merchant": "Mister Car Wash",
+      "mcc": 7542,
+      "category": "car_wash",
+      "amountUsd": 14.94
+    },
+    {
+      "txId": "user_016-tx-0023",
+      "date": "2026-07-13",
+      "merchant": "ParkMobile",
+      "mcc": 7523,
+      "category": "parking",
+      "amountUsd": 12.1
+    },
+    {
+      "txId": "user_016-tx-0024",
+      "date": "2026-07-13",
+      "merchant": "Amazon",
+      "mcc": 5942,
+      "category": "non_driving",
+      "amountUsd": 39.83
+    },
+    {
+      "txId": "user_016-tx-0025",
+      "date": "2026-10-01",
+      "merchant": "State Farm",
+      "mcc": 6300,
+      "category": "insurance",
+      "amountUsd": 185.33
+    },
+    {
+      "txId": "user_016-tx-0026",
+      "date": "2026-10-01",
+      "merchant": "Kroger",
+      "mcc": 5411,
+      "category": "non_driving",
+      "amountUsd": 55
+    },
+    {
+      "txId": "user_016-tx-0027",
+      "date": "2026-10-04",
+      "merchant": "Kroger",
+      "mcc": 5411,
+      "category": "non_driving",
+      "amountUsd": 13.74
+    },
+    {
+      "txId": "user_016-tx-0028",
+      "date": "2026-10-07",
+      "merchant": "ParkMobile",
+      "mcc": 7523,
+      "category": "parking",
+      "amountUsd": 14.27
+    },
+    {
+      "txId": "user_016-tx-0029",
+      "date": "2026-10-07",
+      "merchant": "Starbucks",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 114.97
+    },
+    {
+      "txId": "user_016-tx-0030",
+      "date": "2026-10-08",
+      "merchant": "Lyft",
+      "mcc": 4121,
+      "category": "rideshare",
+      "amountUsd": 14.04
+    },
+    {
+      "txId": "user_016-tx-0031",
+      "date": "2026-10-09",
+      "merchant": "ChargePoint",
+      "mcc": 5552,
+      "category": "ev_charging",
+      "amountUsd": 2.44,
+      "kwh": 8,
+      "pricePerKwh": 0.306,
+      "sessionKind": "l2",
+      "avgKw": 6.6,
+      "durationMin": 73,
+      "kwhFromGrid": 9.1
+    },
+    {
+      "txId": "user_016-tx-0032",
+      "date": "2026-10-10",
+      "merchant": "Amazon",
+      "mcc": 5942,
+      "category": "non_driving",
+      "amountUsd": 57.2
+    },
+    {
+      "txId": "user_016-tx-0033",
+      "date": "2026-10-12",
+      "merchant": "Costco Gas",
+      "mcc": 5541,
+      "category": "fuel",
+      "amountUsd": 24.71,
+      "gallons": 8.79,
+      "pricePerGal": 2.811,
+      "listPricePerGal": 2.811,
+      "loyaltyDiscountPerGal": 0
+    },
+    {
+      "txId": "user_016-tx-0034",
+      "date": "2026-10-13",
+      "merchant": "Amazon",
+      "mcc": 5942,
+      "category": "non_driving",
+      "amountUsd": 8.48
+    },
+    {
+      "txId": "user_016-tx-0035",
+      "date": "2026-10-14",
+      "merchant": "ChargePoint",
+      "mcc": 5552,
+      "category": "ev_charging",
+      "amountUsd": 7.84,
+      "kwh": 18.6,
+      "pricePerKwh": 0.421,
+      "sessionKind": "l2",
+      "avgKw": 6.6,
+      "durationMin": 169,
+      "kwhFromGrid": 21.2
+    }
+  ]
+}

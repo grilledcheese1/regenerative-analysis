@@ -1,10 +1,11 @@
-# Next Move
+# Regentic
 
 Next Move helps a driver decide what to do about their car: keep it, buy out a lease, refinance, or replace it. It
 builds an affordable monthly budget from banking data, compares every option over the same horizon, and explains the
 leading one with the evidence behind each number. The Drives tab replays modeled hybrid drives on real Austin routes.
 
-- `/` Next Move (Home, Drives, Money, Compare, Next Move, Settings)
+- `/` sign in as one of 29 simulated people, then the scroll story (where you stand, commute, options, hybrid value, next move)
+- `/home` the tabbed screens (Home, Drives, Cost, Compare, Next Step, Settings); `?as=<id>` picks the person
 - `/next-move` redirects to `/`
 
 ## Run it
@@ -33,9 +34,12 @@ npm run test:e2e
 - `src/domain/` pure calculation code (integer cents, no React/Next imports)
 - `src/server/providers/` adapters for external services (server-only)
 - `src/app/api/` route handlers
-- `src/components/next-move/` Next Move screens; `src/components/` Drives replay (map, timeline, panels)
+- `src/components/story/` the scroll story and entry; `src/components/auth/` the cookie-only demo sign-in
+- `src/components/next-move/` the tabbed screens; `src/components/` Drives replay (map, timeline, panels)
 - `src/lib/model/` the braking and regen model behind the Drives replay; `src/data/routes.json` its cached routes
   (`npm run fetch-demo-routes` refreshes them)
+- `src/fixtures/people.generated.json` the 26 generated people, built from `simulated_user_data/` by
+  `node scripts/build-people.ts`; design references are in `docs/design/`
 
 ## Environment variables
 

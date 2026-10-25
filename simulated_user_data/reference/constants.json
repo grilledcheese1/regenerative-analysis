@@ -1,0 +1,91 @@
+{
+  "_note": "SIMULATED / ESTIMATE shared physics constants and limit curves. regenGripUtilization: stability control only lets regen use this share of mu*g*phi (our addition to the AGENTS.md grip cap).",
+  "gravity": 9.81,
+  "airDensitySeaLevel": 1.225,
+  "socFadeStart": 0.8,
+  "socFadeMaxLoss": 0.9,
+  "coldBattery": {
+    "fullRegenAboveC": 15,
+    "factorAtZeroC": 0.65,
+    "factorAtMinus15C": 0.5
+  },
+  "hvacKw": {
+    "base": 0.25,
+    "acAbove26C": 1.2,
+    "evHeatBelow5C": 2.5,
+    "acPerCAbove26": 0.08
+  },
+  "evDriveEffDefault": 0.88,
+  "referenceTrip": {
+    "distanceKm": 16,
+    "roadMix": {
+      "urban": 0.3,
+      "suburban": 0.25,
+      "highway": 0.45
+    },
+    "tempC": 21,
+    "driver": "mixed",
+    "gainPerKm": 0
+  },
+  "hotBattery": {
+    "throttleAboveC": 35,
+    "lossPerC": 0.02,
+    "minFactor": 0.7
+  },
+  "tires": {
+    "winter": {
+      "crr": 1.05,
+      "snowIceMu": 1.4,
+      "wetMu": 1.03
+    },
+    "summer": {
+      "crr": 0.97,
+      "snowIceMu": 0.5,
+      "wetMu": 0.95
+    },
+    "all_season": {
+      "crr": 1.0,
+      "snowIceMu": 1.0,
+      "wetMu": 1.0
+    },
+    "underinflationCrrPerPct": 0.003
+  },
+  "roofRack": {
+    "cdaAddM2": 0.1
+  },
+  "batteryAging": {
+    "regenPowerLossAtZeroHealth": 0.5,
+    "fadePerYear": 0.015
+  },
+  "heatWave": {
+    "startProbPerDay": 0.04,
+    "minMonthMeanC": 22,
+    "lengthDays": [
+      3,
+      6
+    ],
+    "deltaC": 7
+  },
+  "coldSnap": {
+    "startProbPerDay": 0.05,
+    "maxMonthMeanC": 2,
+    "lengthDays": [
+      3,
+      7
+    ],
+    "deltaC": -9
+  },
+  "storm": {
+    "precipMm": 12,
+    "snowPrecipMm": 6,
+    "skipCommuteProb": 0.15,
+    "skipOtherProb": 0.6
+  },
+  "wearAndTax": {
+    "tradeInDiscount": 0.08,
+    "dealerFeeUsd": 500,
+    "downPaymentShare": 0.1,
+    "financeTermMonths": 60
+  },
+  "regenGripUtilization": 0.6
+}

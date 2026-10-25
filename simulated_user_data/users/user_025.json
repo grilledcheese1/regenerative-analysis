@@ -1,0 +1,97 @@
+{
+  "userId": "user_025",
+  "alias": "Elif (Pittsburgh, PA)",
+  "simulated": true,
+  "archetype": "mountain",
+  "regionId": "pittsburgh_pa",
+  "home": {
+    "lat": 40.44962,
+    "lon": -80.05413
+  },
+  "work": {
+    "lat": 40.51395,
+    "lon": -79.98459
+  },
+  "commute": {
+    "oneWayKm": 25,
+    "workDaysPerWeek": 5,
+    "roadMix": {
+      "urban": 0.1,
+      "suburban": 0.6,
+      "highway": 0.3
+    }
+  },
+  "longTripRate": 0.17,
+  "vehicle": {
+    "vehicleId": "toyota_camry_hybrid_xse_2025",
+    "modelYear": 2016,
+    "ageYears": 9,
+    "odometerKm": 356535,
+    "estimatedValueUsd": 15100,
+    "batteryHealth": 0.86
+  },
+  "driver": {
+    "style": "mixed",
+    "jitterDecelMs2": 0.03,
+    "usesCruiseControl": false,
+    "ecoMode": false,
+    "highwayCruiseMs": 27.4,
+    "speedLimitMs": 31.3
+  },
+  "load": {
+    "typicalExtraMassKg": 350,
+    "crrMult": 1.019,
+    "unpavedShare": 0.12,
+    "roofRack": false,
+    "towing": null
+  },
+  "tires": {
+    "type": "winter_seasonal",
+    "pressureDriftPct": 0
+  },
+  "charging": {
+    "access": "home",
+    "hasHomeCharger": true,
+    "mix": {
+      "home": 0.88,
+      "publicL2": 0.04,
+      "publicDC": 0.08
+    },
+    "touPlan": true,
+    "offPeakShare": 0.64,
+    "plugInHabit": 0.83
+  },
+  "income": {
+    "band": "mid",
+    "householdUsd": 106738
+  },
+  "preferences": {
+    "bodyStyles": [
+      "sedan",
+      "suv",
+      "hatchback"
+    ],
+    "excludeMakes": [],
+    "budgetCapUsd": 47000,
+    "needsTowingKg": 0,
+    "minRangeKm": 350
+  },
+  "finance": {
+    "fuelBudgetUsdPerMonth": 306,
+    "priceSensitivity": 0.93,
+    "insurer": "GEICO",
+    "insuranceUserFactor": 0.97,
+    "registrationMonth": 10,
+    "loyalty": {
+      "program": "Fuel rewards",
+      "discountPerGal": 0.05
+    },
+    "loan": null
+  },
+  "annualDrift": 1.007,
+  "lifeEvents": [],
+  "terrainOverride": {
+    "gainPerKmMean": 38,
+    "gainPerKmSd": 10
+  }
+}

@@ -24,7 +24,7 @@ const result = (origin: "live" | "saved_fixture") => ({
 });
 
 async function openCompare(page: Page) {
-  await page.goto("/");
+  await page.goto("/home");
   await expect(page.getByText("Banking loaded (fixture)")).toBeVisible();
   await page.getByRole("navigation", { name: "Screens" }).getByRole("button", { name: "Compare" }).click();
 }
@@ -86,8 +86,8 @@ test("R5 dealers appear with Maria's buyout-quote next step", async ({ page }) =
       },
     }),
   );
-  await page.goto("/");
-  await page.getByRole("navigation", { name: "Screens" }).getByRole("button", { name: "Next Move", exact: true }).click();
+  await page.goto("/home");
+  await page.getByRole("navigation", { name: "Screens" }).getByRole("button", { name: "Next Step", exact: true }).click();
   await expect(page.getByText("Toyota dealers near Austin")).toBeVisible();
   await expect(page.getByRole("link", { name: "Round Rock Toyota" })).toHaveAttribute("rel", /noopener/);
   await expect(page.getByText(/doesn't request one for you/)).toBeVisible();

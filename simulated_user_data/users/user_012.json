@@ -1,0 +1,101 @@
+{
+  "userId": "user_012",
+  "alias": "Caleb (Denver, CO)",
+  "simulated": true,
+  "archetype": "typical",
+  "regionId": "denver_co",
+  "home": {
+    "lat": 39.70604,
+    "lon": -104.91891
+  },
+  "work": {
+    "lat": 39.73135,
+    "lon": -105.0418
+  },
+  "commute": {
+    "oneWayKm": 30.6,
+    "workDaysPerWeek": 5,
+    "roadMix": {
+      "urban": 0.311,
+      "suburban": 0.392,
+      "highway": 0.296
+    }
+  },
+  "longTripRate": 0.7,
+  "vehicle": {
+    "vehicleId": "honda_civic_2025",
+    "modelYear": 2022,
+    "ageYears": 3,
+    "odometerKm": 61593,
+    "estimatedValueUsd": 16300,
+    "batteryHealth": null
+  },
+  "driver": {
+    "style": "mixed",
+    "jitterDecelMs2": -0.2,
+    "usesCruiseControl": false,
+    "ecoMode": false,
+    "highwayCruiseMs": 26.1,
+    "speedLimitMs": 31.3
+  },
+  "load": {
+    "typicalExtraMassKg": 80,
+    "crrMult": 0.951,
+    "unpavedShare": 0.082,
+    "roofRack": false,
+    "towing": null
+  },
+  "tires": {
+    "type": "winter_seasonal",
+    "pressureDriftPct": 0
+  },
+  "charging": {
+    "access": "home",
+    "hasHomeCharger": true,
+    "mix": {
+      "home": 0.88,
+      "publicL2": 0.04,
+      "publicDC": 0.08
+    },
+    "touPlan": true,
+    "offPeakShare": 0.83,
+    "plugInHabit": 0.63
+  },
+  "income": {
+    "band": "low",
+    "householdUsd": 31290
+  },
+  "preferences": {
+    "bodyStyles": [
+      "sedan",
+      "truck"
+    ],
+    "excludeMakes": [
+      "Kia"
+    ],
+    "budgetCapUsd": 34000,
+    "needsTowingKg": 0,
+    "minRangeKm": 0
+  },
+  "finance": {
+    "fuelBudgetUsdPerMonth": 148,
+    "priceSensitivity": 0.35,
+    "insurer": "State Farm",
+    "insuranceUserFactor": 1.01,
+    "registrationMonth": 9,
+    "loyalty": {
+      "program": "Fuel rewards",
+      "discountPerGal": 0.05
+    },
+    "loan": {
+      "lender": "Ally Auto",
+      "aprPct": 5.69,
+      "termMonths": 48,
+      "monthsRemaining": 9,
+      "monthlyPaymentUsd": 499,
+      "balanceUsd": 4386
+    }
+  },
+  "annualDrift": 1.092,
+  "lifeEvents": []
+}

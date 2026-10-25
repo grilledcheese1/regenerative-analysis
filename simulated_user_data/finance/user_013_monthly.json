@@ -1,0 +1,64 @@
+{
+  "userId": "user_013",
+  "simulated": true,
+  "annualFixedCosts": {
+    "insuranceUsdPerYear": 1372,
+    "registrationUsdPerYear": 120,
+    "maintenanceUsdPerYear": 650,
+    "loanPaymentUsdPerYear": 0
+  },
+  "months": [
+    {
+      "month": "2026-01",
+      "regionId": "minneapolis_mn",
+      "tripsInSample": 30,
+      "sampledDays": 14,
+      "modeledEnergyCostUsd": 46.21,
+      "cardEnergySpendUsd": 54.63,
+      "budgetUsd": 209,
+      "varianceVsBudgetUsd": -162.79,
+      "avgGasPriceUsdPerGal": 2.782,
+      "priceSpike": false,
+      "fixedMonthlyUsd": 178.5
+    },
+    {
+      "month": "2026-04",
+      "regionId": "minneapolis_mn",
+      "tripsInSample": 27,
+      "sampledDays": 14,
+      "modeledEnergyCostUsd": 45.9,
+      "cardEnergySpendUsd": 64.22,
+      "budgetUsd": 209,
+      "varianceVsBudgetUsd": -163.1,
+      "avgGasPriceUsdPerGal": 2.923,
+      "priceSpike": false,
+      "fixedMonthlyUsd": 178.5
+    },
+    {
+      "month": "2026-07",
+      "regionId": "minneapolis_mn",
+      "tripsInSample": 31,
+      "sampledDays": 14,
+      "modeledEnergyCostUsd": 68.49,
+      "cardEnergySpendUsd": 61.67,
+      "budgetUsd": 209,
+      "varianceVsBudgetUsd": -140.51,
+      "avgGasPriceUsdPerGal": 3.027,
+      "priceSpike": false,
+      "fixedMonthlyUsd": 178.5
+    },
+    {
+      "month": "2026-10",
+      "regionId": "minneapolis_mn",
+      "tripsInSample": 32,
+      "sampledDays": 14,
+      "modeledEnergyCostUsd": 57.81,
+      "cardEnergySpendUsd": 54.91,
+      "budgetUsd": 209,
+      "varianceVsBudgetUsd": -151.19,
+      "avgGasPriceUsdPerGal": 2.914,
+      "priceSpike": false,
+      "fixedMonthlyUsd": 178.5
+    }
+  ]
+}

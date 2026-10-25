@@ -1,0 +1,64 @@
+{
+  "userId": "user_020",
+  "simulated": true,
+  "annualFixedCosts": {
+    "insuranceUsdPerYear": 2436,
+    "registrationUsdPerYear": 113,
+    "maintenanceUsdPerYear": 580,
+    "loanPaymentUsdPerYear": 8256
+  },
+  "months": [
+    {
+      "month": "2026-01",
+      "regionId": "miami_fl",
+      "tripsInSample": 34,
+      "sampledDays": 14,
+      "modeledEnergyCostUsd": 27.21,
+      "cardEnergySpendUsd": 0,
+      "budgetUsd": 288,
+      "varianceVsBudgetUsd": -260.79,
+      "avgGasPriceUsdPerGal": 3.198,
+      "priceSpike": false,
+      "fixedMonthlyUsd": 948.75
+    },
+    {
+      "month": "2026-04",
+      "regionId": "miami_fl",
+      "tripsInSample": 25,
+      "sampledDays": 14,
+      "modeledEnergyCostUsd": 20.53,
+      "cardEnergySpendUsd": 0,
+      "budgetUsd": 288,
+      "varianceVsBudgetUsd": -267.47,
+      "avgGasPriceUsdPerGal": 3.301,
+      "priceSpike": false,
+      "fixedMonthlyUsd": 948.75
+    },
+    {
+      "month": "2026-07",
+      "regionId": "miami_fl",
+      "tripsInSample": 25,
+      "sampledDays": 14,
+      "modeledEnergyCostUsd": 26.35,
+      "cardEnergySpendUsd": 0,
+      "budgetUsd": 288,
+      "varianceVsBudgetUsd": -261.65,
+      "avgGasPriceUsdPerGal": 3.402,
+      "priceSpike": false,
+      "fixedMonthlyUsd": 948.75
+    },
+    {
+      "month": "2026-10",
+      "regionId": "miami_fl",
+      "tripsInSample": 25,
+      "sampledDays": 14,
+      "modeledEnergyCostUsd": 26.39,
+      "cardEnergySpendUsd": 61.09,
+      "budgetUsd": 288,
+      "varianceVsBudgetUsd": -261.61,
+      "avgGasPriceUsdPerGal": 3.311,
+      "priceSpike": false,
+      "fixedMonthlyUsd": 948.75
+    }
+  ]
+}

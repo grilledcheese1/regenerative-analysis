@@ -1,0 +1,42 @@
+{
+  "userId": "user_004",
+  "simulated": true,
+  "noiseLevel": "med",
+  "readings": [
+    {
+      "date": "2026-01-01",
+      "odometerKm": 136158,
+      "source": "state_inspection"
+    },
+    {
+      "date": "2026-01-14",
+      "odometerKm": 144210,
+      "source": "insurance_telematics"
+    },
+    {
+      "date": "2026-04-01",
+      "odometerKm": 148583,
+      "source": "state_inspection"
+    },
+    {
+      "date": "2026-04-14",
+      "odometerKm": 149304,
+      "source": "dealer_service"
+    },
+    {
+      "date": "2026-07-01",
+      "odometerKm": 153323,
+      "source": "state_inspection"
+    },
+    {
+      "date": "2026-10-01",
+      "odometerKm": 158182,
+      "source": "state_inspection"
+    },
+    {
+      "date": "2026-10-14",
+      "odometerKm": 158830,
+      "source": "state_inspection"
+    }
+  ]
+}

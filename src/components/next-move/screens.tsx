@@ -134,8 +134,8 @@ export function MoneyScreen({
   return (
     <section className="section">
       <div className="section-head">
-        <span className="label">Money</span>
-        <h2>What the car can cost each month</h2>
+        <span className="label">Cost</span>
+        <h2>What The Cost Can Cost Each Month</h2>
         <span className="tag">{bank.mode === "sandbox" ? "Nessie sandbox" : "Nessie-format fixture"}</span>
       </div>
       <p className="lede">
@@ -337,7 +337,7 @@ interface ActionStep {
   checklist: string[];
 }
 
-const ACTION_STEPS: Record<NextAction, ActionStep> = {
+export const ACTION_STEPS: Record<NextAction, ActionStep> = {
   request_buyout_quote: {
     cta: "Open Toyota Financial Services lease-end options",
     href: "https://www.toyotafinancial.com/us/en/end_of_lease_options/faqs.html",
@@ -354,7 +354,7 @@ const ACTION_STEPS: Record<NextAction, ActionStep> = {
   review_budget: {
     cta: "Review the budget",
     checklist: [
-      "Check the spending categories on the Money screen",
+      "Check the spending categories on the Cost screen",
       "Consider the savings goal and reserve you chose",
       "Request a payoff statement before acting on a refinance or sale",
     ],
@@ -388,7 +388,7 @@ export function NextMoveScreen({
   return (
     <section className="section">
       <div className="section-head">
-        <span className="label">Next move</span>
+        <span className="label" style={{ fontWeight: 700 }}>Next Step</span>
         <h2>{r.headline}</h2>
         <span className={`status status-${r.status}`}>{r.status.replaceAll("_", " ")}</span>
       </div>

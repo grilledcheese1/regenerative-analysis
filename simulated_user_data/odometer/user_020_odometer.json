@@ -1,0 +1,46 @@
+{
+  "userId": "user_020",
+  "simulated": true,
+  "readings": [
+    {
+      "date": "2026-01-01",
+      "odometerKm": 60340,
+      "source": "state_inspection"
+    },
+    {
+      "date": "2026-01-14",
+      "odometerKm": 60726,
+      "source": "dealer_service"
+    },
+    {
+      "date": "2026-04-01",
+      "odometerKm": 62850,
+      "source": "dealer_service"
+    },
+    {
+      "date": "2026-04-14",
+      "odometerKm": 63128,
+      "source": "state_inspection"
+    },
+    {
+      "date": "2026-07-01",
+      "odometerKm": 64675,
+      "source": "dealer_service"
+    },
+    {
+      "date": "2026-07-14",
+      "odometerKm": 64949,
+      "source": "state_inspection"
+    },
+    {
+      "date": "2026-10-01",
+      "odometerKm": 66497,
+      "source": "state_inspection"
+    },
+    {
+      "date": "2026-10-14",
+      "odometerKm": 66784,
+      "source": "state_inspection"
+    }
+  ]
+}

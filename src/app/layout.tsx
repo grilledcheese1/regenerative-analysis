@@ -4,7 +4,7 @@ import "./globals.css";
 import "./theme.css";
 
 export const metadata: Metadata = {
-  title: "Next Move",
+  title: "Regentic",
   description: "Vehicle ownership decisions from your driving, contract and budget.",
 };
 

@@ -1,0 +1,99 @@
+{
+  "userId": "user_007",
+  "alias": "Sofia (Atlanta, GA)",
+  "simulated": true,
+  "archetype": "typical",
+  "regionId": "atlanta_ga",
+  "home": {
+    "lat": 33.68561,
+    "lon": -84.45062
+  },
+  "work": {
+    "lat": 33.68356,
+    "lon": -84.46475
+  },
+  "commute": {
+    "oneWayKm": 15.1,
+    "workDaysPerWeek": 3,
+    "roadMix": {
+      "urban": 0.361,
+      "suburban": 0.265,
+      "highway": 0.373
+    }
+  },
+  "longTripRate": 0.72,
+  "vehicle": {
+    "vehicleId": "toyota_crown_hybrid_2025",
+    "modelYear": 2018,
+    "ageYears": 7,
+    "odometerKm": 119546,
+    "estimatedValueUsd": 21700,
+    "batteryHealth": 0.892
+  },
+  "driver": {
+    "style": "mixed",
+    "jitterDecelMs2": -0.11,
+    "usesCruiseControl": true,
+    "ecoMode": true,
+    "highwayCruiseMs": 25,
+    "speedLimitMs": 31.3
+  },
+  "load": {
+    "typicalExtraMassKg": 160,
+    "crrMult": 1.051,
+    "unpavedShare": 0.041,
+    "roofRack": false,
+    "towing": null
+  },
+  "tires": {
+    "type": "all_season",
+    "pressureDriftPct": 17
+  },
+  "charging": {
+    "access": "home",
+    "hasHomeCharger": true,
+    "mix": {
+      "home": 0.88,
+      "publicL2": 0.04,
+      "publicDC": 0.08
+    },
+    "touPlan": true,
+    "offPeakShare": 0.62,
+    "plugInHabit": 0.56
+  },
+  "income": {
+    "band": "low",
+    "householdUsd": 40215
+  },
+  "preferences": {
+    "bodyStyles": [
+      "sedan"
+    ],
+    "excludeMakes": [
+      "Mazda"
+    ],
+    "budgetCapUsd": 47000,
+    "needsTowingKg": 0,
+    "minRangeKm": 0
+  },
+  "finance": {
+    "fuelBudgetUsdPerMonth": 229,
+    "priceSensitivity": 0.03,
+    "insurer": "State Farm",
+    "insuranceUserFactor": 1.13,
+    "registrationMonth": 4,
+    "loyalty": {
+      "program": "Card fuel rebate",
+      "discountPerGal": 0.07
+    },
+    "loan": null
+  },
+  "annualDrift": 1.054,
+  "lifeEvents": [
+    {
+      "type": "job_change",
+      "fromMonth": 6,
+      "newOneWayKm": 3
+    }
+  ]
+}

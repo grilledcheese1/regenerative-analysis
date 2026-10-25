@@ -1,0 +1,335 @@
+{
+  "userId": "user_013",
+  "simulated": true,
+  "noiseLevel": "med",
+  "transactions": [
+    {
+      "txId": "user_013-tx-0001",
+      "date": "2026-01-01",
+      "merchant": "Allstate",
+      "mcc": 6300,
+      "category": "insurance",
+      "amountUsd": 112.84
+    },
+    {
+      "txId": "user_013-tx-0002",
+      "date": "2026-01-01",
+      "merchant": "Starbucks",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 16.76
+    },
+    {
+      "txId": "user_013-tx-0003",
+      "date": "2026-01-04",
+      "merchant": "E-ZPass",
+      "mcc": 4784,
+      "category": "tolls",
+      "amountUsd": 18.62
+    },
+    {
+      "txId": "user_013-tx-0004",
+      "date": "2026-01-04",
+      "merchant": "Chipotle",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 116.19
+    },
+    {
+      "txId": "user_013-tx-0005",
+      "date": "2026-01-07",
+      "merchant": "Discount Tire",
+      "mcc": 7538,
+      "category": "maintenance",
+      "amountUsd": 183.57
+    },
+    {
+      "txId": "user_013-tx-0006",
+      "date": "2026-01-07",
+      "merchant": "Target",
+      "mcc": 5311,
+      "category": "non_driving",
+      "amountUsd": 74.79
+    },
+    {
+      "txId": "user_013-tx-0007",
+      "date": "2026-01-10",
+      "merchant": "Valero",
+      "mcc": 5541,
+      "category": "fuel",
+      "amountUsd": 24.67,
+      "gallons": 8.67,
+      "pricePerGal": 2.845,
+      "listPricePerGal": 2.895,
+      "loyaltyDiscountPerGal": 0.05
+    },
+    {
+      "txId": "user_013-tx-0008",
+      "date": "2026-01-10",
+      "merchant": "Target",
+      "mcc": 5311,
+      "category": "non_driving",
+      "amountUsd": 102.79
+    },
+    {
+      "txId": "user_013-tx-0008-dup",
+      "date": "2026-01-10",
+      "merchant": "Target",
+      "mcc": 5311,
+      "category": "non_driving",
+      "amountUsd": 102.79
+    },
+    {
+      "txId": "user_013-tx-0009",
+      "date": "2026-01-13",
+      "merchant": "Starbucks",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 99.72
+    },
+    {
+      "txId": "user_013-tx-0010",
+      "date": "2026-04-01",
+      "merchant": "Allstate",
+      "mcc": 6300,
+      "category": "insurance",
+      "amountUsd": 114.16
+    },
+    {
+      "txId": "user_013-tx-0011",
+      "date": "2026-04-01",
+      "merchant": "CHIPOTLE",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 103.25
+    },
+    {
+      "txId": "user_013-tx-0012",
+      "date": "2026-04-03",
+      "merchant": "E-ZPass",
+      "mcc": 4784,
+      "category": "tolls",
+      "amountUsd": 6.76
+    },
+    {
+      "txId": "user_013-tx-0013",
+      "date": "2026-04-03",
+      "merchant": "Amazon",
+      "mcc": 5942,
+      "category": "refund",
+      "amountUsd": -38.1
+    },
+    {
+      "txId": "user_013-tx-0014",
+      "date": "2026-04-04",
+      "merchant": "Kroger",
+      "mcc": 5411,
+      "category": "non_driving",
+      "amountUsd": 13.1
+    },
+    {
+      "txId": "user_013-tx-0015",
+      "date": "2026-04-07",
+      "merchant": "Chipotle",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 93.73
+    },
+    {
+      "txId": "user_013-tx-0015-dup",
+      "date": "2026-04-08",
+      "merchant": "Chipotle",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 93.73
+    },
+    {
+      "txId": "user_013-tx-0016",
+      "date": "2026-04-09",
+      "merchant": "Mister Car Wash",
+      "mcc": 7542,
+      "category": "car_wash",
+      "amountUsd": 23.18
+    },
+    {
+      "txId": "user_013-tx-0017",
+      "date": "2026-04-09",
+      "merchant": "Lyft",
+      "mcc": 4121,
+      "category": "rideshare",
+      "amountUsd": 32.99
+    },
+    {
+      "txId": "user_013-tx-0018",
+      "date": "2026-04-10",
+      "merchant": "Pep Boys",
+      "mcc": 7538,
+      "category": "maintenance",
+      "amountUsd": 272.88
+    },
+    {
+      "txId": "user_013-tx-0019",
+      "date": "2026-04-10",
+      "merchant": "Chipotle",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 67.03
+    },
+    {
+      "txId": "user_013-tx-0020",
+      "date": "2026-04-12",
+      "merchant": "Exxon",
+      "mcc": 5541,
+      "category": "fuel",
+      "amountUsd": 29.97,
+      "gallons": 10.26,
+      "pricePerGal": 2.921,
+      "listPricePerGal": 2.971,
+      "loyaltyDiscountPerGal": 0.05
+    },
+    {
+      "txId": "user_013-tx-0021",
+      "date": "2026-04-13",
+      "merchant": "Kroger",
+      "mcc": 5411,
+      "category": "non_driving",
+      "amountUsd": 81.79
+    },
+    {
+      "txId": "user_013-tx-0022",
+      "date": "2026-07-01",
+      "merchant": "Allstate",
+      "mcc": 6300,
+      "category": "insurance",
+      "amountUsd": 116.43
+    },
+    {
+      "txId": "user_013-tx-0023",
+      "date": "2026-07-01",
+      "merchant": "Kroger",
+      "mcc": 5411,
+      "category": "non_driving",
+      "amountUsd": 68.94
+    },
+    {
+      "txId": "user_013-tx-0024",
+      "date": "2026-07-04",
+      "merchant": "Chipotle",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 4.88
+    },
+    {
+      "txId": "user_013-tx-0025",
+      "date": "2026-07-07",
+      "merchant": "Chipotle",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 84.18
+    },
+    {
+      "txId": "user_013-tx-0026",
+      "date": "2026-07-10",
+      "merchant": "Starbucks",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 57.18
+    },
+    {
+      "txId": "user_013-tx-0027",
+      "date": "2026-07-12",
+      "merchant": "QT 8555",
+      "mcc": 5541,
+      "category": "fuel",
+      "amountUsd": 27.85,
+      "gallons": 8.77,
+      "pricePerGal": 3.176,
+      "listPricePerGal": 3.176,
+      "loyaltyDiscountPerGal": 0
+    },
+    {
+      "txId": "user_013-tx-0028",
+      "date": "2026-07-13",
+      "merchant": "Chipotle",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 10.98
+    },
+    {
+      "txId": "user_013-tx-0029",
+      "date": "2026-10-01",
+      "merchant": "Allstate",
+      "mcc": 6300,
+      "category": "insurance",
+      "amountUsd": 112.76
+    },
+    {
+      "txId": "user_013-tx-0030",
+      "date": "2026-10-01",
+      "merchant": "Chipotle",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 57.26
+    },
+    {
+      "txId": "user_013-tx-0031",
+      "date": "2026-10-04",
+      "merchant": "Spotify",
+      "mcc": 5815,
+      "category": "non_driving",
+      "amountUsd": 48.39
+    },
+    {
+      "txId": "user_013-tx-0032",
+      "date": "2026-10-06",
+      "merchant": "E-ZPass",
+      "mcc": 4784,
+      "category": "tolls",
+      "amountUsd": 5.73
+    },
+    {
+      "txId": "user_013-tx-0033",
+      "date": "2026-10-07",
+      "merchant": "Chipotle",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 18.01
+    },
+    {
+      "txId": "user_013-tx-0034",
+      "date": "2026-10-10",
+      "merchant": "Chipotle",
+      "mcc": 5814,
+      "category": "non_driving",
+      "amountUsd": 45.99
+    },
+    {
+      "txId": "user_013-tx-0035",
+      "date": "2026-10-11",
+      "merchant": "Discount Tire",
+      "mcc": 7538,
+      "category": "maintenance",
+      "amountUsd": 226.55
+    },
+    {
+      "txId": "user_013-tx-0036",
+      "date": "2026-10-12",
+      "merchant": "Sheetz",
+      "mcc": 5541,
+      "category": "fuel",
+      "amountUsd": 24.8,
+      "gallons": 9.08,
+      "pricePerGal": 2.731,
+      "listPricePerGal": 2.781,
+      "loyaltyDiscountPerGal": 0.05
+    },
+    {
+      "txId": "user_013-tx-0037",
+      "date": "2026-10-13",
+      "merchant": "Target",
+      "mcc": 5311,
+      "category": "non_driving",
+      "amountUsd": 69.03
+    }
+  ]
+}
