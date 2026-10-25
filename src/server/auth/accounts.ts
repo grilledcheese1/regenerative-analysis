@@ -51,7 +51,7 @@ function store(): Map<string, AccountRecord> {
   const f = file();
   if (f) {
     try {
-      for (const a of JSON.parse(readFileSync(f, "utf8")) as AccountRecord[]) m.set(a.email, a);
+      for (const a of JSON.parse(readFileSync(/*turbopackIgnore: true*/ f, "utf8")) as AccountRecord[]) m.set(a.email, a);
     } catch {
       // No file yet, or unreadable: start empty.
     }
@@ -63,8 +63,8 @@ function persist() {
   const f = file();
   if (!f) return;
   try {
-    mkdirSync(path.dirname(f), { recursive: true });
-    writeFileSync(f, JSON.stringify([...store().values()], null, 1));
+    mkdirSync(/*turbopackIgnore: true*/ path.dirname(f), { recursive: true });
+    writeFileSync(/*turbopackIgnore: true*/ f, JSON.stringify([...store().values()], null, 1));
   } catch {
     // Read-only filesystem: memory still works.
   }
