@@ -1,11 +1,13 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useMemo, useState } from "react";
+import SignIn from "@/components/auth/SignIn";
 import DrivesView from "@/components/DrivesView";
 import type { CompareRequest, DrivingProfile, ScenarioInputs, SourceKind } from "@/contracts";
 import { runScenario } from "@/domain/recommendations/scenario";
 import { catalogVehicle } from "@/fixtures/catalog";
-import { PERSONAS } from "@/fixtures/personas";
+import { PEOPLE, persona as findPersona } from "@/fixtures/personas";
 import BankingSyncBar from "./banking/BankingSyncBar";
 import { useBankingSync } from "./banking/useBankingSync";
 import ImportDrive from "./import/ImportDrive";
@@ -16,9 +18,9 @@ const TABS = ["home", "drives", "money", "compare", "next", "settings"] as const
 type Tab = (typeof TABS)[number];
 const TAB_LABEL: Record<Tab, string> = { home: "Home", drives: "Drives", money: "Money", compare: "Compare", next: "Next Move", settings: "Settings" };
 
-export default function NextMoveApp() {
-  const [personaId, setPersonaId] = useState(PERSONAS[0].id);
-  const persona = PERSONAS.find((p) => p.id === personaId)!;
+export default function NextMoveApp({ initialPersonaId }: { initialPersonaId?: string }) {
+  const [personaId, setPersonaId] = useState(initialPersonaId && findPersona(initialPersonaId) ? initialPersonaId : PEOPLE[0].id);
+  const persona = findPersona(personaId)!;
   const vehicle = catalogVehicle(persona.vehicle.catalogId);
   const [tab, setTab] = useState<Tab>("home");
   const banking = useBankingSync(personaId);
@@ -37,7 +39,7 @@ export default function NextMoveApp() {
   const [highlight, setHighlight] = useState<string[]>([]);
 
   const selectPersona = (id: string) => {
-    const p = PERSONAS.find((x) => x.id === id)!;
+    const p = findPersona(id)!;
     setPersonaId(id);
     setExtraSpendingCents(0);
     setIncomeConfirmed(false);
@@ -89,12 +91,14 @@ export default function NextMoveApp() {
           Next<em>Move</em>
         </div>
         <select id="persona" name="persona" value={personaId} onChange={(e) => selectPersona(e.target.value)} aria-label="Demo customer">
-          {PERSONAS.map((p) => (
+          {PEOPLE.map((p) => (
             <option key={p.id} value={p.id}>
               {p.summary}
             </option>
           ))}
         </select>
+        <Link href="/next-move" className="linkish">Story view</Link>
+        <SignIn />
         <div className="modes" aria-label="Data sources">
           <span className="tag">Banking · {bankingTag}</span>
           <span className="tag">Driving · {usageSource ? "imported" : "modeled"}</span>

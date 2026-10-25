@@ -1,4 +1,5 @@
 import { known, unknown, type Persona } from "@/contracts";
+import generated from "./people.generated.json";
 
 // Three synthetic customers. Every rate, price, value and premium below is an invented
 // scenario input, not a Toyota offer, insurer quote or credit decision.
@@ -184,4 +185,19 @@ export const PERSONAS: Persona[] = [
   },
 ];
 
-export const persona = (id: string) => PERSONAS.find((p) => p.id === id);
+// Twenty-six more synthetic people to sign in as (scripts/build-people.ts). They are kept out of PERSONAS on purpose:
+// PERSONAS is the curated set that the Nessie sandbox is seeded with. Looking a person up by id covers both.
+export const GENERATED_PEOPLE = generated.personas as unknown as Persona[];
+export const PEOPLE: Persona[] = [...PERSONAS, ...GENERATED_PEOPLE];
+
+export const persona = (id: string) => PEOPLE.find((p) => p.id === id);
+
+// How each simulated person drives. Curated personas are set by hand; the rest come from simulated_user_data.
+export type DriveStyle = "smooth" | "mixed" | "aggressive";
+const STYLES: Record<string, DriveStyle> = {
+  maria: "aggressive",
+  devon: "smooth",
+  kai: "mixed",
+  ...(generated.styles as Record<string, DriveStyle>),
+};
+export const styleOf = (id: string): DriveStyle => STYLES[id] ?? "mixed";

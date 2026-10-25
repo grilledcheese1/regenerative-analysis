@@ -316,7 +316,7 @@ interface ActionStep {
   checklist: string[];
 }
 
-const ACTION_STEPS: Record<NextAction, ActionStep> = {
+export const ACTION_STEPS: Record<NextAction, ActionStep> = {
   request_buyout_quote: {
     cta: "Open Toyota Financial Services lease-end options",
     href: "https://www.toyotafinancial.com/us/en/end_of_lease_options/faqs.html",
