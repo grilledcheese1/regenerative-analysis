@@ -14,10 +14,20 @@ export const asOwner = (who: keyof typeof UUIDS | null) => {
 };
 export const ownerUuid = (who: keyof typeof UUIDS) => UUIDS[who];
 
+// Every other cookie (e.g. the nm_account session) lives in a small jar.
+const jar = new Map<string, string>();
+export const resetJar = () => jar.clear();
+
 export const cookiesMock = async () => ({
-  get: (name: string) => (name === "nm_sid" && current ? { name, value: current } : undefined),
+  get: (name: string) => {
+    if (name === "nm_sid") return current ? { name, value: current } : undefined;
+    const value = jar.get(name);
+    return value ? { name, value } : undefined;
+  },
   set: (name: string, value: string) => {
     setCookies.push({ name, value });
-    current = value;
+    if (name === "nm_sid") current = value;
+    else if (value) jar.set(name, value);
+    else jar.delete(name);
   },
 });
