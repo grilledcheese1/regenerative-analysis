@@ -6,7 +6,7 @@ import { useMemo, useRef, useState } from "react";
 import type { Persona } from "@/contracts";
 import { catalogVehicle } from "@/fixtures/catalog";
 import { PEOPLE } from "@/fixtures/personas";
-import { signIn, signOut, useSignedInId } from "./auth";
+import { exitCaseStudy as signOut, openCaseStudy as signIn, useCaseStudyId as useSignedInId } from "./caseStudy";
 
 const SITUATION = { lease: "Lease", loan: "Loan", owned: "Paid off" } as const;
 const vehicleName = (p: Persona) => {

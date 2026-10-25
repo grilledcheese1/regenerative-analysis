@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSyncExternalStore } from "react";
 import SignIn from "@/components/auth/SignIn";
-import { useSignedInId } from "@/components/auth/auth";
+import { useCaseStudyId } from "@/components/auth/caseStudy";
 import { PEOPLE, persona } from "@/fixtures/personas";
 import { StaggerItem, StaggerList, MotionProvider } from "./motion";
 import Story from "./Story";
@@ -14,7 +14,7 @@ const useHydrated = () => useSyncExternalStore(noop, () => true, () => false);
 
 /** /next-move: sign in, then the scroll story. the tabbed screens live at /home; `?as=<id>` skips sign-in. */
 export default function NextMoveEntry({ as }: { as?: string }) {
-  const cookieId = useSignedInId();
+  const cookieId = useCaseStudyId();
   const hydrated = useHydrated();
   const id = [as, cookieId].find((x) => x && persona(x)) ?? null;
 
