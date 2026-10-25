@@ -172,6 +172,29 @@ export interface ScenarioTerms {
   refinance?: { aprBps: number; termMonths: number; feeCents: Cents };
 }
 
+/** One lease term on offer for a car (synthetic). The money factor is the prime-borrower base. */
+export interface LeaseTermOffer {
+  termMonths: 12 | 24 | 36 | 48;
+  moneyFactor: number;
+  residualCents: Cents;
+  dueAtSigningCents: Cents;
+}
+
+/** One term's cost to this person: average monthly cost over the term's own length, all-in. */
+export interface LeaseTermResult {
+  termMonths: number;
+  moneyFactor: number; // after the credit-tier adjustment
+  aprEquivalentPct: number; // money factor × 2400
+  paymentCents: Cents;
+  dueAtSigningCents: Cents;
+  mileageOverageCents: Cents; // projected, at the end of the term
+  avgMonthlyCostCents: Cents;
+  totalMonthlyCents: Cents; // payment + running costs
+  feasible: boolean;
+  exclusion: string | null;
+  pastWarranty: boolean;
+}
+
 export interface CandidateTerms {
   catalogId: string;
   acquisition: "lease" | "finance" | "cash";
@@ -179,6 +202,8 @@ export interface CandidateTerms {
   residualCents?: Cents;
   moneyFactor?: number;
   leaseTermMonths?: number;
+  /** Several lease terms; when present they replace the single-term fields above. */
+  leaseTerms?: LeaseTermOffer[];
   dueAtSigningCents: Cents;
   endValueCents: Cents; // estimated value at the horizon (0 for a lease that ends there)
   insuranceMonthlyCents: Cents;

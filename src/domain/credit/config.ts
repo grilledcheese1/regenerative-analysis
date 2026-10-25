@@ -50,3 +50,12 @@ export const GERMAN_BANDS = {
   savingsDm: [100, 500, 1000], // A61 | A62 | A63 | A64
   installmentPti: [0.05, 0.1, 0.15], // A8 = 1 | 2 | 3 | 4
 } as const;
+
+/** Added to a lease offer's base (prime) money factor, by credit tier. Synthetic. */
+export const LEASE_MF_TIER_ADJ: Record<CreditTier, number> = {
+  super_prime: -0.00015,
+  prime: 0,
+  near_prime: 0.0005,
+  subprime: 0.0011,
+  deep_subprime: 0.0018,
+};
