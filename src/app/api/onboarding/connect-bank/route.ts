@@ -17,7 +17,7 @@ import { fieldErrors } from "@/server/records";
 
 const Body = z.object({ answers: AnswersSchema });
 const BUDGET_MS = 45_000;
-const STEP_ORDER = ["customers", "accounts", "deposits", "bills", "purchases", "transfers", "withdrawals"];
+const STEP_ORDER = ["customers", "accounts", "loans", "deposits", "bills", "purchases", "transfers", "withdrawals"];
 
 class TookTooLong extends Error {}
 const within = <T>(p: Promise<T>, ms: number) =>

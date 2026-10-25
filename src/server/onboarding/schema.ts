@@ -38,6 +38,7 @@ export const AnswersSchema = z.object({
       .object({ provider: z.literal("Toyota Insurance (simulated)"), policyNumber: z.string().max(20), coverage: z.string().max(80), monthlyCents: cents })
       .nullable(),
   }),
+  credit: z.object({ score: z.number().int().nullable() }).optional(),
   goals: z.object({
     monthlySavingsGoalCents: cents,
     monthlyBufferCents: cents,

@@ -31,7 +31,7 @@ const CHECKS: Partial<Record<Step, (keyof OnboardingAnswers)[]>> = {
   insurance: ["insurance"],
   driving: ["driving"],
   goals: ["goals"],
-  bank: ["money"],
+  bank: ["money", "credit"],
 };
 
 const defaults = (name: string): OnboardingAnswers => ({
@@ -41,6 +41,7 @@ const defaults = (name: string): OnboardingAnswers => ({
   money: { takeHomeMonthlyCents: 500000, housingCents: 150000, utilitiesCents: 15000, groceriesCents: 50000, diningShoppingCents: 30000, subscriptionsCents: 5000, checkingCents: 300000, savingsCents: 500000, cardBalanceCents: 30000 },
   driving: { monthlyMiles: 800, cityShare: 0.5, source: "user_reported" },
   insurance: { monthlyCents: 15000, source: "user_reported", policy: null },
+  credit: { score: null },
   goals: { monthlySavingsGoalCents: 30000, monthlyBufferCents: 15000, protectedCashReserveCents: 300000, objective: "preserve_cash_then_minimize_cost" },
 });
 

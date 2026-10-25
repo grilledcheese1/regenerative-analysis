@@ -40,6 +40,8 @@ export interface OnboardingAnswers {
   };
   driving: { monthlyMiles: number; cityShare: number; source: "user_reported" | "observed" };
   insurance: { monthlyCents: Cents; source: "synthetic" | "user_reported"; policy: SimulatedPolicy | null };
+  /** Approximate credit score the user gave; null = didn't know. Absent on profiles saved before it existed. */
+  credit?: { score: number | null };
   goals: {
     monthlySavingsGoalCents: Cents;
     monthlyBufferCents: Cents;

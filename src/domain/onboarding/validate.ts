@@ -46,6 +46,9 @@ export function validateAnswers(a: Partial<OnboardingAnswers>, asOf = DEMO_AS_OF
     if (!(a.driving.monthlyMiles >= 0 && a.driving.monthlyMiles <= 10_000)) e["driving.monthlyMiles"] = "Enter between 0 and 10,000 miles a month";
     if (!(a.driving.cityShare >= 0 && a.driving.cityShare <= 1)) e["driving.cityShare"] = "City share must be between 0% and 100%";
   }
+  if (a.credit && a.credit.score !== null && !(Number.isInteger(a.credit.score) && a.credit.score >= 300 && a.credit.score <= 850)) {
+    e["credit.score"] = "Enter a score between 300 and 850";
+  }
   if (a.insurance) money("insurance.monthlyCents", a.insurance.monthlyCents);
   if (a.goals) {
     money("goals.monthlySavingsGoalCents", a.goals.monthlySavingsGoalCents);

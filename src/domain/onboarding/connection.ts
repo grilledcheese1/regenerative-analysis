@@ -21,11 +21,13 @@ export function localConnection(accountId: string, answers: OnboardingAnswers): 
   const bundles = nessieBundlesFromSpec(persona.id, bankingSpecFromAnswers(answers, persona));
   const snapshot = normalizeNessie(`fixture_${persona.id}`, "fixture", bundles);
   const total = (k: "deposits" | "bills" | "purchases" | "withdrawals") => bundles.reduce((n, b) => n + b[k].length, 0);
+  const loans = bundles.reduce((n, b) => n + (b.loans?.length ?? 0), 0);
   // A transfer appears on both accounts but is one record.
   const transfers = new Set(bundles.flatMap((b) => b.transfers.map((t) => t._id))).size;
   const steps = [
     { label: "customers", count: 1 },
     { label: "accounts", count: bundles.length },
+    { label: "loans", count: loans },
     { label: "deposits", count: total("deposits") },
     { label: "bills", count: total("bills") },
     { label: "purchases", count: total("purchases") },

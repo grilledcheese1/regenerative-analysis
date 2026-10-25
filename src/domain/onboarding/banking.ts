@@ -1,7 +1,7 @@
 import type { OnboardingAnswers, Persona } from "@/contracts";
 import { monthlyFuel } from "@/domain/finance/fuel";
 import { catalogVehicle } from "@/fixtures/catalog";
-import type { BankingSpec } from "@/fixtures/banking";
+import type { BankingSpec, CreditSpec } from "@/fixtures/banking";
 
 // Nessie truncates decimals, so every record is whole dollars.
 const dollars = (cents: number) => Math.max(0, Math.round(cents / 100));
@@ -17,7 +17,21 @@ export function bankingSpecFromAnswers(a: OnboardingAnswers, persona: Persona): 
   const fuel = monthlyFuel(catalogVehicle(persona.vehicle.catalogId), a.driving.monthlyMiles, a.driving.cityShare, persona.scenario.gasCentsPerGallon);
   const contract = a.contract;
   const keep = <T extends [string, number, number]>(rows: T[]) => rows.filter((r) => r[1] > 0);
+  const car = catalogVehicle(persona.vehicle.catalogId);
+  const carName = `${car.modelYear} ${car.model}`;
+  // The score lives on a Nessie loan record, next to the current car loan or lease (or an empty credit file).
+  const credit: CreditSpec = {
+    score: a.credit?.score ?? null,
+    loans: [
+      contract.type === "loan"
+        ? { type: "auto", status: "approved", amount: dollars(contract.payoffCents), monthly_payment: dollars(contract.paymentCents), description: `${carName} loan` }
+        : contract.type === "lease"
+          ? { type: "auto lease", status: "approved", amount: dollars(contract.purchaseOptionCents ?? 0), monthly_payment: dollars(contract.paymentCents), description: `${carName} lease` }
+          : { type: "credit file", status: "approved", amount: 0, monthly_payment: 0, description: "No open auto loans" },
+    ],
+  };
   return {
+    credit,
     checking: dollars(m.checkingCents),
     savings: dollars(m.savingsCents),
     cardBalance: dollars(m.cardBalanceCents),

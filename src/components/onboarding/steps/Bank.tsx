@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { BankingSnapshot, UserBanking } from "@/contracts";
 import type { BudgetSnapshot } from "@/domain/finance/budget";
 import { localConnection } from "@/domain/onboarding/connection";
-import { fmtUsd, Money } from "../fields";
+import { fmtUsd, Money, Num } from "../fields";
 import s from "../onboarding.module.css";
 import type { StepProps } from "./types";
 
@@ -17,7 +17,7 @@ export interface Connection {
 }
 
 const PROGRESS = ["Creating your Nessie customer", "Opening checking, savings and a card", "Adding four months of pay, bills and purchases", "Reading it back"];
-const LABEL: Record<string, string> = { customers: "customer", accounts: "accounts", deposits: "deposits", bills: "bills", purchases: "purchases", transfers: "transfers", withdrawals: "withdrawals" };
+const LABEL: Record<string, string> = { customers: "customer", accounts: "accounts", loans: "loan record with your credit score", deposits: "deposits", bills: "bills", purchases: "purchases", transfers: "transfers", withdrawals: "withdrawals" };
 
 const MONEY: [keyof StepProps["a"]["money"], string][] = [
   ["takeHomeMonthlyCents", "Take-home pay (monthly)"],
@@ -69,6 +69,15 @@ export default function Bank({ a, set, errors, accountId, specKey, connection, o
       </p>
       <div className={s.split}>
         <div className={s.grid}>
+          <Num
+            label="About what's your credit score?"
+            name="creditScore"
+            min={300}
+            value={a.credit?.score ?? NaN}
+            onValue={(n) => set((x) => ({ ...x, credit: { score: Number.isFinite(n) ? Math.round(n) : null } }))}
+            error={errors["credit.score"]}
+            hint="300–850. Leave blank if you don't know. Stored on your Nessie loan record."
+          />
           {MONEY.map(([k, label]) => (
             <Money key={k} label={label} name={k} cents={a.money[k]} onCents={(c) => set((x) => ({ ...x, money: { ...x.money, [k]: c } }))} error={errors[`money.${k}`]} />
           ))}

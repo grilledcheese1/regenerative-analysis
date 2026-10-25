@@ -70,6 +70,14 @@ describe("POST /api/onboarding/connect-bank", () => {
     expect(body.steps.find((s: { label: string }) => s.label === "deposits").count).toBeGreaterThan(0);
   });
 
+  it("stores the credit score on a Nessie loan record and reads it back", async () => {
+    vi.stubEnv("NESSIE_API_KEY", "test-key");
+    fakeNessie();
+    const body = await (await connect.POST(post({ answers: { ...felixAnswers, credit: { score: 742 } } }))).json();
+    expect(body.steps.find((s: { label: string }) => s.label === "loans").count).toBe(1);
+    expect(body.snapshot.loans).toEqual([expect.objectContaining({ type: "auto", creditScore: 742, monthlyPaymentCents: 45500 })]);
+  });
+
   it("falls back to the local copy when Nessie fails partway", async () => {
     vi.stubEnv("NESSIE_API_KEY", "test-key");
     fakeNessie(5);
