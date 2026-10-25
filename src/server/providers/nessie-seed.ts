@@ -77,6 +77,9 @@ export function planBundles(personaId: string, bundles: NessieAccountBundle[], n
       seenTransfers.add(t._id);
       writes.push({ path: "transfers", body: { transaction_date: t.transaction_date, status: t.status, amount: whole(t.amount, "transfer"), description: t.description } });
     }
+    for (const l of b.loans ?? []) {
+      writes.push({ path: "loans", body: { type: l.type, status: l.status, credit_score: l.credit_score, monthly_payment: whole(l.monthly_payment, "loan payment"), amount: whole(l.amount, "loan amount"), description: l.description } });
+    }
     return {
       fixtureAccountId: b.account._id,
       create: { type: b.account.type, nickname: b.account.nickname, rewards: 0, balance: whole(b.account.balance, "balance") },

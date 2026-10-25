@@ -13,11 +13,18 @@ interface Monthly {
   savingsTransfer: number;
 }
 
+/** Nessie loan records (dollars) carrying the credit score; score null is written as 0 ("not provided"). */
+export interface CreditSpec {
+  score: number | null;
+  loans: { type: "auto" | "auto lease" | "credit file"; status: "approved"; amount: number; monthly_payment: number; description: string }[];
+}
+
 export interface BankingSpec {
   checking: number;
   savings: number;
   cardBalance: number;
   monthly: Monthly;
+  credit?: CreditSpec;
 }
 
 const CURATED_SPECS: Record<string, BankingSpec> = {
@@ -46,6 +53,7 @@ const CURATED_SPECS: Record<string, BankingSpec> = {
       card: [["Home goods store", 350, 17]],
       savingsTransfer: 400,
     },
+    credit: { score: 712, loans: [{ type: "auto lease", status: "approved", amount: 19850, monthly_payment: 389, description: "2024 Camry Hybrid LE lease" }] },
   },
   devon: {
     checking: 4000,
@@ -71,6 +79,7 @@ const CURATED_SPECS: Record<string, BankingSpec> = {
       card: [["Hardware store", 260, 21]],
       savingsTransfer: 700,
     },
+    credit: { score: 768, loans: [{ type: "credit file", status: "approved", amount: 0, monthly_payment: 0, description: "No open auto loans" }] },
   },
   kai: {
     checking: 1050,
@@ -97,6 +106,7 @@ const CURATED_SPECS: Record<string, BankingSpec> = {
       card: [["Online order store", 300, 12]],
       savingsTransfer: 150,
     },
+    credit: { score: 618, loans: [{ type: "auto", status: "approved", amount: 21400, monthly_payment: 582, description: "2021 RAV4 AWD loan" }] },
   },
 };
 
@@ -177,6 +187,10 @@ export function nessieBundlesFromSpec(personaId: string, spec: BankingSpec): Nes
     if (seen(payDate) && cardTotal > 0) {
       checking.bills.push({ _id: rid("bill"), status: "completed", payee: "Credit card payment", nickname: "Card autopay", payment_date: payDate, payment_amount: cardTotal });
     }
+  }
+
+  if (spec.credit) {
+    checking.loans = spec.credit.loans.map((l) => ({ _id: rid("loan"), ...l, credit_score: spec.credit!.score ?? 0 }));
   }
 
   // Edge cases inside the July-September budget window.

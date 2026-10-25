@@ -13,6 +13,7 @@ describe("seed plan", () => {
     const counts = planCounts(planPersona(id, "test"));
     const sum = (k: "deposits" | "withdrawals" | "purchases" | "bills") => bundles.reduce((n, b) => n + b[k].length, 0);
     const transfers = new Set(bundles.flatMap((b) => b.transfers.map((t) => t._id))).size;
+    const loans = bundles.reduce((n, b) => n + (b.loans?.length ?? 0), 0);
     expect(counts).toEqual({
       customers: 1,
       accounts: bundles.length,
@@ -21,6 +22,7 @@ describe("seed plan", () => {
       ...(sum("purchases") && { purchases: sum("purchases") }),
       ...(sum("bills") && { bills: sum("bills") }),
       ...(transfers && { transfers }),
+      ...(loans && { loans }),
     });
   });
 

@@ -1,6 +1,8 @@
 // Shared contracts for Next Move. Money is integer cents (USD), rates are basis points,
 // distance is meters internally. Unknown values are null with a reason, never zero.
 
+import type { BankLoan } from "./credit";
+
 export const SCHEMA_VERSION = "1.0";
 export const MODEL_VERSION = "finance-1";
 
@@ -122,6 +124,7 @@ export interface BankingSnapshot {
   retrievedAt: string;
   accounts: Account[];
   transactions: Transaction[];
+  loans?: BankLoan[]; // absent on snapshots read before loan records existed
 }
 
 // ---------- Profile and persona ----------
@@ -253,3 +256,4 @@ export * from "./driving";
 export * from "./banking-sync";
 export * from "./market";
 export * from "./onboarding";
+export * from "./credit";

@@ -2,7 +2,7 @@ import "server-only";
 import { z } from "zod";
 import type { BankingSnapshot } from "@/contracts";
 import { nessieBundlesFromSpec, nessieFixture, type BankingSpec } from "@/fixtures/banking";
-import { NessieAccount, NessieBill, NessieDeposit, NessiePurchase, NessieTransfer, NessieWithdrawal, normalizeNessie } from "./nessie-normalize";
+import { NessieAccount, NessieBill, NessieDeposit, NessieLoan, NessiePurchase, NessieTransfer, NessieWithdrawal, normalizeNessie } from "./nessie-normalize";
 
 // ---------- Live sandbox access ----------
 
@@ -146,14 +146,15 @@ export async function fetchCustomer(customerId: string): Promise<BankingSnapshot
   const bundles = await Promise.all(
     accounts.map(async (account) => {
       const base = `/accounts/${account._id}`;
-      const [deposits, withdrawals, purchases, transfers, bills] = await Promise.all([
+      const [deposits, withdrawals, purchases, transfers, bills, loans] = await Promise.all([
         list(`${base}/deposits`, z.array(NessieDeposit)),
         list(`${base}/withdrawals`, z.array(NessieWithdrawal)),
         list(`${base}/purchases`, z.array(NessiePurchase)),
         list(`${base}/transfers`, z.array(NessieTransfer)),
         list(`${base}/bills`, z.array(NessieBill)),
+        list(`${base}/loans`, z.array(NessieLoan)),
       ]);
-      return { account, deposits, withdrawals, purchases, transfers, bills };
+      return { account, deposits, withdrawals, purchases, transfers, bills, loans };
     }),
   );
   return normalizeNessie(customerId, "sandbox", bundles);
