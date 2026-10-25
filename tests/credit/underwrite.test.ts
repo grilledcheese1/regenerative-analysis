@@ -118,3 +118,12 @@ describe("review fixes", () => {
     expect(d.dtiPct).toBeNull();
   });
 });
+
+describe("leases", () => {
+  it("judges a lease on its lease payment, not an amortized loan of the cap cost", () => {
+    const lease: LoanApplication = { purpose: "lease", vehicleCondition: "new", amountCents: 1200000, termMonths: 36, collateralValueCents: 3000000, replacesPaymentCents: 0, paymentCents: 42933 };
+    const d = underwrite(lease, prime);
+    expect(d.paymentCents).toBe(42933);
+    expect(d.ptiPct).toBeCloseTo((42933 / prime.grossMonthlyCents) * 100, 0);
+  });
+});

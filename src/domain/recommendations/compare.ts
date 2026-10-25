@@ -17,7 +17,9 @@ import type { BudgetSnapshot } from "@/domain/finance/budget";
 import { monthlyFuel } from "@/domain/finance/fuel";
 import { leasePayment, monthsBetween, projectLeaseMileage } from "@/domain/finance/lease";
 import { amortize } from "@/domain/finance/loan";
-import { CREDIT_POLICY } from "@/domain/credit/config";
+import { CREDIT_POLICY, LEASE_MF_TIER_ADJ } from "@/domain/credit/config";
+import { LEASE_TERMS, leaseOffers, leaseTermResult, pickTerm } from "@/domain/finance/lease-terms";
+import { reliabilityFor } from "@/domain/reliability";
 import { underwrite } from "@/domain/credit/underwrite";
 import { niceDate, usd } from "@/domain/format";
 import { rankOptions } from "./rank";
@@ -54,7 +56,12 @@ interface Draft {
   missingInputs: string[];
   tradeoff: string;
   credit?: LoanDecision;
+  avgMonthlyCostCents?: Cents; // leases: over the picked term; others are derived from the horizon
+  lease?: OptionResult["lease"];
+  warranty?: string;
 }
+
+const WARRANTY_NOTE = "Repairs after 3 years or 36,000 miles aren't covered by Toyota's basic warranty.";
 
 export function compareOptions({ persona, budget, catalog, asOf, overrides = {}, credit }: CompareInputs): Comparison {
   const { contract, vehicle, usage, scenario, costs } = persona;
@@ -126,15 +133,45 @@ export function compareOptions({ persona, budget, catalog, asOf, overrides = {},
     const monthlyRunning = running(v, c.insuranceMonthlyCents, c.maintenanceMonthlyCents);
     const name = `${v.modelYear} ${v.model}`;
     if (c.acquisition === "lease") {
-      const pay = leasePayment(c.priceCents, c.residualCents!, c.leaseTermMonths!, c.moneyFactor!);
+      // Every term on offer, priced for this borrower's credit tier; the cheapest feasible one represents the car.
+      // A lease is underwritten on its own payment: once to find the tier, again for the picked term.
+      const offers = leaseOffers(c);
+      const leaseApp = (o: (typeof offers)[number], paymentCents: Cents): LoanApplication => ({
+        purpose: "lease",
+        vehicleCondition: "new",
+        amountCents: c.priceCents - o.residualCents,
+        termMonths: o.termMonths,
+        collateralValueCents: c.priceCents,
+        replacesPaymentCents: currentPayment,
+        paymentCents,
+      });
+      const base36 = offers.find((o) => o.termMonths === 36) ?? offers[0];
+      const tierPass = uw(leaseApp(base36, leasePayment(c.priceCents, base36.residualCents, base36.termMonths, base36.moneyFactor)));
+      const terms = offers.map((offer) =>
+        leaseTermResult({
+          capCostCents: c.priceCents,
+          offer,
+          mfAdjust: tierPass ? LEASE_MF_TIER_ADJ[tierPass.tier] : 0,
+          monthlyRunningCents: monthlyRunning,
+          monthlyMiles: miles,
+          dispositionFeeCents: LEASE_TERMS.dispositionFeeCents,
+          equityAppliedCents: 0,
+          extraUpfrontCents: base.upfront,
+          budgetCents: budget.vehicleBudgetCents,
+          availableUpfrontCents: budget.availableUpfrontCashCents,
+        }),
+      );
+      const chosen = pickTerm(terms);
+      const pay = chosen.paymentCents;
+      const decision = uw(leaseApp(offers.find((o) => o.termMonths === chosen.termMonths)!, pay));
       return {
         optionId: `${base.label}_lease_${c.catalogId}`,
         label: `${base.label === "return" ? "Return and lease" : "Lease"} ${name}`,
         kind: "lease_new",
         catalogId: c.catalogId,
-        upfrontCashCents: base.upfront + c.dueAtSigningCents,
+        upfrontCashCents: base.upfront + chosen.dueAtSigningCents,
         monthlyPaymentCents: pay,
-        paymentsTotalCents: pay * Math.min(H, c.leaseTermMonths!),
+        paymentsTotalCents: pay * Math.min(H, chosen.termMonths),
         monthlyRunningCents: monthlyRunning,
         saleReceiptCents: base.saleReceipt,
         startingEquityCents: base.startingEquity,
@@ -142,6 +179,10 @@ export function compareOptions({ persona, budget, catalog, asOf, overrides = {},
         endingValueCents: c.endValueCents,
         missingInputs: [...base.missing, "lease_taxes_and_fees"],
         tradeoff: "No equity at the end, but no resale risk and a predictable payment.",
+        avgMonthlyCostCents: chosen.avgMonthlyCostCents,
+        lease: { chosenTermMonths: chosen.termMonths, terms },
+        ...(chosen.pastWarranty && { warranty: WARRANTY_NOTE }),
+        ...(decision && { credit: decision }),
       };
     }
     if (c.acquisition === "cash") {
@@ -398,6 +439,9 @@ export function compareOptions({ persona, budget, catalog, asOf, overrides = {},
     }
     if (d.credit?.status === "not_prequalified") exclusions.unshift(`Not pre-qualified: ${d.credit.reasons[0]?.text ?? "outside lending policy"}`);
     const tradeoff = d.credit?.status === "needs_review" ? `Needs review: ${d.credit.reasons[0]?.text ?? "borderline file"}. ${d.tradeoff}` : d.tradeoff;
+    const economicCostCents = netCash + d.startingEquityCents - endingEquity;
+    const newCar = d.kind === "purchase_new" || d.kind === "sell_replace";
+    const warranty = d.warranty ?? (newCar && (H > LEASE_TERMS.warrantyMonths || miles * H > LEASE_TERMS.warrantyMiles) ? WARRANTY_NOTE : undefined);
     return {
       optionId: d.optionId,
       label: d.label,
@@ -413,12 +457,16 @@ export function compareOptions({ persona, budget, catalog, asOf, overrides = {},
       endingDebtCents: d.endingDebtCents,
       endingValueCents: d.endingValueCents,
       endingEquityCents: endingEquity,
-      economicCostCents: netCash + d.startingEquityCents - endingEquity,
+      economicCostCents,
+      avgMonthlyCostCents: d.avgMonthlyCostCents ?? Math.round(economicCostCents / H),
       feasible: exclusions.length === 0,
       exclusions,
       missingInputs: d.missingInputs,
       tradeoff,
       ...(d.credit && { credit: d.credit }),
+      ...(d.lease && { lease: d.lease }),
+      ...(d.catalogId && { reliability: reliabilityFor(d.catalogId) }),
+      ...(warranty && { warranty }),
     };
   });
 
@@ -461,7 +509,7 @@ export function compareOptions({ persona, budget, catalog, asOf, overrides = {},
     preparation,
     options,
     notConsidered,
-    sensitivity: sensitivity(options, persona.profile.objective),
+    sensitivity: sensitivity(options, persona.profile.objective, H),
     evidence,
     prequalification,
   };
@@ -469,13 +517,16 @@ export function compareOptions({ persona, budget, catalog, asOf, overrides = {},
 }
 
 /** Does the leader change if ending vehicle values come in 10% lower or higher? */
-function sensitivity(options: OptionResult[], objective: Persona["profile"]["objective"]): Comparison["sensitivity"] {
+function sensitivity(options: OptionResult[], objective: Persona["profile"]["objective"], horizonMonths: number): Comparison["sensitivity"] {
   const leader = rankOptions(options, objective)[0]?.optionId;
   if (!leader) return [];
   return [-0.1, 0.1].map((f) => {
     const shifted = options.map((o) => {
       const dv = Math.round(o.endingValueCents * f);
-      return { ...o, endingValueCents: o.endingValueCents + dv, endingEquityCents: o.endingEquityCents + dv, economicCostCents: o.economicCostCents - dv };
+      const economicCostCents = o.economicCostCents - dv;
+      // Leases end with no car (value 0), so only the horizon-based average moves.
+      const avgMonthlyCostCents = o.lease ? o.avgMonthlyCostCents : Math.round(economicCostCents / horizonMonths);
+      return { ...o, endingValueCents: o.endingValueCents + dv, endingEquityCents: o.endingEquityCents + dv, economicCostCents, avgMonthlyCostCents };
     });
     const top = rankOptions(shifted, objective)[0];
     const flips = top?.optionId !== leader;

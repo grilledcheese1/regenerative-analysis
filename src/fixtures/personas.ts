@@ -57,6 +57,13 @@ export const PERSONAS: Persona[] = [
           residualCents: 1800000,
           moneyFactor: 0.002,
           leaseTermMonths: 36,
+          // Synthetic term table: shorter terms keep more value (higher residual) at a lower money factor.
+          leaseTerms: [
+            { termMonths: 12, moneyFactor: 0.00165, residualCents: 2460000, dueAtSigningCents: 150000 },
+            { termMonths: 24, moneyFactor: 0.00185, residualCents: 2040000, dueAtSigningCents: 150000 },
+            { termMonths: 36, moneyFactor: 0.002, residualCents: 1800000, dueAtSigningCents: 150000 },
+            { termMonths: 48, moneyFactor: 0.00215, residualCents: 1500000, dueAtSigningCents: 150000 },
+          ],
           dueAtSigningCents: 150000,
           endValueCents: 0,
           insuranceMonthlyCents: 15000,

@@ -32,7 +32,7 @@ export interface CreditProfile {
 }
 
 export interface LoanApplication {
-  purpose: "finance" | "buyout" | "refinance";
+  purpose: "finance" | "buyout" | "refinance" | "lease";
   vehicleCondition: "new" | "used";
   amountCents: Cents;
   termMonths: number;
@@ -40,6 +40,8 @@ export interface LoanApplication {
   replacesPaymentCents: Cents; // payment this loan replaces (left out of DTI)
   currentAprBps?: number; // refinance only
   feeCents?: Cents; // refinance only
+  /** Leases: the lease payment, used instead of amortizing `amountCents` (a lease isn't a loan of the full price). */
+  paymentCents?: Cents;
 }
 
 export interface CreditReason {

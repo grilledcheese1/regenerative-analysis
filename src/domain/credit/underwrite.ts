@@ -52,7 +52,7 @@ export function underwrite(app: LoanApplication, p: CreditProfile): LoanDecision
   const gross = p.grossMonthlyCents;
   const share = (cents: number) => (gross > 0 ? cents / gross : 1);
 
-  const provisional = loanPayment(app.amountCents, TIER_APR_BPS[scoreTier][app.vehicleCondition], app.termMonths);
+  const provisional = app.paymentCents ?? loanPayment(app.amountCents, TIER_APR_BPS[scoreTier][app.vehicleCondition], app.termMonths);
   const { pBad, contributions } = scoreGerman(germanInput(app, p, share(provisional)));
   const th = CREDIT_MODEL.thresholds;
   const tier = pBad <= th.tierUp ? shift(scoreTier, -1) : pBad >= th.tierDown ? shift(scoreTier, 1) : scoreTier;
@@ -61,7 +61,7 @@ export function underwrite(app: LoanApplication, p: CreditProfile): LoanDecision
   let aprBps = TIER_APR_BPS[tier][app.vehicleCondition];
   if (app.termMonths > P.longTermMonths) aprBps += P.longTermAddBps;
   if (ltv !== null && ltv > P.highLtv) aprBps += P.highLtvAddBps;
-  const paymentCents = loanPayment(app.amountCents, aprBps, app.termMonths);
+  const paymentCents = app.paymentCents ?? loanPayment(app.amountCents, aprBps, app.termMonths);
   const debts = Math.max(0, p.otherDebtMonthlyCents - app.replacesPaymentCents) + p.housingMonthlyCents + p.cardMinimumCents + paymentCents;
   const pti = share(paymentCents);
   const dti = share(debts);

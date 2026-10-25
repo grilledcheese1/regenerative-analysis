@@ -1,15 +1,10 @@
+import type { ReliabilityInfo } from "@/contracts";
 import raw from "@/fixtures/reliability.json";
 
 // NHTSA recall and owner-complaint counts per catalog car, fetched by scripts/fetch-reliability.mjs.
 // Counts are for the whole model year (every trim), so they compare models, not individual cars.
 
-export interface ReliabilityInfo {
-  catalogId: string;
-  recalls: number | null;
-  complaints: number | null;
-  retrievedAt: string;
-  source: "observed";
-}
+export type { ReliabilityInfo };
 
 const CARS = (raw as { cars: Record<string, ReliabilityInfo & { nhtsaModel: string }> }).cars;
 

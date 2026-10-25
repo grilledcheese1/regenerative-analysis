@@ -11,6 +11,7 @@ export const LEASE_TERMS = {
   warrantyMonths: 36,
   warrantyMiles: 36_000,
   aprPerMoneyFactor: 2400,
+  dispositionFeeCents: 35000, // turn-in fee at the end of a new lease (synthetic)
 } as const;
 
 /** The candidate's term table; a legacy single-term candidate becomes a one-row table. */

@@ -241,6 +241,21 @@ export interface OptionResult {
   missingInputs: string[];
   tradeoff: string;
   credit?: LoanDecision; // pre-qualification for the loan this option needs
+  /** The ranking number: average monthly economic cost over this option's own period (a lease's term, else the horizon). */
+  avgMonthlyCostCents: Cents;
+  /** Lease options: every term's cost and the one the app picked. */
+  lease?: { chosenTermMonths: number; terms: LeaseTermResult[] };
+  reliability?: ReliabilityInfo;
+  warranty?: string;
+}
+
+/** NHTSA counts for a catalog car's model year (src/fixtures/reliability.json). */
+export interface ReliabilityInfo {
+  catalogId: string;
+  recalls: number | null;
+  complaints: number | null;
+  retrievedAt: string;
+  source: "observed";
 }
 
 export type NextAction =
