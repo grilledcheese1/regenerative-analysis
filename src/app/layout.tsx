@@ -2,13 +2,13 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Regen Coach",
-  description: "Replay simulated hybrid drives, score regenerative braking, and get coaching.",
+  title: "Next Move",
+  description: "Vehicle ownership decisions from your driving, contract and budget.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" data-theme="dark">
       <body>{children}</body>
     </html>
   );

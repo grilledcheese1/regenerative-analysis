@@ -258,7 +258,7 @@ export function ComparePanel({ cols }: { cols: { name: string; a: TripAnalysis; 
         </table>
       </div>
       <p className="pitch">
-        Same road, same trip: regen recovers <strong>{smooth.regenKwh.toFixed(2)} kWh</strong> that a conventional car
+        Same road, same trip: regen recovers <strong>{smooth.regenKwh.toFixed(2)} kWh</strong> that the same car with regen off
         throws away as {conv.frictionKwh.toFixed(2)} kWh of brake heat, and smooth driving wastes{" "}
         <strong>{heatPct.toFixed(0)}% less</strong> energy as brake heat than aggressive driving while burning{" "}
         <strong>{fuelPct.toFixed(0)}% less fuel</strong>.

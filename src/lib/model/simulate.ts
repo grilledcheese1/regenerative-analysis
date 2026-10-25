@@ -11,6 +11,7 @@ import {
   type Condition,
   type DriverProfileName,
 } from "./config";
+import { splitBraking } from "./braking";
 
 export interface SimOptions {
   driver: DriverProfileName;
@@ -111,15 +112,13 @@ export function simulateTrip(route: DemoRoute, opts: SimOptions): SimTrip {
           soc <= BATTERY.fadeStartSoc ? 1 : Math.max(0, (1 - soc) / (1 - BATTERY.fadeStartSoc));
         const batteryKw = VEHICLE.maxRegenKw * socFade * (cold ? BATTERY.coldRegenFactor : 1);
         const motorCapKw = VEHICLE.maxRegenKw / VEHICLE.regenEfficiency;
-        const batteryCapKw = batteryKw / VEHICLE.regenEfficiency;
-        const cap = Math.min(motorCapKw, gripKw, batteryCapKw);
-        const wheelKw = Math.min(brakeKw, cap);
-        regenKw = wheelKw * VEHICLE.regenEfficiency;
-        frictionKw = brakeKw - wheelKw;
+        const split = splitBraking(brakeKw, motorCapKw, gripKw, batteryKw, VEHICLE.regenEfficiency);
+        regenKw = split.capturedKw;
+        frictionKw = split.frictionKw;
         if (frictionKw > 1) {
-          if (cap === gripKw) missed = "low-grip";
-          else if (cap === batteryCapKw && socFade < 1) missed = "full-battery";
-          else if (cap === batteryCapKw && cold) missed = "cold-battery";
+          if (split.limit === "grip") missed = "low-grip";
+          else if (split.limit === "battery" && socFade < 1) missed = "full-battery";
+          else if (split.limit === "battery" && cold) missed = "cold-battery";
           else missed = "late-braking";
         }
       } else {
