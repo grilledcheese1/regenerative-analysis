@@ -55,7 +55,7 @@ export default function Story({ persona, initialBankingMode = "fixture" }: { per
         ) : (
           <>
             <Stand persona={persona} vehicle={vehicle} budget={result.budget} comparison={result.comparison} incomeConfirmed={incomeConfirmed} onIncomeConfirmed={setIncomeConfirmed} />
-            <Commute persona={persona} drive={drive} hybrid={vehicle.powertrain === "hybrid"} />
+            <Commute persona={persona} drive={drive} hybrid={drive.physics.ownRegen} />
             <Options comparison={result.comparison} gasCents={gasCents} onGas={setGasCents} monthlyMiles={monthlyMiles} onMiles={setMonthlyMiles} />
             <Value persona={persona} vehicle={vehicle} drive={drive} gasCents={gasCents} monthlyMiles={monthlyMiles} />
             <Plan comparison={result.comparison} compareRequest={compareRequest} />

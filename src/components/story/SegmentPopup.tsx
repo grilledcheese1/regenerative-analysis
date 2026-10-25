@@ -3,13 +3,15 @@
 import { motion, useReducedMotion } from "motion/react";
 import { useEffect } from "react";
 import type { SegmentSummary } from "@/lib/segmentTelemetry";
-import type { SegmentGrade } from "@/lib/segments";
+import { GRADE_VAR, type SegmentGrade } from "@/lib/segments";
 
 const num = (n: number, d = 0) => n.toFixed(d);
 
-/** Telemetry for one partial (amber) or missed (red) stretch of route. Slides up over the map; Escape or the close button dismisses it. */
+/** Telemetry for one clicked stretch of route, whatever its grade. Slides up over the map; Escape or the close button dismisses it. */
 export default function SegmentPopup({ summary, grade, onClose }: { summary: SegmentSummary; grade: SegmentGrade; onClose: () => void }) {
-  const partial = grade === "mid";
+  const color = `var(${GRADE_VAR[grade]})`;
+  const kicker =
+    grade === "good" ? "Full regen" : grade === "mid" ? "Partial regen" : grade === "bad" ? "Missed regen" : "Coasting";
   const reduced = useReducedMotion();
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -29,8 +31,9 @@ export default function SegmentPopup({ summary, grade, onClose }: { summary: Seg
     >
       <div className="seg-popup__head">
         <div>
-          <span className="seg-popup__kicker" style={{ color: partial ? "var(--seg-mid)" : "var(--seg-bad)" }}>
-            {partial ? "Partial regen" : "Missed regen"} · {summary.cause ?? "friction braking"}
+          <span className="seg-popup__kicker" style={{ color }}>
+            {kicker}
+            {grade === "mid" || grade === "bad" ? ` · ${summary.cause ?? "friction braking"}` : ""}
           </span>
           <strong>
             {num(summary.tStart)}s to {num(summary.tEnd)}s
@@ -50,7 +53,7 @@ export default function SegmentPopup({ summary, grade, onClose }: { summary: Seg
         {summary.lostKwh > 0 && <div><dt>Energy lost</dt><dd>{num(summary.lostKwh, 3)} kWh</dd></div>}
       </dl>
       <div className="seg-popup__bar" role="img" aria-label={`${summary.capturePct}% of braking energy captured by regen`}>
-        <span style={{ width: `${summary.capturePct}%`, background: partial ? "var(--seg-mid)" : "var(--seg-bad)" }} />
+        <span style={{ width: `${summary.capturePct}%`, background: color }} />
       </div>
       <p className="seg-popup__note">Simulated drive. Figures are estimates.</p>
     </motion.div>

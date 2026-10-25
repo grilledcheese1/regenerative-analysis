@@ -1,5 +1,5 @@
 import type { MissedCause, TripScore } from "@/lib/types";
-import { SAVINGS, SMOOTH_BRAKE_LIMIT_MS2, VEHICLE } from "./config";
+import { DEFAULT_PHYSICS, SAVINGS, SMOOTH_BRAKE_LIMIT_MS2, VEHICLE } from "./config";
 import type { SimTrip } from "./simulate";
 
 const J_PER_KWH = 3.6e6;
@@ -43,7 +43,9 @@ export function scoreLabel(score: number): string {
 }
 
 export function analyzeTrip(trip: SimTrip): TripAnalysis {
-  const { massKg: m, gravity: g, regenEfficiency: eta } = VEHICLE;
+  const phys = trip.physics ?? DEFAULT_PHYSICS;
+  const { massKg: m, regenEfficiency: eta } = phys;
+  const { gravity: g } = VEHICLE;
   const s = trip.samples;
 
   const regenKwh = sumKwh(s.map((x) => x.regenKw));
@@ -118,7 +120,7 @@ export function analyzeTrip(trip: SimTrip): TripAnalysis {
   const significant = missed.filter((e) => e.lostKwh >= 0.002);
 
   const usefulKwhPerGallon = SAVINGS.kwhPerGallon * SAVINGS.engineEfficiency;
-  const brakeKwh = regenKwh / eta + frictionKwh;
+  const brakeKwh = (eta > 0 ? regenKwh / eta : 0) + frictionKwh;
 
   return {
     score,
@@ -131,7 +133,7 @@ export function analyzeTrip(trip: SimTrip): TripAnalysis {
     tractionKwh,
     missedCount: significant.length,
     durationS: s.length,
-    regenShare: brakeKwh > 0 ? regenKwh / eta / brakeKwh : 0,
+    regenShare: brakeKwh > 0 && eta > 0 ? regenKwh / eta / brakeKwh : 0,
     axes,
     missed: significant,
     fuelGallons: Math.max(0, tractionKwh - regenKwh) / usefulKwhPerGallon,

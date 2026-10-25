@@ -13,6 +13,11 @@
   --seg-good: #22a08f;
   --seg-mid: #c98500;
   --seg-bad: #d5516d;
+  /* The regen path on the map and the legends beside it share these, so a color always means the same thing. */
+  --map-good: #19d69a;
+  --map-mid: #ffb020;
+  --map-bad: #ff4d5e;
+  --map-idle: #8a9aa6;
   --grid: #2a343e;
   --regen-good: #22a08f;
   --regen-mid: #c98500;
@@ -37,6 +42,10 @@
   --seg-good: #1f9d55;
   --seg-mid: #c98500;
   --seg-bad: #eb0a1e;
+  --map-good: #12a36f;
+  --map-mid: #e08a00;
+  --map-bad: #e0293b;
+  --map-idle: #6b7680;
   --grid: #d0d0d0;
   --regen-good: #1f9d55;
   --regen-mid: #c98500;

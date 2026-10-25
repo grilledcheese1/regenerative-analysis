@@ -26,12 +26,12 @@ export interface SegmentSummary {
 }
 
 /** The numbers behind one stretch of route, for the popup. Pure; estimates from the simulation. */
-export function summarizeSegment(slice: SimSample[], missed: MissedEvent[]): SegmentSummary | null {
+export function summarizeSegment(slice: SimSample[], missed: MissedEvent[], regenEfficiency: number = VEHICLE.regenEfficiency): SegmentSummary | null {
   if (slice.length === 0) return null;
   const first = slice[0];
   const last = slice[slice.length - 1];
   const avg = (f: (s: SimSample) => number) => slice.reduce((a, s) => a + f(s), 0) / slice.length;
-  const wheelRegen = slice.reduce((a, s) => a + s.regenKw / VEHICLE.regenEfficiency, 0);
+  const wheelRegen = slice.reduce((a, s) => a + s.regenKw / regenEfficiency, 0);
   const friction = slice.reduce((a, s) => a + s.frictionKw, 0);
   const braking = wheelRegen + friction;
   const causeKey = slice.find((s) => s.missed)?.missed;

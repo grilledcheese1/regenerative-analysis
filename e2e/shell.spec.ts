@@ -146,14 +146,14 @@ test("E12 no horizontal scroll on any tab (runs on desktop and mobile projects)"
   }
 });
 
-test("E13 no console errors across all tabs; missing Mapbox token shows the static preview", async ({ page }) => {
+test("E13 no console errors across all tabs; where the map can't draw, Drives shows the static preview", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
   await openNextMove(page);
   for (const name of TABS) {
     await tab(page, name).click();
-    if (name === "Drives") await expect(page.getByText(/Map tiles unavailable/i)).toBeVisible();
+    if (name === "Drives") await expect(page.getByText(/interactive map needs WebGL/i)).toBeVisible();
   }
   expect(errors).toEqual([]);
 });

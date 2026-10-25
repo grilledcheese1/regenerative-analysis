@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useId, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import type { AssistantAnswer, AssistantFallbackReason, CompareRequest, CompareResponse } from "@/contracts";
 import styles from "./AskNextMove.module.css";
+import DealerList from "../market/DealerList";
 import EyeFollow from "./EyeFollow";
 
 export type AssistantTab = "home" | "drives" | "money" | "compare" | "next" | "settings";
@@ -48,6 +49,7 @@ const MAX_HISTORY = 6;
  */
 export default function AskNextMove({ request, tab, labels, onCite }: AskNextMoveProps) {
   const [open, setOpen] = useState(false);
+  const [dealersOpen, setDealersOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [draft, setDraft] = useState("");
   const [busy, setBusy] = useState(false);
@@ -56,6 +58,7 @@ export default function AskNextMove({ request, tab, labels, onCite }: AskNextMov
   const panelRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const dealerBtnRef = useRef<HTMLButtonElement>(null);
   const logRef = useRef<HTMLDivElement>(null);
   const nextId = useRef(1);
   // The comparison snapshot for the request on screen. A changed request needs a new one.
@@ -132,7 +135,10 @@ export default function AskNextMove({ request, tab, labels, onCite }: AskNextMov
   const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Escape") {
       e.stopPropagation();
-      setOpen(false);
+      if (dealersOpen) {
+        setDealersOpen(false);
+        dealerBtnRef.current?.focus();
+      } else setOpen(false);
       return;
     }
     if (e.key !== "Tab" || !panelRef.current) return;
@@ -156,7 +162,17 @@ export default function AskNextMove({ request, tab, labels, onCite }: AskNextMov
 
   return (
     <>
-      <button ref={triggerRef} type="button" className={styles.fab} onClick={() => setOpen(true)} aria-haspopup="dialog" aria-expanded={open}>
+      <button
+        ref={triggerRef}
+        type="button"
+        className={styles.fab}
+        onClick={() => {
+          setDealersOpen(false);
+          setOpen(true);
+        }}
+        aria-haspopup="dialog"
+        aria-expanded={open}
+      >
         Ask Me Anything!
         <EyeFollow />
       </button>
@@ -188,13 +204,27 @@ export default function AskNextMove({ request, tab, labels, onCite }: AskNextMov
             >
               <header className={styles.head}>
                 <div>
-                  <h2 id={titleId} className={styles.title}>Ask Next Move</h2>
+                  <div className={styles.titleRow}>
+                    <h2 id={titleId} className={styles.title}>Ask Next Move</h2>
+                    <button
+                      ref={dealerBtnRef}
+                      type="button"
+                      className={styles.dealerBtn}
+                      onClick={() => setDealersOpen((v) => !v)}
+                      aria-expanded={dealersOpen}
+                      aria-controls={`${titleId}-dealers`}
+                    >
+                      Contact the dealer
+                    </button>
+                  </div>
                   <p className={styles.sub}>AI assistant · answers use your simulated numbers · estimates, not a quote</p>
                 </div>
                 <button type="button" className={styles.close} onClick={() => setOpen(false)} aria-label="Close assistant">
                   ×
                 </button>
               </header>
+
+              <div className={styles.body}>
 
               <div ref={logRef} className={styles.log} aria-live="polite" aria-relevant="additions">
                 {messages.length === 0 && (
@@ -236,6 +266,31 @@ export default function AskNextMove({ request, tab, labels, onCite }: AskNextMov
                   Send
                 </button>
               </form>
+
+              <AnimatePresence>
+                {dealersOpen && (
+                  <motion.div
+                    key="dealers"
+                    id={`${titleId}-dealers`}
+                    role="region"
+                    aria-label="Toyota dealerships near you"
+                    className={styles.dealerSheet}
+                    initial={{ opacity: 0, y: 28 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 20, transition: { duration: 0.16, ease: "easeIn" } }}
+                    transition={{ type: "spring", stiffness: 420, damping: 34 }}
+                  >
+                    <div className={styles.dealerHead}>
+                      <strong>Contact a dealer</strong>
+                      <button type="button" className={styles.dealerClose} onClick={() => setDealersOpen(false)}>
+                        ← Back to chat
+                      </button>
+                    </div>
+                    <DealerList near="Austin, TX" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              </div>
             </motion.div>
           </>
         )}

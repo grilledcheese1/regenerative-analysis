@@ -12,6 +12,33 @@ export const VEHICLE = {
   gravity: 9.81,
 } as const;
 
+/** The physics of one car. The default is the Camry Hybrid above; each person's own car overrides it. */
+export interface VehiclePhysics {
+  label: string; // "Toyota Sienna Hybrid"
+  massKg: number; // curb weight plus the person's usual load
+  dragCoefficient: number;
+  frontalAreaM2: number;
+  rollingResistance: number; // dry-road coefficient; the road surface scales it
+  regenEfficiency: number; // share of braking energy at the wheels that reaches the battery
+  maxRegenKw: number; // battery-side limit
+  drivenAxleWeightShare: number; // share of weight on the axle the motor brakes
+  batteryKwh: number;
+  regenCapable: boolean;
+}
+
+export const DEFAULT_PHYSICS: VehiclePhysics = {
+  label: "Camry Hybrid (simulated)",
+  massKg: VEHICLE.massKg,
+  dragCoefficient: VEHICLE.dragCoefficient,
+  frontalAreaM2: VEHICLE.frontalAreaM2,
+  rollingResistance: 0.01,
+  regenEfficiency: VEHICLE.regenEfficiency,
+  maxRegenKw: VEHICLE.maxRegenKw,
+  drivenAxleWeightShare: VEHICLE.drivenAxleWeightShare,
+  batteryKwh: 1.6,
+  regenCapable: true,
+};
+
 export type Condition = "dry" | "wet" | "snow" | "ice" | "gravel" | "mud";
 
 export const SURFACES: Record<Condition, { mu: number; crr: number }> = {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import type { MissedEvent } from "@/lib/model/score";
@@ -12,7 +12,7 @@ import WeatherOverlay from "./WeatherOverlay";
 
 /**
  * Interactive 3D map that needs no API key: MapLibre GL with OpenFreeMap streets and buildings
- * and free terrain tiles. Same route, colors and markers as the Mapbox map.
+ * and free terrain tiles (Mapzen / AWS Open Data). Used by the dashboard, Drives and the story.
  */
 interface FreeTripMapProps {
   theme?: MapTheme;
@@ -26,9 +26,14 @@ interface FreeTripMapProps {
   follow: boolean;
   weather?: string;
   onSelectMissed: (e: MissedEvent) => void;
-  onSelectSegment?: (index: number) => void; // a partial (amber) or missed (red) stretch of route was clicked
+  onSelectSegment?: (index: number) => void; // any stretch of route was clicked (green, amber, red or idle)
   focus?: number; // 0..1, how close the car is to a braking zone; speeds up the orbit and tightens the camera
+  /** Shown instead of the map where WebGL is unavailable (blocked, no GPU) or the page is driven by automation. */
+  fallback?: ReactNode;
 }
+
+// The path gets thicker the more regen power a stretch recovers (route-by-surface features have no "kw" and stay at the base width).
+const REGEN_WIDTH: maplibregl.ExpressionSpecification = ["interpolate", ["linear"], ["coalesce", ["get", "kw"], 0], 0, CFG.line.width, 10, CFG.line.width + 3, 30, CFG.line.width + 6, 60, CFG.line.width + 9];
 
 const cssVar = (name: string) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 // "var(--surf-gravel)" -> its current value, so MapLibre gets a real color
@@ -57,7 +62,7 @@ function routeData(p: FreeTripMapProps): GeoJSON.FeatureCollection {
   return fc(
     p.segments.map((s, i) => ({
       type: "Feature",
-      properties: { color: cssVar(GRADE_VAR[s.grade]), dashed: 0, i, grade: s.grade },
+      properties: { color: cssVar(GRADE_VAR[s.grade]), dashed: 0, i, grade: s.grade, kw: Math.round(s.regenKw * 10) / 10 },
       geometry: { type: "LineString", coordinates: s.coords },
     })),
   );
@@ -83,6 +88,7 @@ export default function FreeTripMap(props: FreeTripMapProps) {
   const cam = useRef<{ lon: number; lat: number; bearing: number; zoom: number; pitch: number } | null>(null); // the replay's smoothed camera
   const fit = useRef<maplibregl.LngLatBounds | null>(null);
   const [ready, setReady] = useState(false);
+  const [failed, setFailed] = useState(false);
   const latest = useRef(props);
   useEffect(() => {
     latest.current = props;
@@ -92,16 +98,25 @@ export default function FreeTripMap(props: FreeTripMapProps) {
   useEffect(() => {
     if (!container.current) return;
     const p = latest.current;
-    const map = new maplibregl.Map({
-      container: container.current,
-      style: CFG.styles[theme],
-      center: p.car,
-      zoom: CFG.camera.zoom,
-      pitch: CFG.camera.pitch,
-      bearing: CFG.camera.bearing,
-      maxPitch: 80,
-      attributionControl: { compact: true },
-    });
+    // Automated browsers and machines without WebGL get the fallback instead of a constructor that throws.
+    let map: maplibregl.Map;
+    try {
+      if (navigator.webdriver) throw new Error("automated browser");
+      map = new maplibregl.Map({
+        container: container.current,
+        style: CFG.styles[theme],
+        center: p.car,
+        zoom: CFG.camera.zoom,
+        pitch: CFG.camera.pitch,
+        bearing: CFG.camera.bearing,
+        maxPitch: 80,
+        attributionControl: { compact: true },
+      });
+    } catch {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- reacting to a browser capability check
+      setFailed(true);
+      return;
+    }
     mapRef.current = map;
     map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), "top-right");
 
@@ -151,13 +166,13 @@ export default function FreeTripMap(props: FreeTripMapProps) {
       map.addSource("car", { type: "geojson", data: fc([point(cur.car)]) });
       const L = CFG.line;
       map.addLayer({ id: "route-glow", type: "line", source: "route",
-        paint: { "line-color": ["get", "color"], "line-width": L.glowWidth, "line-blur": L.glowBlur, "line-opacity": L.glowOpacity } });
+        paint: { "line-color": ["get", "color"], "line-width": ["+", REGEN_WIDTH, L.glowExtra], "line-blur": L.glowBlur, "line-opacity": L.glowOpacity } });
       map.addLayer({ id: "route", type: "line", source: "route", filter: ["==", ["get", "dashed"], 0],
-        layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": ["get", "color"], "line-width": L.width } });
+        layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": ["get", "color"], "line-width": REGEN_WIDTH } });
       map.addLayer({ id: "route-dashed", type: "line", source: "route", filter: ["==", ["get", "dashed"], 1],
         paint: { "line-color": ["get", "color"], "line-width": L.width, "line-dasharray": [...L.dash] } });
-      // A wide, nearly invisible copy of the route that catches clicks and hovers, so thin stretches are easy to hit
-      map.addLayer({ id: "route-hit", type: "line", source: "route", filter: ["in", ["get", "grade"], ["literal", ["mid", "bad"]]],
+      // A wide, nearly invisible copy of the route that catches clicks and hovers, so thin stretches are easy to hit.
+      map.addLayer({ id: "route-hit", type: "line", source: "route", filter: ["has", "grade"],
         layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": "#000000", "line-opacity": 0.01, "line-width": L.hitWidth } });
       const M = CFG.markers;
       map.addLayer({ id: "stops", type: "circle", source: "stops",
@@ -174,10 +189,10 @@ export default function FreeTripMap(props: FreeTripMapProps) {
         const ev = typeof i === "number" ? latest.current.missed[i] : undefined;
         if (ev) latest.current.onSelectMissed(ev);
       });
-      // Partial and missed stretches are clickable: they open the telemetry popup.
+      // Every stretch of route is clickable: it opens the telemetry popup.
       map.on("click", "route-hit", (e) => {
         const f = e.features?.[0]?.properties;
-        if ((f?.grade === "bad" || f?.grade === "mid") && typeof f.i === "number") latest.current.onSelectSegment?.(f.i);
+        if (typeof f?.i === "number") latest.current.onSelectSegment?.(f.i);
       });
       map.on("mouseenter", "route-hit", () => (map.getCanvas().style.cursor = "pointer"));
       map.on("mouseleave", "route-hit", () => (map.getCanvas().style.cursor = ""));
@@ -257,6 +272,8 @@ export default function FreeTripMap(props: FreeTripMapProps) {
     if (car[0] !== ahead[0] || car[1] !== ahead[1]) camBearing.current = turn(camBearing.current, target, C.turnSmoothing);
     if (!map.isEasing()) map.jumpTo({ center: car, bearing: camBearing.current });
   }, [ready, car, ahead, follow, focus, replay]);
+
+  if (failed && props.fallback) return <>{props.fallback}</>;
 
   return (
     <div style={{ position: "relative", width: "100%", height: CFG.height }}>
