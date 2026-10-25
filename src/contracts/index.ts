@@ -231,7 +231,7 @@ export interface Recommendation {
   explanation: string[];
   evidenceIds: string[];
   missingInputs: string[];
-  explanationMode: "template";
+  explanationMode: "template" | "ai"; // the domain always says "template"; only the server explainer sets "ai"
 }
 
 export interface Comparison {
@@ -247,3 +247,8 @@ export interface Comparison {
   evidence: EvidenceFact[];
   recommendation: Recommendation;
 }
+
+export * from "./explain";
+export * from "./driving";
+export * from "./banking-sync";
+export * from "./market";

@@ -15,7 +15,8 @@ npm install
 cp .env.example .env.local   # every variable is optional
 npm run dev
 npm run check                # lint + typecheck + unit tests + build
-npm run test:e2e             # Playwright; needs @playwright/test installed (see Tests)
+npx playwright install chromium   # once per machine
+npm run test:e2e
 ```
 
 ## Data modes and honesty notes
@@ -59,7 +60,7 @@ Toyota or Insure Connect data import, an insurer partnership, lender quotes, nat
   scenarios), and the braking model.
 - End to end (`npm run test:e2e`): `e2e/` covers page separation, the Maria journey, changed inputs, Devon and Kai
   outcomes, sliders, evidence, persona reset, Settings, phone-width overflow and the missing-Mapbox fallback. Specs run
-  with no provider keys. Install once: `npm install --save-exact -D @playwright/test` then `npx playwright install chromium`.
+  with no provider keys, so fixture banking and template explanations keep them deterministic.
 
 ## Workstream docs
 

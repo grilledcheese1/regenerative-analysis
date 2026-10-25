@@ -1,179 +1,175 @@
-# Workstream A — Drive imports and driving profile
+# Stream 1 — Drive imports and driving profile
 
-**Owner:** _(name)_ · **Branch:** `ws/a-driving` · **Version:** 1, 2026-10-24
+**Owner:** _(name)_ · **Branch:** `ws/drive-imports` · **Depends on:** nothing · **Version:** 2, 2026-10-24
 
-**Goal:** On the Drives screen, a user can import a GPX (or the documented CSV) drive, or try a sample drive, and see an honest preview: date, distance, gaps, source, and which analysis the data supports. They confirm it, and the confirmed trips plus a confirmed weekly driving pattern produce a `DrivingProfile` (monthly miles, city share). That profile replaces the persona's assumed usage in the comparison, so imported driving visibly changes fuel cost, lease mileage projection and possibly the next action.
-
-This is the "Import a drive" primary action from the product plan, and the canonical trip format that the rest of the app reads.
-
----
+**Goal:** On the Next Move Drives tab, a user can import a GPX (or the documented CSV) drive, or try a sample drive, and see an honest preview: date, distance, gaps, source, and which analysis the data supports. They confirm it, and the confirmed trips plus a confirmed weekly driving pattern produce a `DrivingProfile` (monthly miles, city share). Passed to `onProfile`, it replaces the persona's assumed usage in the comparison, so imported driving visibly changes fuel cost, lease mileage projection and possibly the next action.
 
 ## 0. Shared rules (identical in all four workstream documents)
 
-### 0.1 Where we are (verified 2026-10-24 ~7 pm)
+### 0.1 These four streams run fully in parallel
 
-The Next Move vertical slice works end to end with fixture banking:
+Everything shared already exists on `main`. **No stream waits for, or edits files owned by, another stream:**
 
-- **Domain:** `src/domain/finance/{budget,loan,lease,fuel}.ts` and `src/domain/recommendations/{compare,rank,recommend}.ts`. These are pure functions using integer cents.
-- **Fixtures:** `src/fixtures/{personas,catalog,banking}.ts`, with the three personas Maria, Devon and Kai.
-- **Nessie adapter:** `src/server/providers/nessie.ts` (server-only fetch, sandbox reads) and `nessie-normalize.ts` (zod schemas and normalization).
-- **API:** `GET /api/demo/customers` and `POST /api/banking/nessie/sync` (`{ personaId, mode: "fixture" | "sandbox" }`). The older `POST /api/coach` is still used by the Drives coaching panel in `src/components/Panels.tsx`.
-- **Routes:** Next Move is its own page at **`/next-move`** (`src/app/next-move/page.tsx`). **`/` stays the team's Regen Coach dashboard** (`src/app/page.tsx` → `src/components/Dashboard.tsx`). Keep them separate: don't link, redirect or restyle `/` from Next Move work.
-- **UI:** `src/components/next-move/NextMoveApp.tsx` is the shell (persona picker, tabs, sync bar, scenario state). `screens.tsx` holds Home, Money, Compare and Next Move. `Evidence.tsx` provides `EvidenceList` and `SourceChip`. `src/components/DrivesView.tsx` is the Regen replay on the cached Austin routes in `src/data/routes.json`.
-- **Checks:** 29 Vitest tests pass across `tests/{finance,budget,compare,braking}.test.ts`. `tsc`, `eslint` and `next build` are clean.
-- **Demo scenarios already true:** Maria's buyout leads but needs a quote, and adding $300/mo of spending changes her result. Devon keeps the car. Kai has no feasible option. `tests/compare.test.ts` enforces all of these, so **do not break them.**
+- **Contracts:** all types are in `src/contracts/`.
+- **Server helpers:** everything under `src/server/` is in place.
+- **Dependencies:** every package is installed and pinned.
+- **Environment variables:** all are listed in `.env.example`.
+- **Test config:** Playwright is set up, and each stream has its own spec file.
+- **Mount points:** every new component is already mounted in the Next Move shell as a stub in its owner's folder.
 
-### 0.2 Step 0 — baseline (done)
+Each stream fills in its own files and merges whenever it is green, in any order. If you find you need to change a file you don't own, treat that as a gap in this split: tell the stream 4 owner, who makes the change on `main`. You should not need to.
 
-The work above is committed on `vishruth` and merged into `main`, together with the team's Regen Coach work (physics, data pipeline, `TripMap`, generated trips). Branch from the latest `main`: `git switch main && git pull && git switch -c ws/<stream>`.
+| # | Stream | Document | Delivers |
+|---|---|---|---|
+| 1 | Drive imports | `1-drive-imports.md` | GPX/CSV import, trip preview, driving profile feeding Compare |
+| 2 | Nessie banking | `2-nessie-banking.md` | Live sandbox customers, retries, stale-read fallback, the "Best use of Nessie" moment |
+| 3 | Market research | `3-market-research.md` | SerpAPI listings and dealers, saved results fallback |
+| 4 | Shell and ship | `4-shell-and-ship.md` | Settings, polish, failure states, end-to-end tests, deploy, demo, live AI check |
+
+The recommendations API and grounded Claude explanation (old Workstream C) is **done**. `done-C-recommendations-ai.md` documents it for reference.
+
+### 0.2 Where things are (verified 2026-10-24)
+
+- **Pages:**
+  - `/` is the team's Regen Coach dashboard (`src/app/page.tsx` → `src/components/Dashboard.tsx`).
+  - Next Move is a separate page at **`/next-move`** (`src/app/next-move/page.tsx` → `src/components/next-move/NextMoveApp.tsx`).
+  - Don't link, redirect or restyle `/` from Next Move work.
+- **Next Move tabs:** Home, Drives (the Regen replay reused), Money, Compare and Next Move.
+  - The three personas Maria, Devon and Kai come from `src/fixtures/`.
+  - Banking is a Nessie-format fixture until a sandbox read succeeds.
+- **Calculations:** pure functions in `src/domain/`. `runScenario()` produces the budget and comparison for both the screens and the server, so figures reconcile everywhere.
+- **Server API already live:**
+  - `POST /api/banking/nessie/sync` stores each successful read for the owner.
+  - `POST /api/options/compare`
+  - `POST /api/recommendations`, `GET /api/recommendations/[id]`
+  - `GET` and `PUT /api/consents`
+  - `DELETE /api/me/data`
+  - `GET /api/demo/customers`
+  - Regen Coach's own routes: `/api/{routes,trips,compare,coach}`.
+- **Checks:** 81 Vitest tests and 3 Playwright specs pass, and `npm run check` is green. Demo facts the tests enforce, so **don't break them:**
+  - Maria: the buyout leads but needs a quote.
+  - Maria with +$300/mo of spending gets a different result.
+  - Devon keeps his car.
+  - Kai has no feasible option.
 
 ### 0.3 Next.js 16.4: read before writing routes
 
-The `AGENTS.md` warning is real. Before writing a route, read:
+The `AGENTS.md` warning is real. Read these first:
 
 - `node_modules/next/dist/docs/01-app/01-getting-started/15-route-handlers.md`
 - `node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/route.md`
 - `node_modules/next/dist/docs/01-app/03-api-reference/04-functions/cookies.md`
 
-Facts that differ from older Next.js:
+Dynamic `params` is a **Promise**. Type it as `{ params }: { params: Promise<{ id: string }> }`, then `const { id } = await params` (see `src/app/api/recommendations/[id]/route.ts`). `cookies()` is async. `middleware.ts` is now `proxy.ts`, and nobody needs it.
 
-- Dynamic `params` is a **Promise**: `export async function GET(req: Request, ctx: RouteContext<"/api/drives/[id]">) { const { id } = await ctx.params }`.
-- `cookies()` is **async**: `const jar = await cookies()`.
-- `middleware.ts` is deprecated and renamed `proxy.ts`. We don't need either.
+### 0.4 Conventions
 
-### 0.4 Conventions (from the Calculation and Data Specification)
-
-- Money is integer cents (`Cents`), rates are basis points, distance is meters and speed is m/s internally. Timestamps are ISO-8601 UTC. Format only at the edge (`src/domain/format.ts` → `usd()`).
-- An unknown value is `Maybe<T>` / `unknown(reason)` from `src/contracts/index.ts`, **never 0**.
-- Every displayed number carries a `SourceKind` (`observed | user_reported | derived | modeled | synthetic`) and appears with `SourceChip`.
-- Error body is always `{ error: { code, message, retryable, fieldErrors?, requestId } }`. Status codes:
+- **Units:** money is integer cents, rates are basis points, and distance and speed are meters and m/s internally. Timestamps are ISO-8601 UTC. Format only at the edge, with `usd()` from `src/domain/format.ts`.
+- **Unknown values:** use `Maybe<T>` / `unknown(reason)`, **never 0**.
+- **Sources:** every displayed number carries a `SourceKind` (`observed | user_reported | derived | modeled | synthetic`).
+- **Errors:** return `apiError()` from `src/server/http.ts`, with the shape `{ error: { code, message, retryable, fieldErrors?, requestId } }`.
   - 400 invalid input
   - 404 not found or not yours
-  - 409 conflict
+  - 409 conflict or resync
   - 413 too large
   - 422 supported but unusable
   - 429 rate limited
   - 502 provider error
-  - 503 provider not configured or unavailable
-- **Never relabel a failed live call as fixture/success.** Offer the fallback explicitly and label it.
-- Pure domain code (`src/domain/**`) imports nothing from React, Next or `src/server`. Server code that holds secrets starts with `import "server-only"`.
-- New CSS goes in a **CSS module next to your component** (`Foo.module.css`), using the existing tokens (`var(--border)`, `var(--text-2)`, `var(--font-mono)`, …). `src/app/globals.css` is owned by Stream D.
+  - 503 not configured or unavailable
+- **Never relabel a failed live call as fixture or success.** Offer the fallback explicitly and label it.
+- **Code boundaries:** `src/domain/**` imports nothing from React, Next or `src/server`. Server modules that hold secrets start with `import "server-only"`; Vitest stubs it, so they stay testable.
+- **Styles:** new CSS goes in a **CSS module next to your component**, using the tokens in `src/app/globals.css` (`--border`, `--text-2`, `--muted`, `--accent`, `--accent-text`, `--panel`, `--font-mono`, …).
+- **Dependencies:** don't add any; everything needed is installed. If you truly need one, ask stream 4. A second lockfile change is the one way parallel branches collide.
 
-### 0.5 File ownership (edit only your own files; ask the owner for anything else)
+### 0.5 File ownership (exclusive)
 
-| Area | Owner |
+| Owner | Files |
 |---|---|
-| `src/domain/driving/**`, `src/contracts/driving.ts`, `src/app/api/imports/**`, `src/app/api/drives/**`, `src/server/imports/**`, `src/components/next-move/import/**`, `public/samples/**`, `scripts/make-sample-drives.mjs`, `tests/driving/**` | **A** |
-| `src/server/providers/nessie*.ts`, `src/fixtures/banking.ts`, `src/app/api/banking/**`, `src/app/api/dev/**`, `src/server/providers/serpapi.ts`, `src/app/api/market/**`, `src/contracts/{banking-sync,market}.ts`, `src/fixtures/market-cache.json`, `src/components/next-move/banking/**`, `src/components/next-move/market/**`, `tests/banking/**`, `tests/market/**` | **B** |
-| `src/server/{session,store,http}.ts`, `src/server/explain/**`, `src/app/api/options/**`, `src/app/api/recommendations/**`, `src/app/api/consents/**`, `src/app/api/me/**`, `src/contracts/index.ts` (existing types), `src/contracts/explain.ts`, `src/domain/recommendations/**`, `src/domain/finance/**`, `src/components/next-move/explain/**`, `tests/{finance,budget,compare}.test.ts`, `tests/server/**`, `tests/explain/**` | **C** |
-| `src/components/next-move/{NextMoveApp,screens,Evidence}.tsx`, new `Settings` screen, `src/app/next-move/**`, the Next Move section of `src/app/globals.css` (after `/* ---------- Next Move shell ---------- */`), `src/components/{DrivesView,Panels,RouteMap,RouteSvg,Timeline}.tsx`, `scripts/fetch-demo-routes.mjs` (writes `src/data/routes.json`), `package.json` scripts, `.env.example`, `README.md`, `playwright.config.ts`, `e2e/**`, deployment, demo script | **D** |
+| **1 Drive imports** | `src/domain/driving/**`, `src/server/imports/**`, `src/app/api/imports/**`, `src/app/api/drives/**`, `src/components/next-move/import/**`, `public/samples/**`, `scripts/make-sample-drives.mjs`, `tests/driving/**`, `e2e/drive-imports.spec.ts` |
+| **2 Nessie banking** | `src/server/providers/nessie.ts`, `src/server/providers/nessie-normalize.ts`, `src/fixtures/banking.ts`, `src/app/api/banking/**`, `src/app/api/dev/**`, `src/app/api/demo/**`, `src/components/next-move/banking/**`, `tests/banking/**`, `e2e/nessie-banking.spec.ts` |
+| **3 Market research** | `src/server/providers/serpapi.ts`, `src/app/api/market/**`, `src/fixtures/market-cache.json`, `src/components/next-move/market/**`, `tests/market/**`, `e2e/market-research.spec.ts` |
+| **4 Shell and ship** | `src/components/next-move/{NextMoveApp,screens,Evidence}.tsx`, `src/components/next-move/settings/**`, `src/components/next-move/explain/**`, `src/app/next-move/**`, `src/app/icon.*`, the Next Move section of `src/app/globals.css` (after `/* ---------- Next Move shell ---------- */`), `src/components/DrivesView.tsx`, `scripts/fetch-demo-routes.mjs`, `playwright.config.ts`, `e2e/shell.spec.ts`, `README.md`, `.env.example`, `package.json`/lockfile, deployment, `docs/demo-script.md`. Also the finished recommendations code, for fixes and prompt tuning: `src/server/{session,store,http,hash,records}.ts`, `src/server/explain/**`, `src/app/api/{options,recommendations,consents,me}/**`, `src/domain/**`, `src/contracts/{index,explain}.ts`, `tests/{finance,budget,compare,scenario,braking}.test.ts`, `tests/server/**`, `tests/explain/**` |
 
-Shared append-only exceptions:
+**Contract files.** `src/contracts/driving.ts` belongs to stream 1, `banking-sync.ts` to stream 2 and `market.ts` to stream 3. Their shapes are **frozen** because the shell already consumes them. You may add optional fields; don't rename or remove any. `src/contracts/index.ts` already re-exports all of them, so nobody edits it.
 
-- **`src/contracts/index.ts`:** each stream may append **one** line, `export * from "./<file>";`. All other edits go through C.
-- **`package.json` / `package-lock.json`:** add dependencies with `npm install --save-exact <pkg>@<version>`. On merge conflicts in the lockfile, take either side and re-run `npm install`.
+### 0.6 Server helpers you can use today
 
-### 0.6 Shared server primitives: C delivers by H+0:45, signatures frozen now
-
-Code against these immediately. C merges them to `vishruth` as a tiny PR; everyone rebases.
+Owned by stream 4; don't edit them:
 
 ```ts
-// src/server/session.ts
-import "server-only";
-/** Demo owner id from httpOnly cookie "nm_sid" (crypto.randomUUID(), SameSite=Lax, Path=/, 7 days).
- *  Creates the cookie if missing. Only call from route handlers. */
-export async function ownerId(): Promise<string>;
-
-// src/server/store.ts
-import "server-only";
-export interface OwnedStore<T> {
-  get(owner: string, id: string): T | undefined;      // undefined for other owners: callers return 404
-  put(owner: string, id: string, value: T): void;
-  list(owner: string): T[];                            // newest first
-  remove(owner: string, id: string): boolean;
-}
-/** In-memory, kept on globalThis so dev HMR doesn't wipe it. Registers the store for deleteOwnerData. */
-export function ownedStore<T>(name: string, opts?: { maxPerOwner?: number }): OwnedStore<T>;
-export function deleteOwnerData(owner: string): { stores: string[] };
-
-// src/server/http.ts
-export function newRequestId(): string;
-export function apiError(status: number, code: string, message: string, retryable: boolean,
-  requestId: string, fieldErrors?: Record<string, string>): Response;
-/** Idempotency-Key handling: same key + same body hash → replay the stored response;
- *  same key + different body → 409 "idempotency_conflict". */
-export async function withIdempotency(req: Request, owner: string, route: string,
-  run: (body: unknown) => Promise<Response>): Promise<Response>;
+import { ownerId } from "@/server/session";            // async; demo owner from the httpOnly "nm_sid" cookie (route handlers only)
+import { ownedStore, deleteOwnerData } from "@/server/store";
+//   ownedStore<T>(name, { maxPerOwner? }) → { get(owner,id), put(owner,id,v), list(owner) /* newest first */, remove(owner,id) }
+//   Stores live on globalThis (in memory). DELETE /api/me/data clears every store automatically.
+import { apiError, newRequestId, withIdempotency } from "@/server/http";
+//   withIdempotency(req, owner, routeName, async (parsedJsonBody) => Response): replays on same key+body, 409 on a different body
+import { sha256Hex, canonicalJson } from "@/server/hash";
+import { bankingSnapshots, fieldErrors } from "@/server/records"; // fieldErrors(zodIssues) → { "a.b": "message" }
 ```
 
-Registered store names:
+**Store names are reserved per stream:**
 
-- **A:** `imports`, `trips`
-- **B:** `banking_snapshots`. B's market cache is global, not per owner, and lives in a module-level `Map`.
-- **C:** `comparisons`, `recommendations`, `explanations`, `consents`, `idempotency`
+- **Stream 1:** `imports`, `trips`
+- **Stream 2:** `banking_snapshots`, already exported as `bankingSnapshots` and keyed `${personaId}:fixture` / `${personaId}:sandbox`
+- **Stream 3:** keeps its cache in a module-level `Map`; the data is public, so it needs no owner store
+- **Stream 4:** `comparisons`, `recommendations`, `consents`, `idempotency`
 
-**In-memory caveat.** Vercel instances don't share memory, so server records are best-effort. The client keeps working state. Any route that needs a missing server record returns `409 { code: "<thing>_not_found_resync" }` and the client re-sends its inputs. Supabase persistence is a C stretch goal behind the same `OwnedStore` interface.
+**Tests.** Mock the cookie with `tests/server/cookies.ts`: `vi.mock("next/headers", () => ({ cookies: cookiesMock }))`, then `asOwner("a" | "b")` to switch users. `tests/server/routes.test.ts` shows the pattern.
 
-### 0.7 Integration mount points (D wires these into the shell)
+**In memory only.** Vercel instances don't share memory, so server records are best-effort. A route that needs a missing record returns `409 { code: "<thing>_not_found_resync" }`, and the client re-sends.
 
-| Component (owner) | Path | Props | Mounted by D in |
-|---|---|---|---|
-| `ImportDrive` (A) | `src/components/next-move/import/ImportDrive.tsx` | `{ personaId: string; vehicleLabel: string; onProfile: (p: DrivingProfile \| null) => void }` | Drives tab, above `DrivesView` |
-| `BankingSyncBar` (B) | `src/components/next-move/banking/BankingSyncBar.tsx` and hook `useBankingSync.ts` | hook: `useBankingSync(personaId) → { bank, mode, stale, loading, error, sync(mode) }`; bar: the hook's return value | Replaces the inline `.sync-bar` in `NextMoveApp` |
-| `MarketResearch` (B) | `src/components/next-move/market/MarketResearch.tsx` | `{ catalogId: string; label: string }` | Compare: a "See listings" disclosure per new-vehicle option |
-| `DealerList` (B) | `src/components/next-move/market/DealerList.tsx` | `{ near: "Austin, TX" }` | Next Move, when `nextAction === "compare_confirmed_offers"` |
-| `AiExplanation` (C) | `src/components/next-move/explain/AiExplanation.tsx` | `{ request: CompareRequest; recommendation: Recommendation; evidence: EvidenceFact[] }` | Next Move: replaces the "Explanation generated by a deterministic template" footer |
+### 0.7 Mount points: already wired, you only fill in your own file
 
-Until a component lands, D mounts a placeholder with the same props.
+| Component (owner) | File | Props (frozen) | Already mounted in | What the shell does with it |
+|---|---|---|---|---|
+| `ImportDrive` (1) | `src/components/next-move/import/ImportDrive.tsx` | `{ personaId, vehicleLabel, onProfile(p: DrivingProfile \| null) }` | Drives tab, above the replay; remounts per persona | `onProfile(p)` sets Compare's monthly miles (if `p.monthlyMiles.known`), city share (if known) and usage source; the header tag becomes "Driving · imported". `onProfile(null)` reverts to the persona estimate |
+| `useBankingSync` and `BankingSyncBar` (2) | `src/components/next-move/banking/` | hook `useBankingSync(personaId): BankingSyncState`; bar takes `BankingSyncState` | The shell calls the hook; the bar sits under the tabs | The shell reads `bank`, `mode` and `stale` (header tag "Banking · fixture / Nessie sandbox / stale sandbox read") and sends `mode` to the explanation API |
+| `MarketResearch` (3) | `src/components/next-move/market/MarketResearch.tsx` | `{ catalogId, label }` | Inside every Compare option card whose `kind` is `lease_new` or `purchase_new` | Nothing else; the component owns its whole UI, including any disclosure |
+| `DealerList` (3) | `src/components/next-move/market/DealerList.tsx` | `{ near: string }` | Next Move card, when `nextAction === "compare_confirmed_offers"` | Nothing else |
+| `AiExplanation` (4, done) | `src/components/next-move/explain/AiExplanation.tsx` | `{ request, recommendation, evidence, onCite }` | Next Move card | Highlights cited evidence |
 
-### 0.8 Environment registry (D adds all of these to `.env.example` at H+0)
+Today the stubs render nothing, or reproduce current behavior in the banking hook's case. **Replace the body; keep the file path, the default or named export and the props.**
 
-| Variable | Used by | Default / note |
-|---|---|---|
-| `NEXT_PUBLIC_MAPBOX_TOKEN` | D (map) | exists |
-| `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL` | C | model default `claude-sonnet-5-5` in `src/lib/env.ts` |
-| `AI_DAILY_CAP` | C | `50` |
-| `NESSIE_API_KEY`, `NESSIE_BASE_URL`, `NESSIE_CUSTOMERS` | B | `http://api.nessieisreal.com`; `maria:<id>,devon:<id>,kai:<id>` |
-| `NESSIE_SEED_ALLOW` | B | `1` only on a dev machine; never set in Vercel |
-| `SERPAPI_API_KEY`, `MARKET_DAILY_CAP` | B | `100` |
-| `IMPORT_MAX_BYTES` | A | `4194304` (4 MiB) |
+### 0.8 Environment variables (all already in `.env.example`)
 
-### 0.9 Schedule (H+0 = kickoff; scale to the real deadline)
-
-| When | Milestone |
+| Variable | Stream |
 |---|---|
-| H+0 | D commits the baseline; everyone branches; D deploys the baseline preview |
-| H+0:45 | C merges the shared primitives (§0.6); everyone rebases |
-| H+1 | C merges the `CompareInputs.overrides` extension (`cityShare`, `usageSource`), which A needs |
-| H+3 | **Integration window 1:** each stream merges whatever is green behind its component |
-| H+6 | **Integration window 2:** features complete |
-| H+8 | **Integration window 3:** fixes only |
-| H+9 | **Freeze.** Then e2e, deploy, and two full rehearsals on another device |
+| `NEXT_PUBLIC_MAPBOX_TOKEN` | 4 (map) |
+| `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL` (the committed `.env` sets `claude-sonnet-5-5`), `AI_DAILY_CAP` | 4 |
+| `NESSIE_API_KEY`, `NESSIE_BASE_URL`, `NESSIE_CUSTOMERS`, `NESSIE_SEED_ALLOW` (dev only; never in Vercel) | 2 |
+| `SERPAPI_API_KEY`, `MARKET_DAILY_CAP` | 3 |
+| `IMPORT_MAX_BYTES` | 1 |
 
-Merge = rebase on `vishruth`, `npm run lint && npm run typecheck && npm test && npm run build` green, then D merges. Shared field names are frozen after H+1. Changing one needs a fixture update and a message to all owners.
+### 0.9 Merging: any time, any order
+
+1. `git switch main && git pull && git switch -c ws/<stream>`
+2. Work only in your files.
+3. Before merging: `git rebase main`, `npm run check` (lint, typecheck, unit tests, build), and `npx playwright test e2e/<your>.spec.ts e2e/shell.spec.ts`. You need `npx playwright install chromium` once per machine.
+4. Merge to `main` when green. Since no two streams share a file, rebases don't conflict.
 
 ### 0.10 Definition of done (every stream)
 
-- Lint, typecheck, unit tests and build are green, and your own tests cover your acceptance list.
-- No new browser console errors.
-- The four demo scenarios in §0.1 still hold.
-- Every new number has a source label, and unknowns are shown as unknown.
+- `npm run check` is green.
+- Your unit tests cover your acceptance list, and your `e2e/<stream>.spec.ts` passes alongside `e2e/shell.spec.ts`.
+- No new browser console errors on `/next-move`, and `/` is unchanged.
+- The demo facts in §0.2 still hold.
+- Every new number has a source label, and unknowns show as unknown.
 - Failures are explicit and labeled.
 - Nothing claims a Toyota or insurer integration, approval, quote or booking that doesn't exist.
 
 ### 0.11 Relationship to the team `AGENTS.md` (Regen Coach Streams 1–4)
 
-`AGENTS.md` on `main` defines four **Regen Coach** streams (1 Physics and Scoring, 2 Data and API, 3 Map and Charts, 4 UI, Theme and Pitch) and their file ownership. Those rules still govern the Regen Coach dashboard at `/`, including `src/app/page.tsx`, `src/app/layout.tsx` and `src/components/Dashboard.tsx`. The Next Move Drives tab reuses its replay components. These Next Move workstreams (A–D) **do not edit** Regen Coach files:
+`AGENTS.md` on `main` defines four **Regen Coach** streams (1 Physics and Scoring, 2 Data and API, 3 Map and Charts, 4 UI, Theme and Pitch). Those rules govern the dashboard at `/`. These Next Move streams **do not edit** Regen Coach files:
 
-- `src/lib/physics/**`, `src/config/regen.config.ts`, `src/lib/trip/**`
+- `src/lib/physics/**`, `src/config/regen.config.ts`, `src/lib/trip/**`, `src/lib/model/**`
 - `src/components/map/**`, `src/components/charts/**`
+- `src/components/{Dashboard,Panels,RouteMap,RouteSvg,Timeline}.tsx`
 - `data/**`, `simulated_user_data/**`, `scripts/fetch-routes.mjs`
-- the existing routes `src/app/api/{routes,trips,compare}/**`
-- the root page and layout `src/app/{page,layout}.tsx`, and `src/components/Dashboard.tsx`
+- `src/app/api/{routes,trips,compare,coach}/**`
+- `src/app/{page,layout}.tsx`
+- the Regen section of `src/app/globals.css` (everything before the Next Move marker)
 
-`Panels`, `RouteMap`, `RouteSvg` and `Timeline` are used by both `/` and the Drives tab. Any change to them must keep `/` working; check both pages.
-
-Next Move uses its own paths (`/api/drives`, `/api/options/compare`, …), so nothing collides. If a Next Move feature needs a change there, ask that Regen stream's owner. Stream D coordinates the two sets of owners at each integration window.
+If Next Move needs a change there, ask that Regen stream's owner.
 
 ---
 
@@ -200,9 +196,9 @@ Next Move uses its own paths (`/api/drives`, `/api/options/compare`, …), so no
 
 ---
 
-## 2. Contracts — `src/contracts/driving.ts` (deliver first, by H+0:30)
+## 2. Contracts: already in `src/contracts/driving.ts` (frozen)
 
-Append `export * from "./driving";` to `src/contracts/index.ts`.
+These types are committed and re-exported from `@/contracts`. The shell already uses `DrivingProfile`, through `onProfile`. Add optional fields if you need them; don't rename or remove any. Copied here for reference; the file is the source of truth.
 
 ```ts
 import type { Maybe, SourceKind } from "./index";
@@ -320,7 +316,7 @@ export const PREVIEW_POINTS = 500;
 
 ### 3.1 `parse-gpx.ts` → `parseGpx(text: string): ParsedPoints | ParseFailure`
 
-Add the parser with `npm install --save-exact fast-xml-parser@<latest 4.x or 5.x you verify>`. Read its README for the option names in that exact version. Option names changed between v4 and v5, so do not trust memory.
+`fast-xml-parser@5.11.2` is already installed and pinned; don't change it. Read `node_modules/fast-xml-parser/README.md` and its docs for the v5 option names. They changed between v4 and v5, so don't trust memory.
 
 **Reject before parsing.** Return `ParseFailure { code, message }`, which the route maps to 400 unless noted:
 
@@ -482,34 +478,34 @@ Every file has `<metadata><desc>Synthetic sample generated from a cached Austin 
      - "Route and mileage only."
      - "Route, mileage and speed."
      - "Route, mileage, speed and speed-change observations."
-4. `TripPreview`: an SVG polyline of `previewGeometry` using an equirectangular projection fitted to the bbox. Each segment is its own `<polyline>`, so gaps show as breaks. Start and end dots. No map tiles needed, so it also serves as D's static fallback.
+4. `TripPreview`: an SVG polyline of `previewGeometry` using an equirectangular projection fitted to the bbox. Each segment is its own `<polyline>`, so gaps show as breaks. Start and end dots. No map tiles are needed.
 5. **Confirm row:** a checkbox "I was driving (not a passenger)" (required), assignment "Assign to {vehicleLabel}", and buttons **Confirm** / **Cancel**, which call DELETE. A duplicate shows "Already imported on {date}", with the existing trip selected.
 6. **Trip list:** confirmed trips with distance, date and chips. Remove is not needed for the MVP.
 7. **`WeeklyForm`:** "How often do you drive this?", with trips per week (number, step 1, default 10), other miles per week (default 0), and weeks per year (default 48). Pre-fill from the persona? No, keep the defaults explicit. Show the computed monthly miles and the formula in mono text: `avg 6.4 mi × 10 trips × 48 wk + 0 mi × 48 wk ÷ 12 = 256 mi/mo`. A **Use for comparison** button calls `onProfile(profile)`. **Revert to persona estimate** calls `onProfile(null)`.
 
 **States:** loading, server error (show `error.message` and a retry), 413 ("Files up to 4 MiB"), 422/400 (the server message). Keyboard: all of it is reachable, the file input has a label, and an `aria-live="polite"` region announces preview ready, confirmed and errors.
 
-Do **not** edit `NextMoveApp.tsx`. D wires `onProfile` into the shell like this, which you can tell D or leave as a PR comment:
+**Already wired:** `ImportDrive` is mounted at the top of the Drives tab (`NextMoveApp.tsx`) and remounts per persona. The shell handles `onProfile` as follows:
+- **`onProfile(profile)`:** Compare's monthly miles become `profile.monthlyMiles.value` when known, otherwise the persona's estimate.
+  - The city share becomes `profile.cityShare.value` when known.
+  - The `monthly_miles` evidence takes `profile.source`.
+  - The `city_share` evidence reads **Modeled**.
+  - The header tag reads "Driving · imported".
+- **`onProfile(null)`:** reverts all of that.
 
-```ts
-onProfile={(p) => {
-  if (p && p.monthlyMiles.known) setMonthlyMiles(p.monthlyMiles.value);
-  setCityShareOverride(p && p.cityShare.known ? p.cityShare.value : null);
-  setUsageSource(p ? p.source : null);
-}}
-```
-
-C adds `overrides.cityShare` and `overrides.usageSource` to `CompareInputs` by H+1. Then the `monthly_miles` evidence fact carries the profile's source and the formula `trips/wk × avg trip mi × weeks ÷ 12`, so the comparison cites the imported drives instead of the persona's assumption.
+So you never edit the shell. Implement the component, call `onProfile`, and watch Compare change.
 
 ---
 
 ## 7. Dependencies on other streams
 
-| Need | From | By | If late |
-|---|---|---|---|
-| `ownerId`, `ownedStore`, `apiError`, `withIdempotency` | C | H+0:45 | write against the frozen signatures and stub the import path in tests with `vi.mock` |
-| `overrides.cityShare` / `usageSource` in `compareOptions` | C | H+1 | your component still emits the profile; D wires `monthlyMiles` only |
-| Mounting `ImportDrive` on Drives | D | window 1 or 2 | demo it standalone with a temporary story page **in your branch only**; don't merge that |
+**None.** Everything this stream uses already exists on `main`:
+- `src/contracts/driving.ts`
+- `ownerId`, `ownedStore("imports" | "trips")`, `apiError`, `withIdempotency` and `sha256Hex` from `src/server/`
+- the mounted `ImportDrive` stub and the shell's `onProfile` handling
+- `fast-xml-parser`
+- `IMPORT_MAX_BYTES` in `.env.example`
+- the cookie mock in `tests/server/cookies.ts`
 
 ---
 
@@ -541,7 +537,19 @@ Fixtures live in `tests/driving/fixtures/`. Keep them small: build GPX strings i
 | A20 | Sharp decel: synthetic speed trace 15 → 5 m/s over 3 s | exactly 1 event; the same trace at 5 s sampling gives unknown |
 | A21 | All six sample files parse | expected flags per §5 table |
 
-Run `npm test` and also `npm run build`. The route files must compile under Next 16.
+Use `tests/server/cookies.ts` for the owner-scoped route tests (A13–A16). Call route handlers directly, as `tests/server/routes.test.ts` does.
+
+### 8.1 End-to-end: `e2e/drive-imports.spec.ts` (Playwright, yours alone)
+
+| # | Spec | Steps → assertions |
+|---|---|---|
+| E1 | Preview, cancel, confirm | `/next-move` → Drives → "Try a sample drive" → `maria-commute-am.gpx` → the preview says "Route, mileage and speed…" → Cancel → the preview is gone → again → check "I was driving" → Confirm → the trip appears in the list |
+| E2 | Imported usage changes Compare | Import both Maria samples; weekly form 10 trips/wk → **Use for comparison** → the header shows "Driving · imported"; Compare's "Monthly miles" value equals the profile's monthly miles |
+| E3 | Revert | **Revert to persona estimate** → the header shows "Driving · modeled"; Compare shows `875` again |
+| E4 | Unsafe upload | `setInputFiles` with an in-memory `xxe.gpx` containing `<!DOCTYPE` → the server message appears; no preview |
+| E5 | Sparse sample | `sparse-no-time.gpx` → "Route and mileage only."; no event count shown |
+
+Run `npm run check` and `npx playwright test e2e/drive-imports.spec.ts e2e/shell.spec.ts`.
 
 ---
 
@@ -549,12 +557,12 @@ Run `npm test` and also `npm run build`. The route files must compile under Next
 
 1. **Map Matching enrichment.** A server-only `src/server/imports/map-match.ts` using `NEXT_PUBLIC_MAPBOX_TOKEN`. Send ≤ 100 coordinates per request with `timestamps`, chunked with a 10-point overlap, then merge geometry. Store it as `matchedGeometry` next to the raw geometry, and **never** derive observed speed from it. Show it with the toggle "Snap to roads (Mapbox)". Fall back to the raw trace on any error.
 2. **Same-journey grouping.** Group trips whose start and end points are within 300 m of each other. Only with 2+ trips: show "Recurring: 2 trips, avg 6.4 mi".
-3. **Lease-mileage evidence.** When the profile is used for Maria, put the projected end miles in the preview: "At this pattern you'd reach ~38,100 of 36,000 miles." Take the number from the comparison evidence `projected_mileage`. Do not recompute it.
 
-## 10. Handoff checklist
+## 10. Done checklist
 
-- [ ] `src/contracts/driving.ts` merged by H+0:30, and the field names posted to the team.
-- [ ] Parsers, normalizer, summary and profile merged with tests A1–A12, A17–A21 by **window 1 (H+3)**.
-- [ ] Routes and UI with A13–A16 by **window 2 (H+6)**.
-- [ ] D has mounted `ImportDrive`. Importing `maria-commute-am.gpx` + `-pm.gpx` with 10 trips/wk changes Maria's monthly miles on Compare, and the `monthly_miles` evidence shows the trip-based formula.
-- [ ] Demo line for D's script: "This is a synthetic sample built from a real Austin route. We show only what the file supports. This one has no timestamps, so there's no speed analysis."
+- [ ] Parsers, normalizer, summary, decimation and profile, with tests A1–A12 and A17–A21.
+- [ ] Routes (`/api/imports/**`, `/api/drives/**`), with tests A13–A16.
+- [ ] Sample drives committed in `public/samples/`.
+- [ ] `ImportDrive` UI implemented in place of the stub, with E1–E5 passing.
+- [ ] Importing `maria-commute-am.gpx` + `-pm.gpx` with 10 trips/wk changes Maria's monthly miles on Compare. The header reads "Driving · imported" and the `monthly_miles` evidence shows the profile's source.
+- [ ] Demo line handed to stream 4 (for `docs/demo-script.md`): "This is a synthetic sample built from a real Austin route. We show only what the file supports. This one has no timestamps, so there's no speed analysis."

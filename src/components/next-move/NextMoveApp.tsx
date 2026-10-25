@@ -1,110 +1,85 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import DrivesView from "@/components/DrivesView";
-import type { BankingSnapshot, DataMode } from "@/contracts";
-import { buildBudget } from "@/domain/finance/budget";
-import { compareOptions } from "@/domain/recommendations/compare";
-import { catalogVehicle, CATALOG } from "@/fixtures/catalog";
-import { DEMO_AS_OF, PERSONAS } from "@/fixtures/personas";
+import type { CompareRequest, DrivingProfile, ScenarioInputs, SourceKind } from "@/contracts";
+import { runScenario } from "@/domain/recommendations/scenario";
+import { catalogVehicle } from "@/fixtures/catalog";
+import { PERSONAS } from "@/fixtures/personas";
+import BankingSyncBar from "./banking/BankingSyncBar";
+import { useBankingSync } from "./banking/useBankingSync";
+import ImportDrive from "./import/ImportDrive";
 import { CompareScreen, HomeScreen, MoneyScreen, NextMoveScreen } from "./screens";
-import { SettingsScreen } from "./settings";
+import { SettingsScreen } from "./settings/SettingsScreen";
 
 const TABS = ["home", "drives", "money", "compare", "next", "settings"] as const;
 type Tab = (typeof TABS)[number];
 const TAB_LABEL: Record<Tab, string> = { home: "Home", drives: "Drives", money: "Money", compare: "Compare", next: "Next Move", settings: "Settings" };
-
-interface SyncError {
-  code: string;
-  message: string;
-  retryable: boolean;
-}
 
 export default function NextMoveApp() {
   const [personaId, setPersonaId] = useState(PERSONAS[0].id);
   const persona = PERSONAS.find((p) => p.id === personaId)!;
   const vehicle = catalogVehicle(persona.vehicle.catalogId);
   const [tab, setTab] = useState<Tab>("home");
-  const [sandboxIds, setSandboxIds] = useState<string[]>([]);
-  const [mode, setMode] = useState<DataMode>("fixture");
-  const [bank, setBank] = useState<BankingSnapshot | null>(null);
-  const [syncError, setSyncError] = useState<SyncError | null>(null);
-  const [loading, setLoading] = useState(false);
+  const banking = useBankingSync(personaId);
+  const { bank } = banking;
   const [dataKey, setDataKey] = useState(0); // bumped by "Delete my demo data" to remount data-holding children
 
-  // Scenario controls. Reset with the persona by keying them on it below.
+  // Scenario controls. Reset with the persona in selectPersona.
   const [extraSpendingCents, setExtraSpendingCents] = useState(0);
   const [incomeConfirmed, setIncomeConfirmed] = useState(false);
   const [gasCents, setGasCents] = useState(persona.scenario.gasCentsPerGallon);
   const [monthlyMiles, setMonthlyMiles] = useState(persona.usage.monthlyMiles);
-
-  useEffect(() => {
-    fetch("/api/demo/customers")
-      .then((r) => r.json())
-      .then((d: { customers: { id: string; sandboxAvailable: boolean }[] }) =>
-        setSandboxIds(d.customers.filter((c) => c.sandboxAvailable).map((c) => c.id)),
-      )
-      .catch(() => setSandboxIds([]));
-  }, []);
-
-  const latestPersona = useRef(personaId);
-  useEffect(() => {
-    latestPersona.current = personaId;
-  }, [personaId]);
-
-  const sync = useCallback(async (id: string, m: DataMode) => {
-    setLoading(true);
-    setSyncError(null);
-    try {
-      const res = await fetch("/api/banking/nessie/sync", { method: "POST", body: JSON.stringify({ personaId: id, mode: m }) });
-      const body = await res.json();
-      if (latestPersona.current !== id) return; // a newer persona was selected meanwhile
-      if (!res.ok) {
-        // Keep whatever was shown before; never relabel a failed sandbox read as fixture data.
-        setSyncError(body.error);
-        return;
-      }
-      setBank(body.snapshot);
-      setMode(m);
-    } catch {
-      setSyncError({ code: "network", message: "Could not reach the banking route", retryable: true });
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    // Fetch on persona change; the setState calls happen after the request resolves.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    void sync(personaId, "fixture");
-  }, [personaId, sync]);
+  // Usage from imported drives, when the user chose to use it for the comparison.
+  const [cityShare, setCityShare] = useState<number | null>(null);
+  const [usageSource, setUsageSource] = useState<SourceKind | null>(null);
+  // Evidence ids the AI explanation cited, highlighted in the evidence list.
+  const [highlight, setHighlight] = useState<string[]>([]);
 
   const selectPersona = (id: string) => {
     const p = PERSONAS.find((x) => x.id === id)!;
     setPersonaId(id);
-    setBank(null);
     setExtraSpendingCents(0);
     setIncomeConfirmed(false);
     setGasCents(p.scenario.gasCentsPerGallon);
     setMonthlyMiles(p.usage.monthlyMiles);
+    setCityShare(null);
+    setUsageSource(null);
+    setHighlight([]);
     setTab("home");
   };
 
-  const budget = useMemo(() => {
-    if (!bank) return null;
-    const manual = extraSpendingCents ? [{ label: "New monthly expense", monthlyCents: extraSpendingCents }] : [];
-    return buildBudget(bank, { ...persona.profile, manualObligations: [...persona.profile.manualObligations, ...manual] }, DEMO_AS_OF);
-  }, [bank, persona, extraSpendingCents]);
-
-  const comparison = useMemo(
-    () =>
-      budget
-        ? compareOptions({ persona, budget, catalog: CATALOG, asOf: DEMO_AS_OF, overrides: { gasCentsPerGallon: gasCents, monthlyMiles } })
-        : null,
-    [budget, persona, gasCents, monthlyMiles],
+  const onProfile = useCallback(
+    (p: DrivingProfile | null) => {
+      setMonthlyMiles(p && p.monthlyMiles.known ? p.monthlyMiles.value : persona.usage.monthlyMiles);
+      setCityShare(p && p.cityShare.known ? p.cityShare.value : null);
+      setUsageSource(p ? p.source : null);
+    },
+    [persona],
   );
 
-  const sandboxReady = sandboxIds.includes(personaId);
+  const scenario: ScenarioInputs = useMemo(
+    () => ({
+      gasCentsPerGallon: gasCents,
+      monthlyMiles,
+      ...(cityShare !== null && { cityShare }),
+      ...(usageSource && { usageSource }),
+      extraMonthlySpendingCents: extraSpendingCents,
+      incomeConfirmed,
+    }),
+    [gasCents, monthlyMiles, cityShare, usageSource, extraSpendingCents, incomeConfirmed],
+  );
+
+  const result = useMemo(() => (bank ? runScenario(persona, bank, scenario) : null), [bank, persona, scenario]);
+  const budget = result?.budget ?? null;
+  const comparison = result?.comparison ?? null;
+
+  const compareRequest: CompareRequest = useMemo(
+    () => ({ schemaVersion: "1.0", personaId, bankingMode: banking.mode ?? "fixture", scenario }),
+    [personaId, banking.mode, scenario],
+  );
+
+  const bankingTag = banking.stale ? "stale sandbox read" : banking.mode === "sandbox" ? "Nessie sandbox" : "fixture";
 
   return (
     <>
@@ -121,8 +96,8 @@ export default function NextMoveApp() {
           ))}
         </select>
         <div className="modes" aria-label="Data sources">
-          <span className="tag">Banking · {mode === "sandbox" ? "Nessie sandbox" : "fixture"}</span>
-          <span className="tag">Driving · modeled</span>
+          <span className="tag">Banking · {bankingTag}</span>
+          <span className="tag">Driving · {usageSource ? "imported" : "modeled"}</span>
           <span className="tag">Offers · synthetic</span>
         </div>
       </header>
@@ -134,37 +109,16 @@ export default function NextMoveApp() {
         ))}
       </nav>
       <main>
-        <div className="sync-bar">
-          <span className="muted">
-            {loading ? "Loading banking data…" : bank ? `Banking loaded (${bank.mode})` : "No banking data loaded"}
-          </span>
-          <button className="btn" disabled={loading} onClick={() => sync(personaId, "fixture")}>
-            Use fixture
-          </button>
-          <button
-            className="btn"
-            disabled={loading || !sandboxReady}
-            onClick={() => sync(personaId, "sandbox")}
-            title={sandboxReady ? "Read this customer from the Nessie sandbox" : "Set NESSIE_API_KEY and NESSIE_CUSTOMERS to enable"}
-          >
-            Sync from Nessie sandbox
-          </button>
-          {syncError && (
-            <span className="excl">
-              {syncError.message}. {bank ? `Still showing the earlier ${bank.mode} data.` : ""}
-            </span>
-          )}
-        </div>
+        <BankingSyncBar {...banking} />
         {tab === "settings" ? (
           <SettingsScreen
             persona={persona}
-            bank={bank}
-            loading={loading}
-            onSync={() => sync(personaId, mode)}
+            banking={banking}
             onDeleted={() => {
-              setBank(null);
+              onProfile(null);
               setDataKey((k) => k + 1);
-              void sync(personaId, "fixture");
+              setHighlight([]);
+              void banking.sync("fixture");
             }}
           />
         ) : !budget || !comparison || !bank ? (
@@ -181,7 +135,10 @@ export default function NextMoveApp() {
               <HomeScreen persona={persona} vehicle={vehicle} budget={budget} comparison={comparison} onReview={() => setTab("next")} />
             )}
             {tab === "drives" && (
-              <DrivesView key={`${persona.id}-${dataKey}`} initialRouteId={persona.usage.routeId} vehicleName={`${vehicle.modelYear} ${vehicle.model}`} hybrid={vehicle.powertrain === "hybrid"} />
+              <>
+                <ImportDrive key={`${persona.id}-${dataKey}`} personaId={persona.id} vehicleLabel={`${vehicle.modelYear} ${vehicle.model}`} onProfile={onProfile} />
+                <DrivesView key={`replay-${persona.id}`} initialRouteId={persona.usage.routeId} vehicleName={`${vehicle.modelYear} ${vehicle.model}`} hybrid={vehicle.powertrain === "hybrid"} />
+              </>
             )}
             {tab === "money" && (
               <MoneyScreen
@@ -196,7 +153,9 @@ export default function NextMoveApp() {
             {tab === "compare" && (
               <CompareScreen comparison={comparison} gasCents={gasCents} setGasCents={setGasCents} monthlyMiles={monthlyMiles} setMonthlyMiles={setMonthlyMiles} />
             )}
-            {tab === "next" && <NextMoveScreen comparison={comparison} />}
+            {tab === "next" && (
+              <NextMoveScreen comparison={comparison} compareRequest={compareRequest} highlight={highlight} onCite={setHighlight} />
+            )}
           </>
         )}
       </main>

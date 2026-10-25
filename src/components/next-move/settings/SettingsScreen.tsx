@@ -1,21 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { BankingSnapshot, Maybe, Persona, SourceKind } from "@/contracts";
+import type { BankingSyncState, ConsentPurpose, ConsentState, Maybe, Persona, SourceKind } from "@/contracts";
 import { usd } from "@/domain/format";
-import { SourceChip } from "./Evidence";
+import { SourceChip } from "../Evidence";
 
-// Assumed shape of C's GET/PUT /api/consents. If C's route differs or is absent,
-// the Permissions section says so and disables the toggles instead of guessing.
-interface ConsentState {
-  consents: Record<string, boolean>;
-  version?: string | number;
-  updatedAt?: string;
-}
-
-const CONSENT_ROWS = [
-  { key: "drive_analysis", label: "Use my imported drives for personal analysis" },
-  { key: "banking_affordability", label: "Use banking data for affordability" },
+const CONSENT_ROWS: { purpose: ConsentPurpose; label: string }[] = [
+  { purpose: "driving_analysis", label: "Use my imported drives for personal analysis" },
+  { purpose: "banking_analysis", label: "Use banking data for affordability" },
 ];
 
 function maybeText(m: Maybe<number>, fmt: (n: number) => string): string {
@@ -68,17 +60,14 @@ function VehicleCard({ persona }: { persona: Persona }) {
 
 export function SettingsScreen({
   persona,
-  bank,
-  loading,
-  onSync,
+  banking,
   onDeleted,
 }: {
   persona: Persona;
-  bank: BankingSnapshot | null;
-  loading: boolean;
-  onSync: () => void;
+  banking: BankingSyncState;
   onDeleted: () => void;
 }) {
+  const { bank, loading } = banking;
   const [consent, setConsent] = useState<ConsentState | null>(null);
   const [consentNote, setConsentNote] = useState<string | null>("Loading permissions…");
   const [deleted, setDeleted] = useState<string | null>(null);
@@ -93,7 +82,7 @@ export function SettingsScreen({
       setConsentNote(null);
     } catch {
       setConsent(null);
-      setConsentNote("Permission settings are not available in this build yet, so nothing is stored.");
+      setConsentNote("Could not load permission settings.");
     }
   }, []);
 
@@ -103,12 +92,12 @@ export function SettingsScreen({
     void loadConsents();
   }, [loadConsents]);
 
-  async function toggle(key: string, value: boolean) {
+  async function toggle(purpose: ConsentPurpose, granted: boolean) {
     try {
       const res = await fetch("/api/consents", {
         method: "PUT",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ consents: { ...consent?.consents, [key]: value } }),
+        body: JSON.stringify({ purpose, granted }),
       });
       if (!res.ok) throw new Error(String(res.status));
       setConsent((await res.json()) as ConsentState);
@@ -124,8 +113,8 @@ export function SettingsScreen({
       const res = await fetch("/api/me/data", { method: "DELETE" });
       const body = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(body?.error?.message ?? `Request failed (${res.status})`);
-      const stores: string[] = body.stores ?? [];
-      setDeleted(`Deleted: ${stores.length ? stores.join(", ") : "nothing was stored on the server"}.`);
+      const stores: string[] = body.deleted ?? [];
+      setDeleted(stores.length ? `Deleted: ${stores.join(", ")}` : "Nothing stored yet");
       onDeleted();
     } catch (e) {
       setDeleted(null);
@@ -149,11 +138,16 @@ export function SettingsScreen({
             <li>
               <span>Banking</span>
               <span className="mono muted">
-                {bank ? `${bank.mode === "sandbox" ? "Nessie sandbox" : "Nessie-format fixture"} · retrieved ${new Date(bank.retrievedAt).toLocaleString()}` : "not loaded"}
+                {bank ? `${banking.stale ? "stale sandbox read" : bank.mode === "sandbox" ? "Nessie sandbox" : "Nessie-format fixture"} · retrieved ${new Date(bank.retrievedAt).toLocaleString()}` : "not loaded"}
               </span>
             </li>
           </ul>
-          <button className="btn" disabled={loading} onClick={onSync}>
+          <button
+            className="btn"
+            disabled={loading || !banking.sandboxReady}
+            title={banking.sandboxReady ? "Read this customer from the Nessie sandbox" : "Set NESSIE_API_KEY and NESSIE_CUSTOMERS to enable"}
+            onClick={() => banking.sync("sandbox")}
+          >
             Sync
           </button>
           <ul className="plain" style={{ marginTop: "1rem" }}>
@@ -178,26 +172,28 @@ export function SettingsScreen({
         <div className="card">
           <span className="label">Permissions</span>
           {CONSENT_ROWS.map((r) => (
-            <label key={r.key} className="check">
+            <label key={r.purpose} className="check">
               <input
                 type="checkbox"
-                id={`consent-${r.key}`}
-                name={`consent-${r.key}`}
-                checked={consent?.consents[r.key] ?? false}
+                id={`consent-${r.purpose}`}
+                name={`consent-${r.purpose}`}
+                checked={consent?.effective[r.purpose]?.granted ?? false}
                 disabled={!consent}
-                onChange={(e) => toggle(r.key, e.target.checked)}
+                onChange={(e) => toggle(r.purpose, e.target.checked)}
               />
               {r.label}
             </label>
           ))}
           <label className="check">
             <input type="checkbox" id="consent-insurer" name="consent-insurer" checked={false} disabled />
-            Share with an insurer (not available: no insurer integration exists)
+            Share with an insurer (planned integration: no insurer receives data from this demo)
           </label>
-          {consent && (consent.version !== undefined || consent.updatedAt) && (
+          {consent && (
             <p className="muted small mono">
-              Version {String(consent.version ?? "—")}
-              {consent.updatedAt ? ` · ${new Date(consent.updatedAt).toLocaleString()}` : ""}
+              {CONSENT_ROWS.map((r) => {
+                const e = consent.effective[r.purpose];
+                return e ? `${r.purpose}: v${e.version}, ${new Date(e.at).toLocaleString()}` : `${r.purpose}: not set`;
+              }).join(" · ")}
             </p>
           )}
           {consentNote && <p className="excl">{consentNote}</p>}

@@ -2,14 +2,14 @@
 
 DRAFT: final wording and timings after the freeze. Start at `/next-move`, persona Maria, fixture banking.
 
-| Time | Beat | Clicks | Say |
-| --- | --- | --- | --- |
-| 0:00–0:20 | Problem | Home | "Maria's lease ends in four months and she's on track to go over her miles. The real question is what to do next, not how she drives." |
-| 0:20–0:50 | Driving and current cost | Drives tab → pick a route → Play. Back to Home | "We show only what the data supports. This is a modeled replay on a real Austin route. The regen figures are modeled, not measured." |
-| 0:50–1:30 | Affordability | Money → point at income − spending − savings − buffer = $900 and the excluded transfers. Slide New monthly expense to $300 → budget drops to $600. Sync from Nessie sandbox if configured | "Banking data changes the budget, and through it the recommendation." |
-| 1:30–2:20 | Compare | Compare → three options → move Gas price. Select Kai: no option fits. Select Devon: keep | "Same driving, every option. Keeping can win. Sometimes nothing fits, and we say so." |
-| 2:20–2:40 | Next step and evidence | Next Move → evidence chips → official Toyota Financial Services link | "The decision is computed; every number shows where it came from. The app never requests a quote for you." |
-| 2:40–3:00 | Roadmap | Settings → planned Toyota and insurer integrations | "A future Toyota Insure Connect partnership could add authorized vehicle data. That's roadmap, not built." |
+| Time | Beat | Clicks | Say | Fallback if that feature isn't merged |
+| --- | --- | --- | --- | --- |
+| 0:00–0:20 | Problem | Home | "Maria's lease ends in four months and she's on track to go over her miles. The real question is what to do next, not how she drives." | none |
+| 0:20–0:50 | Driving and current cost | Drives → import the `maria-commute-am`/`pm` samples, then the replay | "We show only what the data supports. The regen figures are modeled, not measured." | Replay only: skip the import |
+| 0:50–1:30 | Nessie affordability | Money → income − spending − savings − buffer = $900; Sync from Nessie sandbox; add the $300 bill and re-sync | "Banking data changes the budget, and through it the recommendation." | Fixture: slide New monthly expense to $300 and show the next action change |
+| 1:30–2:20 | Compare plus a changed scenario | Compare → three options → move Gas price; "See listings"; Kai (nothing fits); Devon (keep) | "Same driving, every option. Keeping can win. Sometimes nothing fits, and we say so." | Skip listings |
+| 2:20–2:40 | Next step and evidence | Next Move → Claude badge, evidence highlights, official TFS link | "Claude only explains. The decision is computed in code and every number Claude writes is checked against it." | Template explanation: "If Claude isn't available we show the calculated template" |
+| 2:40–3:00 | Roadmap | Settings → planned Toyota and insurer integrations | "A future Toyota Insure Connect partnership could add authorized vehicle data. That's roadmap, not built." | none |
 
 ## Q&A crib
 
@@ -18,7 +18,16 @@ DRAFT: final wording and timings after the freeze. Start at `/next-move`, person
 - **Why can't GPS measure battery recovery?** Location and speed don't reveal motor/battery power; only vehicle data would.
 - **What would an insurer or Toyota integration need?** A verified data format, user permission and defined permitted uses.
 - **What is Nessie?** Capital One's sandbox API with test data. Not a bank connection or credit bureau.
+- **Can Claude make up numbers?** No. The decision is computed in code, and every number Claude writes is checked against the calculation. If it invents one, we show the template instead.
 - **Why does an advertised price differ from the scenario price?** Listings are advertised prices; scenarios use synthetic terms that include assumptions about fees and financing.
+
+## Live AI check (needs Anthropic credits)
+
+| Persona | Badge read "Explained by Claude"? | Notes |
+| --- | --- | --- |
+| Maria | | |
+| Devon | | |
+| Kai | | |
 
 ## Backups
 

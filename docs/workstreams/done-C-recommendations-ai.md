@@ -1,3 +1,5 @@
+> **Status: done** (commit `b8194ba`, wired into the shell by the parallel scaffold). Kept as the reference for what the recommendations API and explanation do. **Its schedule, ownership table and handoffs are superseded:** see `1-drive-imports.md` … `4-shell-and-ship.md` §0, where stream 4 now owns this code.
+
 # Workstream C — Server platform, recommendations API and grounded AI explanation
 
 **Owner:** _(name)_ · **Branch:** `ws/c-recommendation-ai` · **Version:** 1, 2026-10-24
@@ -507,9 +509,9 @@ Put the contract types in `explain.ts` or a small `consent.ts`. You own both; ap
 
 ## 11. Handoff checklist
 
-- [ ] §2 primitives merged by **H+0:45**, SHA posted.
-- [ ] §3 contract changes merged by **H+1**, field names posted.
-- [ ] §4 `runScenario` with the C2 test by **window 1**, and the snippet for D.
-- [ ] §5–6 routes, explainer and component with C4–C15 by **window 2**.
-- [ ] §7 consents and deletion by **window 2**.
-- [ ] Demo line for D: "Claude only explains. The decision is computed in code, and every number Claude writes is checked against the calculation. If it invents one, we show the template instead."
+- [x] §2 primitives merged by **H+0:45**, SHA posted.
+- [x] §3 contract changes merged by **H+1**, field names posted.
+- [x] §4 `runScenario` with the C2 test by **window 1**, and the snippet for D.
+- [x] §5–6 routes, explainer and component with C4–C15 by **window 2**.
+- [x] §7 consents and deletion by **window 2**.
+- [x] Demo line for D: "Claude only explains. The decision is computed in code, and every number Claude writes is checked against the calculation. If it invents one, we show the template instead."

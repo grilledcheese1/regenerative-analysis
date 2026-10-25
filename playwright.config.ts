@@ -1,20 +1,21 @@
 import { defineConfig, devices } from "@playwright/test";
 
-// Runs against a production build with no provider keys, so fixture, template and
-// saved-result paths are deterministic. Live-provider checks are in e2e/live.spec.ts.
+// One spec file per workstream in e2e/ (e2e/<stream>.spec.ts), so streams never edit each other's tests.
+// Runs against a production build with no provider keys by default: fixture banking, template
+// explanations and saved market results keep the specs deterministic.
 export default defineConfig({
-  testDir: "./e2e",
-  timeout: 30_000,
-  webServer: {
-    command: "npm run build && npm run start -- -p 3100",
-    url: "http://localhost:3100",
-    reuseExistingServer: !process.env.CI,
-    timeout: 180_000,
-    env: { NEXT_PUBLIC_MAPBOX_TOKEN: "", ANTHROPIC_API_KEY: "", NESSIE_API_KEY: "", SERPAPI_API_KEY: "" },
-  },
-  use: { baseURL: "http://localhost:3100" },
+  testDir: "e2e",
+  fullyParallel: true,
+  retries: process.env.CI ? 1 : 0,
+  use: { baseURL: "http://localhost:3100", trace: "retain-on-failure" },
   projects: [
     { name: "chromium", use: { ...devices["Desktop Chrome"] } },
     { name: "mobile", use: { ...devices["Pixel 7"] } },
   ],
+  webServer: {
+    command: "npm run build && npm run start -- -p 3100",
+    url: "http://localhost:3100/next-move",
+    reuseExistingServer: !process.env.CI,
+    timeout: 180_000,
+  },
 });

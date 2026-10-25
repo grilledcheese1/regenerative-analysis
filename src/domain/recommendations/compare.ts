@@ -8,6 +8,7 @@ import {
   type EvidenceFact,
   type OptionResult,
   type Persona,
+  type SourceKind,
 } from "@/contracts";
 import type { BudgetSnapshot } from "@/domain/finance/budget";
 import { monthlyFuel } from "@/domain/finance/fuel";
@@ -22,7 +23,12 @@ export interface CompareInputs {
   budget: BudgetSnapshot;
   catalog: CatalogVehicle[];
   asOf: string;
-  overrides?: { gasCentsPerGallon?: number; monthlyMiles?: number };
+  overrides?: {
+    gasCentsPerGallon?: number;
+    monthlyMiles?: number;
+    cityShare?: number; // 0..1, e.g. from imported drives
+    usageSource?: SourceKind; // where monthlyMiles came from when overridden
+  };
 }
 
 interface Draft {
@@ -47,6 +53,7 @@ export function compareOptions({ persona, budget, catalog, asOf, overrides = {} 
   const H = scenario.horizonMonths;
   const gas = overrides.gasCentsPerGallon ?? scenario.gasCentsPerGallon;
   const miles = overrides.monthlyMiles ?? usage.monthlyMiles;
+  const cityShare = overrides.cityShare ?? usage.cityShare;
   const byId = (id: string) => {
     const v = catalog.find((c) => c.catalogId === id);
     if (!v) throw new Error(`Unknown catalog vehicle ${id}`);
@@ -55,7 +62,7 @@ export function compareOptions({ persona, budget, catalog, asOf, overrides = {} 
   const current = byId(vehicle.catalogId);
 
   const running = (v: CatalogVehicle, insurance: Cents, maintenance: Cents) =>
-    monthlyFuel(v, miles, usage.cityShare, gas).costCents + insurance + maintenance;
+    monthlyFuel(v, miles, cityShare, gas).costCents + insurance + maintenance;
   const currentRunning = running(current, costs.insuranceMonthlyCents, costs.maintenanceMonthlyCents);
 
   const evidence: EvidenceFact[] = [
@@ -79,7 +86,13 @@ export function compareOptions({ persona, budget, catalog, asOf, overrides = {} 
       source: "derived",
       formula: "liquid cash − protected reserve − committed cash",
     },
-    { id: "monthly_miles", label: "Monthly miles", display: `${miles.toLocaleString()} mi`, source: usage.source },
+    { id: "monthly_miles", label: "Monthly miles", display: `${miles.toLocaleString()} mi`, source: overrides.usageSource ?? usage.source },
+    {
+      id: "city_share",
+      label: "City driving share",
+      display: `${Math.round(cityShare * 100)}% city`,
+      source: overrides.cityShare !== undefined ? "modeled" : usage.source,
+    },
     { id: "gas_price", label: "Gas price", display: `${usd(gas, 2)}/gal`, source: "user_reported" },
     {
       id: "current_mpg",
