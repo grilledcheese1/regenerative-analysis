@@ -26,7 +26,7 @@ interface FreeTripMapProps {
   follow: boolean;
   weather?: string;
   onSelectMissed: (e: MissedEvent) => void;
-  onSelectSegment?: (index: number) => void; // a red (poorly captured) stretch of route was clicked
+  onSelectSegment?: (index: number) => void; // a partial (amber) or missed (red) stretch of route was clicked
   focus?: number; // 0..1, how close the car is to a braking zone; speeds up the orbit and tightens the camera
 }
 
@@ -156,6 +156,9 @@ export default function FreeTripMap(props: FreeTripMapProps) {
         layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": ["get", "color"], "line-width": L.width } });
       map.addLayer({ id: "route-dashed", type: "line", source: "route", filter: ["==", ["get", "dashed"], 1],
         paint: { "line-color": ["get", "color"], "line-width": L.width, "line-dasharray": [...L.dash] } });
+      // A wide, nearly invisible copy of the route that catches clicks and hovers, so thin stretches are easy to hit
+      map.addLayer({ id: "route-hit", type: "line", source: "route", filter: ["in", ["get", "grade"], ["literal", ["mid", "bad"]]],
+        layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": "#000000", "line-opacity": 0.01, "line-width": L.hitWidth } });
       const M = CFG.markers;
       map.addLayer({ id: "stops", type: "circle", source: "stops",
         paint: { "circle-radius": M.stopRadius, "circle-color": cssVar("--text-2"), "circle-stroke-color": cssVar("--bg"), "circle-stroke-width": 2 } });
@@ -171,15 +174,13 @@ export default function FreeTripMap(props: FreeTripMapProps) {
         const ev = typeof i === "number" ? latest.current.missed[i] : undefined;
         if (ev) latest.current.onSelectMissed(ev);
       });
-      // Only red stretches are clickable: they open the telemetry popup.
-      map.on("click", "route", (e) => {
+      // Partial and missed stretches are clickable: they open the telemetry popup.
+      map.on("click", "route-hit", (e) => {
         const f = e.features?.[0]?.properties;
-        if (f?.grade === "bad" && typeof f.i === "number") latest.current.onSelectSegment?.(f.i);
+        if ((f?.grade === "bad" || f?.grade === "mid") && typeof f.i === "number") latest.current.onSelectSegment?.(f.i);
       });
-      map.on("mousemove", "route", (e) => {
-        if (e.features?.[0]?.properties?.grade === "bad") map.getCanvas().style.cursor = "pointer";
-      });
-      map.on("mouseleave", "route", () => (map.getCanvas().style.cursor = ""));
+      map.on("mouseenter", "route-hit", () => (map.getCanvas().style.cursor = "pointer"));
+      map.on("mouseleave", "route-hit", () => (map.getCanvas().style.cursor = ""));
       map.on("mouseenter", "missed", () => (map.getCanvas().style.cursor = "pointer"));
       map.on("mouseleave", "missed", () => (map.getCanvas().style.cursor = ""));
 

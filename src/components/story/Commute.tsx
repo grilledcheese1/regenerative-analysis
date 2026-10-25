@@ -101,7 +101,7 @@ function ReplayMap({ drive, stops }: { drive: DriveParts; stops: [number, number
       ) : (
         <div className="story__map-fallback">The interactive map needs WebGL. The route and numbers below are the same.</div>
       )}
-      <AnimatePresence>{summary && <SegmentPopup key={selected} summary={summary} onClose={close} />}</AnimatePresence>
+      <AnimatePresence>{summary && <SegmentPopup key={selected} summary={summary} grade={segments[selected!].grade} onClose={close} />}</AnimatePresence>
       {canDraw && !reduced && (
         <button className="story__replay" onClick={() => setPaused(!replay.paused)} aria-label={replay.paused ? "Play replay" : "Pause replay"}>
           {replay.paused ? "▶" : "❚❚"}

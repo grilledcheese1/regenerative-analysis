@@ -46,7 +46,7 @@ export const FREE_MAP_CONFIG = {
   terrain: { exaggeration: 1.4 },
   hillshade: { exaggeration: 0.5 },
   buildings: { minzoom: 13, defaultHeightM: 6 },
-  line: { width: 6, glowWidth: 16, glowBlur: 10, glowOpacity: 0.55, dash: [1.5, 1] },
+  line: { width: 6, hitWidth: 20, glowWidth: 16, glowBlur: 10, glowOpacity: 0.55, dash: [1.5, 1] },
   markers: { stopRadius: 5, missedRadius: 8, carRadius: 8, carHaloRadius: 18 },
   weather: { rainDrops: 220, snowFlakes: 160, rainSpeed: 700, snowSpeed: 60 },
 } as const;

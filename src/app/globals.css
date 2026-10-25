@@ -1181,6 +1181,8 @@ input:focus-visible {
 .seg-popup__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem 0.8rem; margin: 0; }
 .seg-popup__grid dt { color: var(--muted); font-size: 0.7rem; }
 .seg-popup__grid dd { margin: 0; font-size: 0.9rem; font-variant-numeric: tabular-nums; }
+.seg-popup__bar { height: 4px; margin-top: 0.65rem; border-radius: 2px; background: var(--border); overflow: hidden; }
+.seg-popup__bar span { display: block; height: 100%; }
 .seg-popup__note { margin: 0.6rem 0 0; color: var(--muted); font-size: 0.7rem; }
 .seg-popup__close:focus-visible, .story__replay:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 
@@ -1264,11 +1266,13 @@ input:focus-visible {
 .story__rail { display: none; position: fixed; right: 20px; top: 50%; transform: translateY(-50%); z-index: 30; }
 .story__rail ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
 .story__dot { position: relative; display: block; width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--muted); background: var(--bg); }
+.story__dot { transition: background-color 250ms ease-out, border-color 250ms ease-out; }
+.story__dot.is-passed { background: var(--accent); border-color: var(--accent); }
 .story__dot-fill { position: absolute; inset: -2px; border-radius: 50%; background: var(--accent); }
 .story__dot-label { position: absolute; right: 26px; top: 50%; translate: 0 -50%; white-space: nowrap; font-size: 0.8rem; background: var(--text); color: var(--bg); padding: 0.15rem 0.5rem; border-radius: 6px; opacity: 0; pointer-events: none; transition: opacity 150ms ease-out; }
 @media (hover: hover) { .story__dot:hover .story__dot-label { opacity: 1; } }
 .story__dot:focus-visible .story__dot-label { opacity: 1; }
 @media (min-width: 1100px) { .story__rail { display: block; } }
 @media (max-width: 520px) { .m-slider { grid-template-columns: 1fr 6rem; } .m-slider input { grid-column: 1 / -1; grid-row: 2; } }
-@media (prefers-reduced-motion: reduce) { .actionrow__arrow, .story__dot-label { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .actionrow__arrow, .story__dot-label, .story__dot { transition: none; } }
 .story input[type="range"], .story input[type="checkbox"] { accent-color: var(--accent); }

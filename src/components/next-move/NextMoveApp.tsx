@@ -7,6 +7,7 @@ import { useCallback, useMemo, useState } from "react";
 import SignIn from "@/components/auth/SignIn";
 import DrivesView from "@/components/DrivesView";
 import { MotionProvider } from "@/components/story/motion";
+import { ScrollProgress } from "@/components/story/SectionRail";
 import type { CompareRequest, DrivingProfile, ScenarioInputs, SourceKind } from "@/contracts";
 import { runScenario } from "@/domain/recommendations/scenario";
 import { catalogVehicle } from "@/fixtures/catalog";
@@ -97,6 +98,7 @@ export default function NextMoveApp({ initialPersonaId }: { initialPersonaId?: s
 
   return (
     <MotionProvider>
+      <ScrollProgress />
       <header className="header">
         <button type="button" className="wordmark" onClick={() => setTab("home")} aria-label="Regentic home" style={{ background: "none", border: 0, padding: 0, color: "inherit", cursor: "pointer" }}>
           <Image src="/regentic-logo.png" alt="" width={310} height={286} className="wordmark__logo" priority />
