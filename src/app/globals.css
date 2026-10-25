@@ -1314,3 +1314,17 @@ input:focus-visible {
 .home__how li { counter-increment: how; display: grid; gap: 0.3rem; padding: 1.1rem 1.2rem; border: 1px solid var(--border); border-radius: 16px; background: var(--panel); }
 .home__how li::before { content: counter(how); width: 28px; height: 28px; display: grid; place-items: center; border-radius: 50%; background: var(--text); color: var(--panel); font-weight: 800; font-size: 0.85rem; }
 .home__how span { color: var(--muted); font-size: 0.92rem; }
+
+/* Lease terms, reliability, switch math */
+.terms { display: grid; gap: 0.5rem; margin-top: 0.75rem; padding: 0.85rem; border: 1px solid var(--border); border-radius: 14px; background: var(--bg); }
+.terms__row { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.terms__btn { display: inline-flex; align-items: center; gap: 0.35rem; min-height: 40px; padding: 0 0.8rem; border-radius: 999px; border: 1px solid var(--border); background: var(--panel); color: var(--text); font: inherit; font-weight: 600; cursor: pointer; }
+.terms__btn[aria-pressed="true"] { border-color: var(--text); background: var(--text); color: var(--panel); }
+.terms__best { font-style: normal; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; padding: 0.05rem 0.4rem; border-radius: 999px; background: var(--seg-good); color: #fff; }
+.terms__lines { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr)); gap: 0.35rem 1rem; margin: 0; }
+.terms__lines div { display: grid; }
+.terms__lines dt { color: var(--muted); font-size: 0.8rem; }
+.terms__lines dd { margin: 0; font-weight: 700; font-variant-numeric: tabular-nums; }
+.terms--compact { padding: 0.6rem; }
+.reliability { margin: 0.5rem 0 0; display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; }
+.switch { margin-top: 0.75rem; padding: 0.85rem; border-radius: 14px; border: 1px solid var(--seg-good); background: rgb(26 107 63 / 6%); }

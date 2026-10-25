@@ -4,9 +4,11 @@ import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import type { Comparison, OptionResult } from "@/contracts";
 import { usd } from "@/domain/format";
+import SwitchMath from "../next-move/lease/SwitchMath";
+import TermPicker from "../next-move/lease/TermPicker";
 import StorySection from "./StorySection";
 
-const ILLUSTRATIVE = new Set<OptionResult["kind"]>(["lease_new", "purchase_new", "sell_replace", "refinance"]);
+const ILLUSTRATIVE = new Set<OptionResult["kind"]>(["lease_new", "purchase_new", "sell_replace", "refinance", "switch_now"]);
 const SPRING = { type: "spring", duration: 0.3, bounce: 0 } as const;
 
 function Slider({ label, id, min, max, step, value, onChange, display }: { label: string; id: string; min: number; max: number; step: number; value: number; onChange: (n: number) => void; display: string }) {
@@ -34,7 +36,7 @@ function Detail({ o }: { o: OptionResult }) {
 
 function Row({ o, rank, lead, maxCost }: { o: OptionResult; rank: number; lead: boolean; maxCost: number }) {
   const [open, setOpen] = useState(false);
-  const bar = Math.max(4, Math.round((100 * o.economicCostCents) / (maxCost || 1)));
+  const bar = Math.max(4, Math.round((100 * o.avgMonthlyCostCents) / (maxCost || 1)));
   return (
     <motion.li layout="position" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={SPRING} className={`combo__row${lead ? " is-best" : ""}${o.feasible ? "" : " is-out"}`}>
       <button type="button" className="combo__btn" aria-expanded={open} onClick={() => setOpen(!open)}>
@@ -47,8 +49,8 @@ function Row({ o, rank, lead, maxCost }: { o: OptionResult; rank: number; lead: 
           <span className="combo__plan">{o.feasible ? o.tradeoff : o.exclusions[0] ?? "Not feasible with the information we have"}</span>
         </span>
         <span className="combo__nums">
-          <b>{usd(o.totalMonthlyCents)}/mo</b>
-          <small>{usd(o.economicCostCents)} total cost</small>
+          <b>{usd(o.avgMonthlyCostCents)}/mo</b>
+          <small>average, all-in</small>
         </span>
         <span className="combo__bar" aria-hidden="true"><i style={{ width: `${o.feasible ? bar : 0}%` }} /></span>
       </button>
@@ -57,6 +59,8 @@ function Row({ o, rank, lead, maxCost }: { o: OptionResult; rank: number; lead: 
         {open && (
           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.2, ease: "easeOut" }} style={{ overflow: "hidden" }}>
             <Detail o={o} />
+            {o.lease && <TermPicker lease={o.lease} compact />}
+            {o.switchMath && <SwitchMath m={o.switchMath} />}
             {o.missingInputs.length > 0 && <p className="muted small">Needs: {o.missingInputs.map((m) => m.replaceAll("_", " ")).join(", ")}</p>}
           </motion.div>
         )}
@@ -81,16 +85,17 @@ export default function Options({
 }) {
   const [all, setAll] = useState(false);
   const leader = comparison.recommendation.selectedOptionId;
-  const ranked = [...comparison.options].sort((a, b) => Number(b.feasible) - Number(a.feasible) || a.economicCostCents - b.economicCostCents);
+  // The app's order: the leader first, then by average monthly cost (feasible before excluded).
+  const ranked = [...comparison.options].sort((a, b) => Number(b.optionId === leader) - Number(a.optionId === leader) || Number(b.feasible) - Number(a.feasible) || a.avgMonthlyCostCents - b.avgMonthlyCostCents);
   const shown = all ? ranked : ranked.slice(0, 3);
-  const maxCost = Math.max(...ranked.filter((o) => o.feasible).map((o) => o.economicCostCents), 1);
+  const maxCost = Math.max(...ranked.filter((o) => o.feasible).map((o) => o.avgMonthlyCostCents), 1);
 
   return (
     <StorySection
       id="options"
       kicker="Your options"
       title="Every way to handle it, side by side"
-      lede={`Compared over ${comparison.horizonMonths} months. Move the sliders and the ranking updates.`}
+      lede="Ranked by average monthly cost, all-in: leases over their own term, everything else over three years. Move the sliders and the ranking updates."
     >
       <div className="m-sliders">
         <Slider label="Gas price" id="story-gas" min={200} max={500} step={10} value={gasCents} onChange={onGas} display={`${usd(gasCents, 2)}/gal`} />

@@ -1436,3 +1436,22 @@ body:has(.nm) {
   text-align: right;
   white-space: nowrap;
 }
+
+/* The leading option card is dark: keep its small print light, and the term box readable. */
+.nm .option.leader .muted,
+.nm .option.leader .kv-sub {
+  color: rgb(244 243 239 / 72%) !important;
+}
+.nm .option.leader .terms {
+  color: #1b1d1c;
+  background: #f4f3ef;
+  border-color: transparent;
+}
+.nm .option.leader .terms .muted,
+.nm .option.leader .terms dt {
+  color: #5c605e !important;
+}
+.nm .option.leader .switch {
+  background: rgb(255 255 255 / 6%);
+  border-color: rgb(255 255 255 / 28%);
+}

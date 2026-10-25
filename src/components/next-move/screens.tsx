@@ -12,6 +12,9 @@ import HomeHeroClient from "./HomeHeroClient";
 import DealerList from "./market/DealerList";
 import MarketResearch from "./market/MarketResearch";
 import PrequalCard from "./credit/PrequalCard";
+import ReliabilityBadge from "./lease/ReliabilityBadge";
+import SwitchMath from "./lease/SwitchMath";
+import TermPicker from "./lease/TermPicker";
 
 const CATEGORY_LABEL: Record<string, string> = {
   vehicle_payment: "Car payment",
@@ -287,7 +290,12 @@ export function CompareScreen({
               <Kv k="Debt at horizon" v={usd(o.endingDebtCents)} />
               <Kv k="Equity at horizon" v={usd(o.endingEquityCents)} sub={`value ${usd(o.endingValueCents)} − debt`} />
               <Kv k="Economic cost" v={usd(o.economicCostCents)} sub="cash out + starting − ending equity" />
+              <Kv k="Average per month" v={usd(o.avgMonthlyCostCents)} sub={o.lease ? `over the ${o.lease.chosenTermMonths}-month term` : `over ${comparison.horizonMonths} months, equity counted`} />
             </div>
+            {o.lease && <TermPicker lease={o.lease} />}
+            {o.switchMath && <SwitchMath m={o.switchMath} />}
+            {o.reliability && <ReliabilityBadge r={o.reliability} />}
+            {o.warranty && <p className="muted small">{o.warranty}</p>}
             {o.credit && (
               <p className="prequal-badge">
                 {o.credit.status === "prequalified" ? "Pre-qualified" : o.credit.status === "needs_review" ? "Needs review" : "Not pre-qualified"} ·{" "}
