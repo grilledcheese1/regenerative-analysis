@@ -2,11 +2,11 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import { useRouter } from "next/navigation";
-import { useMemo, useRef, useState } from "react";
+import { forwardRef, useImperativeHandle, useMemo, useRef, useState } from "react";
 import type { Persona } from "@/contracts";
 import { catalogVehicle } from "@/fixtures/catalog";
 import { PEOPLE } from "@/fixtures/personas";
-import { exitCaseStudy as signOut, openCaseStudy as signIn, useCaseStudyId as useSignedInId } from "./caseStudy";
+import { openCaseStudy, useCaseStudyId } from "./caseStudy";
 
 const SITUATION = { lease: "Lease", loan: "Loan", owned: "Paid off" } as const;
 const vehicleName = (p: Persona) => {
@@ -14,13 +14,22 @@ const vehicleName = (p: Persona) => {
   return `${v.modelYear} ${v.model}`;
 };
 
-/** Fake sign-in. Opens a list of the simulated people; choosing one "signs in" as them. No passwords, no accounts. */
-export default function SignIn({ label, variant = "ghost" }: { label?: string; variant?: "ghost" | "primary" }) {
+export interface CaseStudyPickerHandle {
+  open(): void;
+}
+
+/** The list of simulated case studies. Choosing one opens it on /home. Not a sign-in. */
+const CaseStudyPicker = forwardRef<CaseStudyPickerHandle, { trigger?: { label: string; variant: "ghost" | "primary" } }>(function CaseStudyPicker({ trigger }, ref) {
   const router = useRouter();
   const dialog = useRef<HTMLDialogElement>(null);
-  const signedInId = useSignedInId();
-  const me = PEOPLE.find((p) => p.id === signedInId);
+  const openId = useCaseStudyId();
   const [query, setQuery] = useState("");
+
+  const show = () => {
+    setQuery("");
+    dialog.current?.showModal();
+  };
+  useImperativeHandle(ref, () => ({ open: show }));
 
   const shown = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -28,37 +37,30 @@ export default function SignIn({ label, variant = "ghost" }: { label?: string; v
   }, [query]);
 
   const choose = (id: string) => {
-    signIn(id);
+    openCaseStudy(id);
     dialog.current?.close();
     router.push("/home");
   };
 
   return (
     <>
-      <span className="auth">
-        {me && <span className="auth__who">Signed in as <strong>{me.profile.displayName}</strong></span>}
-        <button type="button" className={`m-btn m-btn--${variant}`} onClick={() => { setQuery(""); dialog.current?.showModal(); }}>
-          {label ?? (me ? "Switch person" : "Sign in")}
+      {trigger && (
+        <button type="button" className={`m-btn m-btn--${trigger.variant}`} onClick={show}>
+          {trigger.label}
         </button>
-        {me && (
-          <button type="button" className="auth__out" onClick={() => { signOut(); router.push("/next-move"); }}>
-            Sign out
-          </button>
-        )}
-      </span>
-
-      <dialog ref={dialog} className="m-dialog signin" aria-labelledby="signin-title">
-        <h2 id="signin-title">Sign in</h2>
-        <p className="m-dialog__demo">DEMO ONLY. Pick a simulated person. There are no passwords or real accounts.</p>
+      )}
+      <dialog ref={dialog} className="m-dialog signin" aria-labelledby="casestudy-title">
+        <h2 id="casestudy-title">Explore a case study</h2>
+        <p className="m-dialog__demo">SIMULATED. Each person has a made-up contract, bank history and commute.</p>
         <label className="signin__search">
-          <span className="sr-only">Search people</span>
+          <span className="sr-only">Search case studies</span>
           <input type="search" placeholder="Search by name or car" value={query} onChange={(e) => setQuery(e.target.value)} />
         </label>
         <ul className="signin__list">
           <AnimatePresence initial={false}>
             {shown.map((p) => (
               <motion.li key={p.id} layout="position" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15, ease: "easeOut" }}>
-                <button type="button" className="signin__row" onClick={() => choose(p.id)} aria-current={p.id === signedInId ? "true" : undefined}>
+                <button type="button" className="signin__row" onClick={() => choose(p.id)} aria-current={p.id === openId ? "true" : undefined}>
                   <span className="signin__name">{p.profile.displayName}</span>
                   <span className="signin__meta">{vehicleName(p)}</span>
                   <span className="signin__tag">{SITUATION[p.contract.type]}</span>
@@ -76,4 +78,6 @@ export default function SignIn({ label, variant = "ghost" }: { label?: string; v
       </dialog>
     </>
   );
-}
+});
+
+export default CaseStudyPicker;

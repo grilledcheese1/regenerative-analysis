@@ -4,7 +4,9 @@ import { AnimatePresence, motion, type Variants } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useMemo, useState } from "react";
-import SignIn from "@/components/auth/SignIn";
+import IdentityControl from "@/components/auth/IdentityControl";
+import { openCaseStudy, useCaseStudyId } from "@/components/auth/caseStudy";
+import { useAccount } from "@/components/auth/useAccount";
 import DrivesView from "@/components/DrivesView";
 import { MotionProvider } from "@/components/story/motion";
 import { ScrollProgress } from "@/components/story/SectionRail";
@@ -33,6 +35,10 @@ const TAB_LABEL: Record<Tab, string> = { home: "Home", drives: "Drives", money: 
 export default function NextMoveApp({ initialPersonaId }: { initialPersonaId?: string }) {
   const [personaId, setPersonaId] = useState(initialPersonaId && findPersona(initialPersonaId) ? initialPersonaId : PEOPLE[0].id);
   const persona = findPersona(personaId)!;
+  const { account } = useAccount();
+  const caseStudyId = useCaseStudyId();
+  // One identity at a time: the case-study picker shows only when browsing case studies.
+  const showPicker = !account || Boolean(caseStudyId);
   const vehicle = catalogVehicle(persona.vehicle.catalogId);
   const [nav, setNav] = useState<{ tab: Tab; dir: 1 | -1 }>({ tab: "home", dir: 1 });
   const tab = nav.tab;
@@ -104,15 +110,26 @@ export default function NextMoveApp({ initialPersonaId }: { initialPersonaId?: s
           <Image src="/regentic-logo.png" alt="" width={310} height={286} className="wordmark__logo" priority />
           <span>Regen<em>tic</em></span>
         </button>
-        <select id="persona" name="persona" value={personaId} onChange={(e) => selectPersona(e.target.value)} aria-label="Demo customer">
-          {PEOPLE.map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.summary}
-            </option>
-          ))}
-        </select>
-        <Link href="/next-move" className="linkish">Story view</Link>
-        <SignIn />
+        {showPicker && (
+          <select
+            id="persona"
+            name="persona"
+            value={personaId}
+            onChange={(e) => {
+              openCaseStudy(e.target.value);
+              selectPersona(e.target.value);
+            }}
+            aria-label="Demo customer"
+          >
+            {PEOPLE.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.summary}
+              </option>
+            ))}
+          </select>
+        )}
+        {!account && <Link href="/" className="linkish">Story view</Link>}
+        <IdentityControl />
       </header>
       <nav className="tabs" aria-label="Screens">
         {TABS.map((t) => (

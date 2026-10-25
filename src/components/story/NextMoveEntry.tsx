@@ -2,9 +2,12 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useSyncExternalStore } from "react";
-import SignIn from "@/components/auth/SignIn";
+import { useRef, useSyncExternalStore } from "react";
+import AuthDialog, { type AuthDialogHandle } from "@/components/auth/AuthDialog";
+import CaseStudyPicker from "@/components/auth/CaseStudyPicker";
+import IdentityControl from "@/components/auth/IdentityControl";
 import { useCaseStudyId } from "@/components/auth/caseStudy";
+import { useAccount } from "@/components/auth/useAccount";
 import { PEOPLE, persona } from "@/fixtures/personas";
 import { StaggerItem, StaggerList, MotionProvider } from "./motion";
 import Story from "./Story";
@@ -12,11 +15,13 @@ import Story from "./Story";
 const noop = () => () => {};
 const useHydrated = () => useSyncExternalStore(noop, () => true, () => false);
 
-/** /next-move: sign in, then the scroll story. the tabbed screens live at /home; `?as=<id>` skips sign-in. */
+/** /: create an account, sign in, or explore a case study; then the scroll story. `?as=<id>` opens a case study directly. */
 export default function NextMoveEntry({ as }: { as?: string }) {
-  const cookieId = useCaseStudyId();
+  const caseStudyId = useCaseStudyId();
+  const { account } = useAccount();
   const hydrated = useHydrated();
-  const id = [as, cookieId].find((x) => x && persona(x)) ?? null;
+  const auth = useRef<AuthDialogHandle>(null);
+  const id = [as, caseStudyId].find((x) => x && persona(x)) ?? null;
 
   return (
     <>
@@ -26,8 +31,8 @@ export default function NextMoveEntry({ as }: { as?: string }) {
           <span>Regen<em>tic</em></span>
         </div>
         <nav className="story-nav" aria-label="Views">
-          {id && <Link href="/home" className="linkish">Details view</Link>}
-          {id && <SignIn variant="ghost" />}
+          {id && !account && <Link href="/home" className="linkish">Details view</Link>}
+          <IdentityControl />
         </nav>
       </header>
       <main className={id ? "story-page" : undefined}>
@@ -40,18 +45,27 @@ export default function NextMoveEntry({ as }: { as?: string }) {
               <StaggerItem><h1 className="home__title">What is the smartest move for you and your car?</h1></StaggerItem>
               <StaggerItem>
                 <p className="story__lede">
-                  Sign in as one of {PEOPLE.length} simulated people. Each has their own contract, bank history and commute.
-                  Everything here is simulated and every number is an estimate. There are no real accounts.
+                  Create an account to get your own plan, or explore one of {PEOPLE.length} simulated case studies. Every number is an estimate.
                 </p>
               </StaggerItem>
-              <StaggerItem><SignIn label="Sign in to see your move" variant="primary" /></StaggerItem>
               <StaggerItem>
-                <Link href="/home" className="linkish">Or open the detailed screens without signing in</Link>
+                <div className="home__actions">
+                  {account ? (
+                    <Link href="/onboarding" className="m-btn m-btn--primary">Set up my profile</Link>
+                  ) : (
+                    <>
+                      <button type="button" className="m-btn m-btn--primary" onClick={() => auth.current?.open("signup")}>Create an account</button>
+                      <button type="button" className="m-btn m-btn--ghost" onClick={() => auth.current?.open("signin")}>Sign in</button>
+                    </>
+                  )}
+                  <CaseStudyPicker trigger={{ label: "Explore a case study", variant: "ghost" }} />
+                </div>
               </StaggerItem>
             </StaggerList>
           </MotionProvider>
         )}
       </main>
+      <AuthDialog ref={auth} />
     </>
   );
 }
