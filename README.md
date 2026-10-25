@@ -31,6 +31,12 @@ npm run test:e2e
 - **Accounts:** demo accounts (email and password, hashed with scrypt) live in server memory, plus `.data/accounts.json`
   outside production. A restart or another server instance forgets them; a signed-in browser stays signed in and re-sends
   its profile, but signing in again needs a new account. Not real authentication.
+- **Loan pre-qualification:** lender-style and automated. Policy knock-outs (payment ≤ 20% and debts ≤ 50% of estimated
+  gross income, loan ≤ 125% of the car's value, term ≤ 84 months, steady payroll, score ≥ 500), then a logistic
+  regression trained on UCI German Credit (`scripts/credit/train.py`, AUC 0.77) that can move the rate tier one band or
+  send a file to review but never declines alone. Rates start from Experian Q3 2025 tier averages. Sex, age, marital
+  status and nationality are not used. Credit scores live on Nessie loan records: user reported in onboarding,
+  synthetic for case studies. Every result is an estimate, not an offer or a credit decision.
 - **Your profile:** onboarding answers become a regular persona. "Connect your banking" seeds a new Capital One Nessie
   sandbox customer with four months of history built from your answers and reads it back; without a key (or when Nessie
   fails) the same history is created locally and the screen says so. Toyota Insurance is a simulated connection.
