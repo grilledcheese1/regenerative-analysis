@@ -3,7 +3,7 @@ import { validateAnswers } from "@/domain/onboarding/validate";
 import { currentAccount } from "@/server/auth/session";
 import { apiError, newRequestId } from "@/server/http";
 import { AnswersSchema, BankingSchema } from "@/server/onboarding/schema";
-import { loadProfile, saveProfile } from "@/server/profiles";
+import { bankingClaimError, loadProfile, saveProfile } from "@/server/profiles";
 import { fieldErrors } from "@/server/records";
 
 const Body = z.object({ answers: AnswersSchema, banking: BankingSchema });
@@ -25,6 +25,8 @@ export async function PUT(request: Request) {
   const parsed = Body.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return apiError(400, "invalid_request", "Check your answers", false, requestId, fieldErrors(parsed.error.issues));
   const errors = validateAnswers(parsed.data.answers);
+  const claim = bankingClaimError(account.accountId, parsed.data.banking);
+  if (claim) errors["banking.nessieCustomerId"] = claim;
   if (Object.keys(errors).length) return apiError(400, "invalid_request", "Check your answers", false, requestId, errors);
   const stored = saveProfile(account.accountId, parsed.data.answers, parsed.data.banking);
   return Response.json({ requestId, profile: stored.profile });

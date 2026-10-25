@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { OnboardingAnswers, UserBanking } from "@/contracts";
 import { bankingSpecFromAnswers } from "@/domain/onboarding/banking";
+import { localConnection } from "@/domain/onboarding/connection";
 import { buildUserPersona } from "@/domain/onboarding/persona";
 import { validateAnswers } from "@/domain/onboarding/validate";
 import { useAccount } from "../auth/useAccount";
@@ -18,6 +19,7 @@ import Goals from "./steps/Goals";
 import Insurance from "./steps/Insurance";
 import Review from "./steps/Review";
 import Welcome from "./steps/Welcome";
+import { DRAFT_KEY as DRAFT } from "./localProfile";
 import { useMyProfile } from "./useMyProfile";
 
 const STEPS = ["welcome", "car", "contract", "insurance", "driving", "goals", "bank", "review"] as const;
@@ -31,7 +33,6 @@ const CHECKS: Partial<Record<Step, (keyof OnboardingAnswers)[]>> = {
   goals: ["goals"],
   bank: ["money"],
 };
-const DRAFT = "regentic.onboarding.draft";
 
 const defaults = (name: string): OnboardingAnswers => ({
   name,
@@ -105,12 +106,12 @@ export default function Onboarding({ edit }: { edit: boolean }) {
   }, [draft, accountId]);
 
   // Editing: the saved profile's banking counts as connected until an answer that feeds it changes.
+  // Rebuilt locally: re-running the connection would seed another Nessie customer.
   useEffect(() => {
     if (!draft || draft.connection || !edit || !mine.profile || draft.answers !== mine.profile.answers) return;
     const p = mine.profile;
-    void fetch("/api/onboarding/connect-bank", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ answers: p.answers }) })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((body) => body && setDraft((d) => (d ? { ...d, connection: { ...body, banking: p.banking, specKey } } : d)));
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- derived once from the saved profile
+    setDraft((d) => (d ? { ...d, connection: { ...localConnection(p.accountId, p.answers), banking: p.banking, specKey } } : d));
   }, [draft, edit, mine.profile, specKey]);
 
   const set = useCallback((update: (a: OnboardingAnswers) => OnboardingAnswers) => setDraft((d) => (d ? { ...d, answers: update(d.answers) } : d)), []);

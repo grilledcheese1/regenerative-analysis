@@ -53,6 +53,7 @@ export interface UserBanking {
   nessieCustomerId: string | null;
   connectedAt: string;
   note: string | null;
+  proof?: string; // server-issued tag tying nessieCustomerId to this account (sandbox only)
 }
 
 export interface UserProfile {

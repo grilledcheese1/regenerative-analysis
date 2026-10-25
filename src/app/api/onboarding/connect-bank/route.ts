@@ -12,6 +12,7 @@ import { apiError, newRequestId } from "@/server/http";
 import { AnswersSchema } from "@/server/onboarding/schema";
 import { fetchCustomer, fixtureSnapshot } from "@/server/providers/nessie";
 import { planBundles, planCounts, writePlan } from "@/server/providers/nessie-seed";
+import { bankingProof } from "@/server/profiles";
 import { fieldErrors } from "@/server/records";
 
 const Body = z.object({ answers: AnswersSchema });
@@ -65,7 +66,7 @@ export async function POST(request: Request) {
       BUDGET_MS,
     );
     log({ requestId, outcome: "ok", ms: Date.now() - started });
-    return respond({ mode: "sandbox", nessieCustomerId: customerId, connectedAt: now, note: null }, snapshot);
+    return respond({ mode: "sandbox", nessieCustomerId: customerId, connectedAt: now, note: null, proof: bankingProof(account.accountId, customerId) }, snapshot);
   } catch (e) {
     const reason = e instanceof Error ? e.message.replace(/\.$/, "") : "unknown error";
     log({ requestId, outcome: "fallback", ms: Date.now() - started });

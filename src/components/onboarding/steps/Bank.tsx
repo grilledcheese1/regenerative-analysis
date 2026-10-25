@@ -2,12 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { BankingSnapshot, UserBanking } from "@/contracts";
-import { buildBudget, type BudgetSnapshot } from "@/domain/finance/budget";
-import { bankingSpecFromAnswers } from "@/domain/onboarding/banking";
-import { buildUserPersona } from "@/domain/onboarding/persona";
-import { nessieBundlesFromSpec } from "@/fixtures/banking";
-import { DEMO_AS_OF } from "@/fixtures/personas";
-import { normalizeNessie } from "@/server/providers/nessie-normalize";
+import type { BudgetSnapshot } from "@/domain/finance/budget";
+import { localConnection } from "@/domain/onboarding/connection";
 import { fmtUsd, Money } from "../fields";
 import s from "../onboarding.module.css";
 import type { StepProps } from "./types";
@@ -41,12 +37,7 @@ export default function Bank({ a, set, errors, accountId, specKey, connection, o
   const [failed, setFailed] = useState<string | null>(null);
 
   // The live budget, from the same history the connection will create.
-  const live = useMemo(() => {
-    if (Object.values(a.money).some((v) => !Number.isFinite(v))) return null;
-    const p = buildUserPersona(accountId, a);
-    const snap = normalizeNessie("preview", "fixture", nessieBundlesFromSpec(p.id, bankingSpecFromAnswers(a, p)));
-    return buildBudget(snap, p.profile, DEMO_AS_OF);
-  }, [a, accountId]);
+  const live = useMemo(() => (Object.values(a.money).some((v) => !Number.isFinite(v)) ? null : localConnection(accountId, a).budget), [a, accountId]);
 
   useEffect(() => {
     if (!busy) return;

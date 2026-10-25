@@ -1,9 +1,11 @@
 import "server-only";
+import { createHmac, timingSafeEqual } from "node:crypto";
 import type { OnboardingAnswers, Persona, UserBanking, UserProfile } from "@/contracts";
 import { bankingSpecFromAnswers } from "@/domain/onboarding/banking";
 import { buildUserPersona } from "@/domain/onboarding/persona";
 import type { BankingSpec } from "@/fixtures/banking";
 import { persona as fixturePersona } from "@/fixtures/personas";
+import { authSecret } from "./auth/accounts";
 import { currentAccount } from "./auth/session";
 import { ownedStore } from "./store";
 
@@ -26,6 +28,19 @@ export function saveProfile(accountId: string, answers: OnboardingAnswers, banki
   };
   userProfiles.put(accountId, ID, stored);
   return stored;
+}
+
+/** Tag proving this server connected `customerId` for `accountId`; profiles can't claim someone else's customer. */
+export const bankingProof = (accountId: string, customerId: string) =>
+  createHmac("sha256", authSecret()).update(`nessie|${accountId}|${customerId}`).digest("base64url");
+
+/** Error message when a profile's banking claims a Nessie customer it can't prove, else null. */
+export function bankingClaimError(accountId: string, b: UserBanking): string | null {
+  if (b.mode === "fixture") return b.nessieCustomerId === null ? null : "Local banking can't name a Nessie customer";
+  if (!b.nessieCustomerId || !b.proof) return "Connect your banking again";
+  const want = Buffer.from(bankingProof(accountId, b.nessieCustomerId));
+  const got = Buffer.from(b.proof);
+  return want.length === got.length && timingSafeEqual(want, got) ? null : "Connect your banking again";
 }
 
 export const loadProfile = (accountId: string) => userProfiles.get(accountId, ID);

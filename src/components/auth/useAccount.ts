@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { clearLocalProfiles } from "../onboarding/localProfile";
 import { AUTH_EVENT } from "./caseStudy";
 
 export interface PublicAccount {
@@ -50,5 +51,6 @@ export const signUp = (input: { name: string; email: string; password: string })
 export const signInWithPassword = (email: string, password: string) => send("/api/auth/signin", { email, password });
 export async function signOutAccount(): Promise<void> {
   await fetch("/api/auth/signout", { method: "POST" }).catch(() => undefined);
+  clearLocalProfiles();
   changed();
 }

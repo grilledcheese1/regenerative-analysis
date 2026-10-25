@@ -4,9 +4,10 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type { OnboardingAnswers, Persona, UserBanking, UserProfile } from "@/contracts";
 import { buildUserPersona } from "@/domain/onboarding/persona";
 import { useAccount } from "../auth/useAccount";
+import { PROFILE_PREFIX } from "./localProfile";
 
 export type ProfileStatus = "signed_out" | "loading" | "none" | "ready";
-const key = (accountId: string) => `regentic.profile.${accountId}`;
+const key = (accountId: string) => `${PROFILE_PREFIX}${accountId}`;
 
 function readLocal(accountId: string): UserProfile | null {
   try {

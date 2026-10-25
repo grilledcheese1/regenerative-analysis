@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import type { BankingSyncState, ConsentPurpose, ConsentState, Maybe, Persona, SourceKind, UserBanking } from "@/contracts";
 import { usd } from "@/domain/format";
+import { clearLocalProfiles } from "@/components/onboarding/localProfile";
 import { SourceChip } from "../Evidence";
 
 const CONSENT_ROWS: { purpose: ConsentPurpose; label: string }[] = [
@@ -132,6 +133,8 @@ export function SettingsScreen({
       const body = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(body?.error?.message ?? `Request failed (${res.status})`);
       const stores: string[] = body.deleted ?? [];
+      // The browser copy would otherwise restore the profile on the next load.
+      if (persona.id.startsWith("u_")) clearLocalProfiles();
       setDeleted(stores.length ? `Deleted: ${stores.join(", ")}` : "Nothing stored yet");
       onDeleted();
     } catch (e) {

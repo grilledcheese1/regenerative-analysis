@@ -87,3 +87,23 @@ test("the story shows the user's own profile", async ({ page }) => {
   await expect(page.getByRole("button", { name: "Create an account" })).toHaveCount(0);
   await noOverflow(page);
 });
+
+test("deleting demo data removes the profile for good", async ({ page }) => {
+  await signUp(page);
+  await finishOnboardingWithDefaults(page);
+  await page.getByRole("navigation", { name: "Screens" }).getByRole("button", { name: "Settings" }).click();
+  await page.getByRole("button", { name: "Delete my demo data" }).first().click();
+  await page.getByRole("button", { name: "Confirm delete" }).click();
+  await expect(page.getByText(/Deleted: |Nothing stored yet/)).toBeVisible();
+  await page.goto("/home");
+  await expect(page).toHaveURL(/\/onboarding$/);
+});
+
+test("signing out clears the profile from this browser", async ({ page }) => {
+  await signUp(page);
+  await finishOnboardingWithDefaults(page);
+  await page.getByRole("button", { name: "Felix ▾" }).click();
+  await page.getByRole("menuitem", { name: "Sign out" }).click();
+  await expect(page.getByRole("button", { name: "Create an account" })).toBeVisible();
+  expect(await page.evaluate(() => Object.keys(localStorage).filter((k) => k.startsWith("regentic.")))).toEqual([]);
+});

@@ -51,4 +51,5 @@ export const BankingSchema = z.object({
   nessieCustomerId: z.string().max(64).nullable(),
   connectedAt: z.string().max(40),
   note: z.string().max(300).nullable(),
+  proof: z.string().max(100).optional(),
 });
