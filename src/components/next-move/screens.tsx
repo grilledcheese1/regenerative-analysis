@@ -5,7 +5,10 @@ import type { BudgetSnapshot } from "@/domain/finance/budget";
 import { usd } from "@/domain/format";
 import { NEXT_ACTION_LABEL } from "@/domain/recommendations/recommend";
 import { EvidenceList, SourceChip } from "./Evidence";
+import { ROUTES } from "@/lib/routes";
 import AiExplanation from "./explain/AiExplanation";
+import type { HeroSlide } from "./HomeHero";
+import HomeHeroClient from "./HomeHeroClient";
 import DealerList from "./market/DealerList";
 import MarketResearch from "./market/MarketResearch";
 
@@ -34,12 +37,14 @@ export function HomeScreen({
   budget,
   comparison,
   onReview,
+  onGo,
 }: {
   persona: Persona;
   vehicle: CatalogVehicle;
   budget: BudgetSnapshot;
   comparison: Comparison;
   onReview: () => void;
+  onGo: (tab: "drives" | "compare") => void;
 }) {
   const c = persona.contract;
   const current = comparison.options.find((o) => o.kind === "keep" || o.kind === "buyout");
@@ -47,8 +52,24 @@ export function HomeScreen({
   const running = current?.monthlyRunningCents ?? 0;
   const total = payment + running;
   const r = comparison.recommendation;
+  const route = ROUTES.find((x) => x.id === persona.usage.routeId) ?? ROUTES[0];
+  const car = `${vehicle.modelYear} ${vehicle.model}`;
+  const projected = comparison.evidence.find((e) => e.id === "projected_mileage")?.display;
+  const overage = comparison.evidence.find((e) => e.id === "mileage_overage")?.display;
+  const slides: HeroSlide[] = [
+    c.type === "lease"
+      ? { title: `Your lease ends on ${c.maturityDate}.`, body: `See the smartest next move for your ${car}, from your driving and your budget.`, cta: { label: "See your next move", onClick: onReview } }
+      : c.type === "loan"
+        ? { title: `${c.remainingMonths} payments left on your ${vehicle.model}.`, body: "See whether to keep it, refinance or replace it.", cta: { label: "See your next move", onClick: onReview } }
+        : { title: `Your ${vehicle.model} is paid off.`, body: "See whether replacing it is worth it.", cta: { label: "See your next move", onClick: onReview } },
+    c.type === "lease" && projected
+      ? { title: `On pace for ${projected} miles.`, body: overage ? `Possible mileage charge ${overage}. Compare every option side by side.` : "Compare every option side by side.", cta: { label: "Compare options", onClick: () => onGo("compare") } }
+      : { title: "Every option, side by side.", body: "Keep, buy out, lease or finance, with the same driving.", cta: { label: "Compare options", onClick: () => onGo("compare") } },
+    { title: "Your commute, on real Austin roads.", body: "Import a recorded drive to replace the mileage estimate.", cta: { label: "Add your drives", onClick: () => onGo("drives") } },
+  ];
   return (
     <section className="section">
+      <HomeHeroClient route={route.points.map((p) => [p.lon, p.lat] as [number, number])} routeName={route.name} slides={slides} />
       <div className="section-head">
         <span className="label">Home</span>
         <h2>{persona.profile.displayName}&apos;s {vehicle.modelYear} {vehicle.model}</h2>
