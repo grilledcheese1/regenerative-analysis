@@ -2,10 +2,10 @@ import type { EvidenceBundle } from "./bundle";
 import { ExplanationOutput } from "./prompt";
 
 const NUMBER = /\$?\d[\d,]*(?:\.\d+)?%?/g;
-const PROHIBITED =
+export const PROHIBITED =
   /\b(pre-?approved|approved|pre-?qualified|you qualify|guarantee[sd]?|locked[- ]in|booked|appointment (is|has been) (set|made)|discount of)\b/i;
 // snake_case codes and camelCase field names, e.g. needs_information, totalMonthly
-const INTERNAL_ID = /\b(?:[a-z]+(?:_[a-z0-9]+)+|[a-z]+[A-Z][A-Za-z]*)\b/;
+export const INTERNAL_ID = /\b(?:[a-z]+(?:_[a-z0-9]+)+|[a-z]+[A-Z][A-Za-z]*)\b/;
 const MAX_SUMMARY = 600;
 const MAX_ITEM = 200;
 const MAX_ITEMS = 3;
@@ -13,12 +13,12 @@ const MAX_ITEMS = 3;
 /** "$15,138.00" → "15138"; "10%" → "10". Single digits are ignored by the caller. */
 const normalize = (token: string) => token.replace(/[$,%]/g, "").replace(/\.00$/, "").replace(/\.$/, "");
 
-function numbersIn(text: string): string[] {
+export function numbersIn(text: string): string[] {
   return (text.match(NUMBER) ?? []).map(normalize).filter((n) => n.length > 0);
 }
 
 /** Every number written anywhere in the bundle, tokenized the same way as the output. */
-function allowedNumbers(value: unknown, out = new Set<string>()): Set<string> {
+export function allowedNumbers(value: unknown, out = new Set<string>()): Set<string> {
   if (typeof value === "string") numbersIn(value).forEach((n) => out.add(n));
   else if (typeof value === "number") numbersIn(String(value)).forEach((n) => out.add(n));
   else if (Array.isArray(value)) value.forEach((v) => allowedNumbers(v, out));
