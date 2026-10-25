@@ -126,6 +126,29 @@ new result, rather than tuning her numbers to keep the buyout on top.
 6. **Candidate leases get a mileage allowance:** 12,000 mi/year at 15¢ per excess mile (synthetic), with projected
    overage from monthly miles added to the term's cost.
 
+## Update before building (2026-10-25, after pre-qualification shipped)
+
+The app changed after this design was approved. These are Claude's calls to fit it, approved by the team when it
+asked to build:
+
+1. **Lease rates follow the person's credit tier.** Each term offer's money factor is the base for a prime borrower;
+   the comparison's credit profile shifts it by tier: super prime −0.00015, prime 0, near prime +0.00050, subprime
+   +0.00110, deep subprime +0.00180 (synthetic, in `src/domain/credit/config.ts` next to the APR table). Lease
+   options also get a `LoanDecision` from the existing underwriting (purpose `"lease"`, amount = cap cost − due at
+   signing, collateral = cap cost), so a person who isn't pre-qualified sees the lease excluded with the reason, the
+   same as finance options.
+2. **Ranking is by average monthly economic cost** as decided below (Calls 1); for every non-lease option it is
+   `economicCostCents / horizonMonths`, so non-lease orderings, Devon and Kai are unchanged. The `lowest_monthly`
+   objective keeps `totalMonthlyCents`.
+3. **Where terms show:** the Compare tab's option card (row of term buttons) and the story's "Your options" section
+   (the same buttons, compact). Tab names are now Cost and Next Step; tests use those.
+4. **The fourth case study** is curated (next to Maria, Devon, Kai), so it gets a hand-written bank history, a credit
+   profile (prime) and a Nessie loan record of type `"auto lease"` like Maria, and is seeded to Nessie with the
+   others. Its lease contract adds `earlyPayoffCents` and `tradeInValueCents` (both synthetic). Name: Jordan; car:
+   2025 RAV4 Hybrid AWD leased April 2025 for 36 months at a high money factor; switch target: Corolla Hybrid lease.
+5. **NHTSA data** is fetched by `scripts/fetch-reliability.mjs` (recalls by make/model/year, complaints by
+   make/model/year) into `src/fixtures/reliability.json`, committed; the app never calls NHTSA at runtime.
+
 ## Left to the builder
 
 - Exact synthetic numbers for the fourth persona and for Maria's term table, as long as: the switch wins clearly
