@@ -35,16 +35,18 @@ export default function NextMoveEntry({ as }: { as?: string }) {
   useEffect(() => {
     if (hydrated && !caseId && mine.status === "none") router.replace("/onboarding");
   }, [hydrated, caseId, mine.status, router]);
+  // Carry an open case study to /home, which otherwise only knows the cookie.
+  const homeHref = caseId ? `/home?as=${encodeURIComponent(caseId)}` : id ? "/home" : "/";
 
   return (
     <>
       <header className="header">
-        <div className="wordmark">
+        <Link href={homeHref} className="wordmark" aria-label="Regentic home" style={{ color: "inherit", textDecoration: "none" }}>
           <Image src="/regentic-logo.png" alt="" width={310} height={286} className="wordmark__logo" priority />
           <span>Regen<em>tic</em></span>
-        </div>
+        </Link>
         <nav className="story-nav" aria-label="Views">
-          {id && !account && <Link href="/home" className="linkish">Details view</Link>}
+          {id && !account && <Link href={homeHref} className="linkish">Details view</Link>}
           <IdentityControl />
         </nav>
       </header>

@@ -31,3 +31,5 @@ next-env.d.ts
 
 # demo account store (dev)
 /.data/
+
+ai-assistant.md

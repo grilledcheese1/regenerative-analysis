@@ -43,6 +43,12 @@ export function bankingClaimError(accountId: string, b: UserBanking): string | n
   return want.length === got.length && timingSafeEqual(want, got) ? null : "Connect your banking again";
 }
 
+/**
+ * The stored profile behind a `u_` persona id, without a session check. Only for records the
+ * owner already created through an authorized route (a stored comparison's request).
+ */
+export const storedForPersonaId = (personaId: string) => (personaId.startsWith("u_") ? loadProfile(personaId.slice(2)) : undefined);
+
 export const loadProfile = (accountId: string) => userProfiles.get(accountId, ID);
 export const removeProfile = (accountId: string) => userProfiles.remove(accountId, ID);
 

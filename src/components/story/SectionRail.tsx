@@ -1,12 +1,33 @@
 "use client";
 
-import { motion, useScroll, useSpring } from "motion/react";
+import { motion, useMotionValue, useSpring } from "motion/react";
 import { useEffect, useState } from "react";
 
-/** Thin accent line across the top that fills with page scroll. */
+/**
+ * Thin accent line across the top that fills with page scroll. A page too short to scroll shows
+ * nothing, rather than the full bar the browser would report for a zero scroll range.
+ */
 export function ScrollProgress() {
-  const { scrollYProgress } = useScroll();
-  const progress = useSpring(scrollYProgress, { duration: 0.3, bounce: 0 });
+  const raw = useMotionValue(0);
+  const progress = useSpring(raw, { duration: 0.3, bounce: 0 });
+
+  useEffect(() => {
+    const update = () => {
+      const range = document.documentElement.scrollHeight - window.innerHeight;
+      raw.set(range > 8 ? Math.min(1, Math.max(0, window.scrollY / range)) : 0);
+    };
+    update();
+    const resize = new ResizeObserver(update);
+    resize.observe(document.body);
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      resize.disconnect();
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, [raw]);
+
   return <motion.div className="story__progress" style={{ scaleX: progress }} aria-hidden="true" />;
 }
 

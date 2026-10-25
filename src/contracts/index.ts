@@ -260,3 +260,4 @@ export * from "./banking-sync";
 export * from "./market";
 export * from "./onboarding";
 export * from "./credit";
+export * from "./assistant";

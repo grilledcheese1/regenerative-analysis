@@ -7,6 +7,7 @@ import { useCallback, useMemo, useState } from "react";
 import IdentityControl from "@/components/auth/IdentityControl";
 import { openCaseStudy, useCaseStudyId } from "@/components/auth/caseStudy";
 import { useAccount } from "@/components/auth/useAccount";
+import AskNextMove from "@/components/next-move/assistant/AskNextMove";
 import DrivesView from "@/components/DrivesView";
 import { MotionProvider } from "@/components/story/motion";
 import { ScrollProgress } from "@/components/story/SectionRail";
@@ -31,6 +32,10 @@ const SCREEN: Variants = {
 const TABS = ["home", "drives", "money", "compare", "next", "settings"] as const;
 type Tab = (typeof TABS)[number];
 const TAB_LABEL: Record<Tab, string> = { home: "Home", drives: "Drives", money: "Cost", compare: "Compare", next: "Next Step", settings: "Settings" };
+
+/** id → label for the evidence and options an assistant answer can cite. */
+const assistantLabels = (c: { evidence: { id: string; label: string }[]; options: { optionId: string; label: string }[] }) =>
+  Object.fromEntries([...c.evidence.map((e) => [e.id, e.label]), ...c.options.map((o) => [o.optionId, o.label])]);
 
 /** The tabbed screens over `people`: every case study, or just the signed-in user's own profile. */
 export default function NextMoveApp({ people, initialPersonaId, userBanking = null }: { people: Persona[]; initialPersonaId?: string; userBanking?: UserBanking | null }) {
@@ -198,6 +203,7 @@ export default function NextMoveApp({ people, initialPersonaId, userBanking = nu
         </motion.div>
         </AnimatePresence>
       </main>
+      {comparison && <AskNextMove key={personaId} request={compareRequest} tab={tab} labels={assistantLabels(comparison)} onCite={setHighlight} />}
     </MotionProvider>
   );
 }
