@@ -268,7 +268,7 @@ export function CompareScreen({
               <p key={x} className="excl">✕ {x}</p>
             ))}
             {o.missingInputs.length > 0 && <p className="muted small">Needs: {o.missingInputs.map((m) => m.replaceAll("_", " ")).join(", ")}</p>}
-            {o.catalogId && (o.kind === "lease_new" || o.kind === "purchase_new") && (
+            {o.catalogId && (o.kind === "lease_new" || o.kind === "purchase_new" || o.kind === "sell_replace") && (
               <MarketResearch catalogId={o.catalogId} label={o.label} />
             )}
           </article>
@@ -402,7 +402,8 @@ export function NextMoveScreen({
                 : "A preparation checklist. Nothing is submitted on your behalf."}
             </p>
           </div>
-          {r.nextAction === "compare_confirmed_offers" && <DealerList near="Austin, TX" />}
+          {/* Dealers can quote a purchase, a new lease or a lease buyout. */}
+          {(r.nextAction === "compare_confirmed_offers" || r.nextAction === "request_buyout_quote") && <DealerList near="Austin, TX" />}
           <AiExplanation request={compareRequest} recommendation={r} evidence={comparison.evidence} onCite={onCite} />
         </div>
         <div className="card">

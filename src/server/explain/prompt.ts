@@ -32,6 +32,8 @@ Rules:
 - In citedEvidenceIds, list the evidence ids and option ids you relied on. Use only ids that appear in the data.
 - Values whose source is "synthetic" are invented scenario inputs; say so when you rely on them.
 - Never claim an approval, pre-qualification, eligibility, quote, booking, appointment, discount or guaranteed saving.
+- Never write ids, data field names or status codes; describe them in words (say "a quote is still needed", not a code).
+- Each option's total monthly figure is its total monthly cost (payment plus fuel, insurance and maintenance). Call it the "total monthly cost", never a payment.
 - Plain English for a car owner. Summary: at most 90 words. At most 3 tradeoffs and at most 3 missing-information items, one sentence each.`;
 
 export const userContent = (bundle: EvidenceBundle) =>

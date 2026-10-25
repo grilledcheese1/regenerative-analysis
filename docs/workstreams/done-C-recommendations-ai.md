@@ -1,4 +1,6 @@
 > **Status: done** (commit `b8194ba`, wired into the shell by the parallel scaffold). Kept as the reference for what the recommendations API and explanation do. **Its schedule, ownership table and handoffs are superseded:** see `1-drive-imports.md` … `4-shell-and-ship.md` §0, where stream 4 now owns this code.
+>
+> **Decisions (2026-10-24):** storage stays in memory; client re-send covers the demo. Streaming is skipped because only fully validated explanations may be shown. **Still open:** the live Claude check (§8). The account had no API credits; the steps are in `4-shell-and-ship.md` §4.
 
 # Workstream C — Server platform, recommendations API and grounded AI explanation
 
@@ -116,7 +118,7 @@ Registered store names:
 - **B:** `banking_snapshots`. B's market cache is global, not per owner, and lives in a module-level `Map`.
 - **C:** `comparisons`, `recommendations`, `explanations`, `consents`, `idempotency`
 
-**In-memory caveat.** Vercel instances don't share memory, so server records are best-effort. The client keeps working state. Any route that needs a missing server record returns `409 { code: "<thing>_not_found_resync" }` and the client re-sends its inputs. Supabase persistence is a C stretch goal behind the same `OwnedStore` interface.
+**In-memory caveat.** Vercel instances don't share memory, so server records are best-effort. The client keeps working state. Any route that needs a missing server record returns `409 { code: "<thing>_not_found_resync" }` and the client re-sends its inputs.
 
 ### 0.7 Integration mount points (D wires these into the shell)
 
@@ -504,8 +506,7 @@ Put the contract types in `explain.ts` or a small `consent.ts`. You own both; ap
 
 ## 10. Stretch goals (only after §8 is green)
 
-1. **Supabase persistence** behind `OwnedStore`: `profiles`, `comparisons`, `recommendations`, `consents` and `import_jobs` tables, each with `owner_id` and RLS `owner_id = auth.uid()`. Test with two users. Only do this if the team wants durable demo data on Vercel. Memory plus client re-send already works.
-2. **Explanation streaming.** Not needed. Skip unless everything else is done.
+1. **Explanation streaming.** Not built: only fully validated explanations may be shown.
 
 ## 11. Handoff checklist
 

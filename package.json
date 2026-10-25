@@ -9,7 +9,7 @@
     "check:physics": "node src/lib/physics/selfcheck.ts",
     "fetch-demo-routes": "node scripts/fetch-demo-routes.mjs",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "next typegen && tsc --noEmit",
     "test:e2e": "playwright test",
     "check": "npm run lint && npm run typecheck && npm test && npm run build"
   },

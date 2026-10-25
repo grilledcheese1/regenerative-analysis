@@ -13,7 +13,12 @@ const money = z.object({ _id: z.string(), amount: z.number(), status, descriptio
 export const NessieDeposit = money.extend({ transaction_date: z.string(), payee_id: z.string().optional() });
 export const NessieWithdrawal = money.extend({ transaction_date: z.string(), payer_id: z.string().optional() });
 export const NessiePurchase = money.extend({ purchase_date: z.string(), payer_id: z.string().optional() });
-export const NessieTransfer = money.extend({ transaction_date: z.string(), payer_id: z.string(), payee_id: z.string() });
+// The live API returns transfers as { id, transaction_date, status, amount, description } on the
+// sending account only, with no payer or payee; older records and our fixture carry both ids.
+export const NessieTransfer = z.preprocess(
+  (v) => (v && typeof v === "object" && !("_id" in v) && "id" in v ? { ...v, _id: (v as { id: unknown }).id } : v),
+  money.extend({ transaction_date: z.string(), payer_id: z.string().optional(), payee_id: z.string().optional() }),
+);
 export const NessieBill = z.object({
   _id: z.string(),
   status,
@@ -53,6 +58,8 @@ const categorize = (description: string, fallback: TxnCategory): TxnCategory =>
   RULES.find(([re]) => re.test(description))?.[1] ?? fallback;
 
 const toCents = (dollars: number) => Math.round(dollars * 100);
+// Without payer/payee ids, a transfer is ours only when its description says so.
+const OWN_TRANSFER = /\btransfer (to|from) (my |own )?(savings|checking)\b/i;
 const toStatus = (s: string): TxnStatus => (s === "executed" ? "completed" : (s as TxnStatus));
 
 export function normalizeNessie(customerId: string, mode: BankingSnapshot["mode"], bundles: NessieAccountBundle[]): BankingSnapshot {
@@ -98,11 +105,12 @@ export function normalizeNessie(customerId: string, mode: BankingSnapshot["mode"
       });
     }
     for (const t of b.transfers) {
-      const internal = ownIds.has(t.payer_id) && ownIds.has(t.payee_id);
+      const known = t.payer_id !== undefined && t.payee_id !== undefined;
+      const internal = known ? ownIds.has(t.payer_id!) && ownIds.has(t.payee_id!) : OWN_TRANSFER.test(t.description);
       push({
         ...base(t._id, "transfer", t.status, t.amount, t.transaction_date, t.description),
         category: internal ? "internal_transfer" : categorize(t.description, "other"),
-        counterpartAccountId: `acct_${t.payer_id === b.account._id ? t.payee_id : t.payer_id}`,
+        ...(known && { counterpartAccountId: `acct_${t.payer_id === b.account._id ? t.payee_id : t.payer_id}` }),
       });
     }
   }

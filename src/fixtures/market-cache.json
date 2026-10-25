@@ -1,0 +1,223 @@
+{
+  "_note": "Normalized SerpAPI results with their real retrievedAt, served as origin saved_fixture when live search is unavailable. Regenerate: run the app with SERPAPI_API_KEY, GET /api/market/search?catalogId=… and /api/market/dealers, and paste each response without requestId/origin.",
+  "listings": {
+    "camry_hev_le_2025": {
+      "catalogId": "camry_hev_le_2025",
+      "query": "2025 Toyota Camry Hybrid LE for sale",
+      "provider": "serpapi_google",
+      "retrievedAt": "2026-10-25T01:50:06.033Z",
+      "listings": [
+        {
+          "title": "Used 2025 Toyota Camry for Sale in Austin, TX",
+          "url": "https://www.edmunds.com/used-2025-toyota-camry-austin-tx/",
+          "domain": "edmunds.com",
+          "snippet": "Save up to $10645 on one of 4523 used 2025 Toyota Camries in Austin, TX. Find your perfect car with Edmunds expert reviews, ...",
+          "advertisedPriceCents": {
+            "known": false,
+            "reason": "no_plausible_price"
+          },
+          "position": 1
+        },
+        {
+          "title": "Used Toyota Camry Hybrid for Sale in Austin, TX - Autotrader",
+          "url": "https://www.autotrader.com/cars-for-sale/hybrid/toyota/camry/austin-tx",
+          "domain": "autotrader.com",
+          "snippet": "Search from 130 Used Toyota Camry cars for sale, including a 2020 Toyota Camry LE ... 2025 Toyota Camry. LE; 40K mi. Hybrid. 29,024. See payment. Dealer Fees ...",
+          "advertisedPriceCents": {
+            "known": false,
+            "reason": "no_plausible_price"
+          },
+          "position": 2
+        },
+        {
+          "title": "Used 2025 Hybrid Toyota Camry for sale",
+          "url": "https://www.carmax.com/cars/toyota/camry/hybrid/2025",
+          "domain": "carmax.com",
+          "snippet": "... Rating: 5.00/5; Number of Reviews: 4. 2025 Toyota Camry LE · View more. Compare. 2025 Toyota Camry. LE·8K mi. $199 shipping·Oct 26–Nov 1 from SC.",
+          "advertisedPriceCents": {
+            "known": false,
+            "reason": "no_plausible_price"
+          },
+          "position": 3
+        },
+        {
+          "title": "Used 2025 Toyota Camry for Sale Near Austin, TX",
+          "url": "https://www.cars.com/shopping/toyota-camry-2025/austin-tx/",
+          "domain": "cars.com",
+          "snippet": "Shop 2025 Toyota Camrys in Austin, TX for sale at Cars.com. Research, compare, save listings or contact sellers directly from 39 2025 Camrys in Austin, TX.",
+          "advertisedPriceCents": {
+            "known": false,
+            "reason": "no_plausible_price"
+          },
+          "position": 4
+        },
+        {
+          "title": "New 2025 Toyota Camry LE Prices",
+          "url": "https://www.kbb.com/toyota/camry/2025/le/",
+          "domain": "kbb.com",
+          "snippet": "A 2025 Toyota Camry LE has a 5-year cost-to-own of $45,268. After 5 years a 2025 Camry LE will depreciate $13,842 and have a residual value of $15,953. During ...",
+          "advertisedPriceCents": {
+            "known": false,
+            "reason": "no_plausible_price"
+          },
+          "position": 5
+        },
+        {
+          "title": "Used 2025 Toyota Camry for Sale Nationwide",
+          "url": "https://www.cargurus.com/Cars/l-Used-2025-Toyota-Camry-c33246",
+          "domain": "cargurus.com",
+          "snippet": "With 9,906 currently listed for sale and an average price of $28,544, 37.9% of 2025 Toyota Camry listings on CarGurus are rated as good or great deals.",
+          "advertisedPriceCents": {
+            "known": true,
+            "value": 2854400
+          },
+          "position": 6
+        }
+      ],
+      "advertisedRange": {
+        "known": false,
+        "reason": "too_few_prices"
+      },
+      "disclaimer": "Advertised prices from public listings. Not a quote, offer, or valuation."
+    },
+    "corolla_hybrid_2025": {
+      "catalogId": "corolla_hybrid_2025",
+      "query": "2025 Toyota Corolla Hybrid for sale",
+      "provider": "serpapi_google",
+      "retrievedAt": "2026-10-25T01:50:06.946Z",
+      "listings": [
+        {
+          "title": "All 2025 Toyota Corolla For Sale in Austin, TX",
+          "url": "https://www.autonationtoyotasouthaustin.com/inventory/all/2025-toyota-corolla.htm",
+          "domain": "autonationtoyotasouthaustin.com",
+          "snippet": "All 2025 Toyota Corolla For Sale in Austin, TX ・ 2025 Toyota Corolla LE Front Wheel Drive $20,223AutoNation. Vehicle Price $19,998 Dealer ・ 48,045 miles ...",
+          "advertisedPriceCents": {
+            "known": true,
+            "value": 2022300
+          },
+          "position": 1
+        },
+        {
+          "title": "Used Toyota Corolla Hybrid for Sale in Austin, TX - Autotrader",
+          "url": "https://www.autotrader.com/cars-for-sale/hybrid/toyota/corolla/austin-tx",
+          "domain": "autotrader.com",
+          "snippet": "Toyota Corolla for Sale by Year. 2026 Toyota Corolla For Sale. 41 for sale starting at $21,808. 2025 Toyota Corolla For Sale. 48 for sale starting at $19,422.",
+          "advertisedPriceCents": {
+            "known": true,
+            "value": 2180800
+          },
+          "position": 2
+        },
+        {
+          "title": "Used 2025 Toyota Corolla Hybrid for Sale Nationwide",
+          "url": "https://www.cargurus.com/Cars/l-Used-2025-Toyota-Corolla-Hybrid-c33778",
+          "domain": "cargurus.com",
+          "snippet": "2025 Toyota Corolla Hybrid LE FWD 10,252 mi Madison Heights, VA Good Deal $24,954. Engine: 1.8L I4 gas mileage: 48 MPG Fuel … $27,814 Price includes fees $484/ ...",
+          "advertisedPriceCents": {
+            "known": true,
+            "value": 2495400
+          },
+          "position": 3
+        },
+        {
+          "title": "Used 2025 Toyota Corolla Hybrid LE Sedan 4D",
+          "url": "https://www.kbb.com/toyota/corolla-hybrid/2025/le-sedan-4d/",
+          "domain": "kbb.com",
+          "snippet": "A 2025 Toyota Corolla Hybrid LE Sedan 4D has depreciated $215 or 1% in the last 1 years and has a current resale value of $21,100 and trade-in value of $18,300.",
+          "advertisedPriceCents": {
+            "known": false,
+            "reason": "no_plausible_price"
+          },
+          "position": 4
+        },
+        {
+          "title": "2025 Toyota Corolla Hybrid for Sale in San Marcos, TX",
+          "url": "https://www.sanmarcostoyota.com/2025-toyota-corolla-hybrid-for-sale/",
+          "domain": "sanmarcostoyota.com",
+          "snippet": "2025 Toyota Corolla Hybrid Starting at $23,825.00 … us located at 5101 IH 35 South in San Marcos, Texas, 78666. Sales: (833) 213-4661 Service:",
+          "advertisedPriceCents": {
+            "known": true,
+            "value": 2382500
+          },
+          "position": 5
+        },
+        {
+          "title": "2025 Toyota Corolla Hybrid | BuyaToyota.com",
+          "url": "https://www.buyatoyota.com/home/vehicles/corollahybrid/2025/",
+          "domain": "buyatoyota.com",
+          "snippet": "2025 Corolla Hybrid LE $23,825 Base MSRP * 53 / 46 Est. mpg … $25,225 Base MSRP * 51 / 44 Est. mpg. Hybrid SE $26,265 Base MSRP * 50 / 43 Est. mpg",
+          "advertisedPriceCents": {
+            "known": true,
+            "value": 2382500
+          },
+          "position": 6
+        }
+      ],
+      "advertisedRange": {
+        "known": true,
+        "value": {
+          "lowCents": 2180800,
+          "highCents": 2382500,
+          "count": 5
+        }
+      },
+      "disclaimer": "Advertised prices from public listings. Not a quote, offer, or valuation."
+    }
+  },
+  "dealers": {
+    "provider": "serpapi_google_maps",
+    "retrievedAt": "2026-10-25T01:50:07.182Z",
+    "dealers": [
+      {
+        "name": "Group 1 Toyota North Austin",
+        "address": "8400 Research Blvd, Austin, TX 78758",
+        "rating": {
+          "known": true,
+          "value": 4.2
+        },
+        "website": "https://www.group1toyotanorthaustin.com/",
+        "phone": "(512) 458-2331"
+      },
+      {
+        "name": "Round Rock Toyota",
+        "address": "2307 N Interstate Hwy 35, Round Rock, TX 78664",
+        "rating": {
+          "known": true,
+          "value": 4.6
+        },
+        "website": "https://www.roundrocktoyota.com/",
+        "phone": "(512) 488-4877"
+      },
+      {
+        "name": "Toyota of Cedar Park",
+        "address": "5600 183A Toll Rd, Leander, TX 78641",
+        "rating": {
+          "known": true,
+          "value": 4.8
+        },
+        "website": "https://www.toyotaofcedarpark.com/",
+        "phone": "(737) 302-6399"
+      },
+      {
+        "name": "AutoNation Toyota South Austin",
+        "address": "4800 S I-35 Frontage Rd, Austin, TX 78745",
+        "rating": {
+          "known": true,
+          "value": 4.6
+        },
+        "website": "https://www.autonationtoyotasouthaustin.com/",
+        "phone": "(512) 518-6900"
+      },
+      {
+        "name": "Lost Pines Toyota",
+        "address": "806 State Hwy 71, Bastrop, TX 78602",
+        "rating": {
+          "known": true,
+          "value": 4.4
+        },
+        "website": "https://www.lostpinestoyota.com/",
+        "phone": "(512) 303-1200"
+      }
+    ]
+  }
+}
