@@ -8,13 +8,15 @@ import { supportsLine } from "@/domain/driving/supports";
 import { SourceChip } from "../Evidence";
 import styles from "./ImportDrive.module.css";
 import TripPreview from "./TripPreview";
-import WeeklyForm from "./WeeklyForm";
+import WeeklyForm, { type UsageStatus } from "./WeeklyForm";
 
 export interface ImportDriveProps {
   personaId: string;
   vehicleLabel: string;
   /** Called with a confirmed driving profile, or null to revert to the persona's estimate. */
   onProfile: (p: DrivingProfile | null) => void;
+  /** What the comparison uses right now, so the form can say so. Omitted where there is no comparison yet. */
+  usage?: UsageStatus;
 }
 
 interface ApiError {
@@ -38,7 +40,7 @@ const segmentsLine = (breaks: number[]) =>
   breaks.length ? `${breaks.length + 1} pieces, split at ${breaks.length} ${breaks.length === 1 ? "gap" : "gaps"}` : "1 continuous segment";
 
 /** Drive import card at the top of the Drives tab: upload or sample → honest preview → confirm → profile. */
-export default function ImportDrive({ personaId, vehicleLabel, onProfile }: ImportDriveProps) {
+export default function ImportDrive({ personaId, vehicleLabel, onProfile, usage }: ImportDriveProps) {
   const [trips, setTrips] = useState<TripRecord[]>([]);
   const [preview, setPreview] = useState<ImportPreview | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
@@ -310,6 +312,7 @@ export default function ImportDrive({ personaId, vehicleLabel, onProfile }: Impo
             <WeeklyForm
               vehicleId={personaId}
               trips={trips}
+              usage={usage}
               onUse={(p) => {
                 onProfile(p);
                 setAnnounce(p.monthlyMiles.known ? `Comparison now uses ${p.monthlyMiles.value} miles a month.` : "Comparison updated.");

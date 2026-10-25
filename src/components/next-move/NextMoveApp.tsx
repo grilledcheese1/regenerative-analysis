@@ -177,7 +177,7 @@ export default function NextMoveApp({ people, initialPersonaId, userBanking = nu
             )}
             {tab === "drives" && (
               <>
-                <ImportDrive key={`${persona.id}-${dataKey}`} personaId={persona.id} vehicleLabel={`${vehicle.modelYear} ${vehicle.model}`} onProfile={onProfile} />
+                <ImportDrive key={`${persona.id}-${dataKey}`} personaId={persona.id} vehicleLabel={`${vehicle.modelYear} ${vehicle.model}`} onProfile={onProfile} usage={{ fromDrives: usageSource !== null, monthlyMiles, estimateMiles: persona.usage.monthlyMiles }} />
                 <DrivesView key={`replay-${persona.id}`} initialRouteId={persona.usage.routeId} vehicleName={`${vehicle.modelYear} ${vehicle.model}`} hybrid={vehicle.powertrain === "hybrid"} />
               </>
             )}

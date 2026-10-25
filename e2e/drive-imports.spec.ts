@@ -54,13 +54,18 @@ test("E2 + E3: imported usage changes Compare, and reverting restores the person
 
   await expect(page.getByLabel("Trips per week")).toHaveValue("10");
   const profileMiles = (await page.getByTestId("profile-monthly-miles").textContent())!.trim();
+  await expect(page.getByTestId("usage-status")).toHaveText("Your comparison uses your estimate of 875 mi/mo.");
+  await expect(page.getByRole("button", { name: "Use my estimate instead" })).toBeDisabled();
   await page.getByRole("button", { name: "Use for comparison" }).click();
+  // Visible confirmation on the Drives tab itself, not only on Compare.
+  await expect(page.getByTestId("usage-status")).toHaveText(`Your comparison now uses ${profileMiles} mi/mo from your drives.`);
 
   await page.getByRole("button", { name: "Compare", exact: true }).click();
   await expect(compareMiles(page)).toHaveText(profileMiles);
 
   await page.getByRole("button", { name: "Drives", exact: true }).click();
-  await page.getByRole("button", { name: "Revert to persona estimate" }).click();
+  await page.getByRole("button", { name: "Use my estimate instead" }).click();
+  await expect(page.getByTestId("usage-status")).toHaveText("Your comparison uses your estimate of 875 mi/mo.");
   await page.getByRole("button", { name: "Compare", exact: true }).click();
   await expect(compareMiles(page)).toHaveText("875");
 });
