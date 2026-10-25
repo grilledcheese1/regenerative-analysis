@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { animate, motion, useMotionValue, useReducedMotion, useTransform } from "motion/react";
 import type { Condition, DriverProfileName } from "@/lib/model/config";
 import type { Axis, Savings, TripAnalysis } from "@/lib/model/score";
 import type { SimTrip } from "@/lib/model/simulate";
@@ -48,27 +49,56 @@ function Stat({ label, value }: { label: string; value: string }) {
 
 export function AxisCards({ axes }: { axes: Axis[] }) {
   const [open, setOpen] = useState<string | null>(null);
+  const reducedMotion = useReducedMotion();
   return (
     <div className="axes">
-      {axes.map((x) => (
-        <button key={x.key} className="card axis" onClick={() => setOpen(open === x.key ? null : x.key)}>
+      {axes.map((x, index) => (
+        <motion.button
+          key={x.key}
+          type="button"
+          className="card axis"
+          initial={reducedMotion ? { opacity: 0 } : { opacity: 0, y: 18, filter: "blur(5px)" }}
+          whileInView={reducedMotion ? { opacity: 1 } : { opacity: 1, y: 0, filter: "blur(0px)" }}
+          viewport={{ once: true, amount: 0.25 }}
+          transition={{ duration: 0.55, delay: reducedMotion ? 0 : index * 0.09, ease: "easeOut" }}
+          whileHover={reducedMotion ? undefined : { y: -3 }}
+          aria-expanded={open === x.key}
+          onClick={() => setOpen(open === x.key ? null : x.key)}
+        >
           <span className="label">{x.label}</span>
           <div className="bar">
             <span style={{ width: `${x.value}%`, background: scoreColor(x.value) }} />
           </div>
-          <div className="val">{x.value}</div>
+          <AnimatedAxisScore value={x.value} delay={reducedMotion ? 0 : 0.18 + index * 0.09} />
           {open === x.key ? (
-            <div className="evidence">
+            <motion.div className="evidence" initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reducedMotion ? 0 : 0.2 }}>
               <div>ƒ {x.formula}</div>
               <div>→ {x.evidence}</div>
-            </div>
+            </motion.div>
           ) : (
             <div className="evidence muted">Show the work ↓</div>
           )}
-        </button>
+        </motion.button>
       ))}
     </div>
   );
+}
+
+function AnimatedAxisScore({ value, delay }: { value: number; delay: number }) {
+  const reducedMotion = useReducedMotion();
+  const score = useMotionValue(reducedMotion ? value : 0);
+  const rounded = useTransform(score, (latest) => Math.round(latest));
+
+  useEffect(() => {
+    if (reducedMotion) {
+      score.set(value);
+      return;
+    }
+    const animation = animate(score, value, { duration: 0.85, delay, ease: "easeOut" });
+    return () => animation.stop();
+  }, [delay, reducedMotion, score, value]);
+
+  return <motion.span className="val">{rounded}</motion.span>;
 }
 
 export function Terminal({ trip, a, cursor }: { trip: SimTrip; a: TripAnalysis; cursor: number }) {
@@ -101,8 +131,15 @@ export function Terminal({ trip, a, cursor }: { trip: SimTrip; a: TripAnalysis; 
     visible.push({ t: cursor, text: `── done · score ${a.score}/100 · ${a.regenKwh.toFixed(3)} kWh recovered · ${a.missedCount} missed`, cls: "good" });
   }
 
+  const reducedMotion = useReducedMotion();
   return (
-    <div className="card">
+    <motion.div
+      className="card analytics-log-card"
+      initial={reducedMotion ? { opacity: 0 } : { opacity: 0, y: 18, filter: "blur(5px)" }}
+      whileInView={reducedMotion ? { opacity: 1 } : { opacity: 1, y: 0, filter: "blur(0px)" }}
+      viewport={{ once: true, amount: 0.15 }}
+      transition={{ duration: 0.65, ease: "easeOut", delay: reducedMotion ? 0 : 0.12 }}
+    >
       <span className="label">Trip log</span>
       <div className="terminal" ref={(el) => el?.scrollTo({ top: el.scrollHeight })}>
         {visible.map((l, i) => (
@@ -110,7 +147,7 @@ export function Terminal({ trip, a, cursor }: { trip: SimTrip; a: TripAnalysis; 
         ))}
         <span className="muted">▍</span>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

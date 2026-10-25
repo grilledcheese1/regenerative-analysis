@@ -162,7 +162,7 @@ export default function ImportDrive({ personaId, vehicleLabel, onProfile }: Impo
     <section className="section" aria-labelledby="your-drives">
       <div className="section-head">
         <span className="label">Drives</span>
-        <h2 id="your-drives">Your drives</h2>
+        <h2 id="your-drives">Your Trips</h2>
         <span className="tag">{allSamples ? "Sample trips · synthetic" : "Imported trips · observed"}</span>
       </div>
 

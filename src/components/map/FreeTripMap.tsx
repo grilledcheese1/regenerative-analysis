@@ -28,11 +28,12 @@ interface FreeTripMapProps {
   onSelectMissed: (e: MissedEvent) => void;
 }
 
-const cssVar = (name: string) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+const cssVar = (name: string, scope?: Element | null) =>
+  getComputedStyle(scope ?? document.documentElement).getPropertyValue(name).trim();
 // "var(--surf-gravel)" -> its current value, so MapLibre gets a real color
-const resolve = (color: string) => {
+const resolve = (color: string, scope?: Element | null) => {
   const name = color.match(/^var\((--[\w-]+)\)$/)?.[1];
-  return name ? cssVar(name) : color;
+  return name ? cssVar(name, scope) : color;
 };
 
 const fc = (features: GeoJSON.Feature[]): GeoJSON.FeatureCollection => ({ type: "FeatureCollection", features });
@@ -42,12 +43,12 @@ const point = (c: [number, number], props: object = {}): GeoJSON.Feature => ({
   geometry: { type: "Point", coordinates: c },
 });
 
-function routeData(p: FreeTripMapProps): GeoJSON.FeatureCollection {
+function routeData(p: FreeTripMapProps, scope?: Element | null): GeoJSON.FeatureCollection {
   if (p.colorBy === "surface") {
     return fc(
       p.surfaces.map((s) => ({
         type: "Feature",
-        properties: { color: resolve(SURFACE_STYLE[s.kind].color), dashed: SURFACE_STYLE[s.kind].dash ? 1 : 0 },
+        properties: { color: resolve(SURFACE_STYLE[s.kind].color, scope), dashed: SURFACE_STYLE[s.kind].dash ? 1 : 0 },
         geometry: { type: "LineString", coordinates: s.coords },
       })),
     );
@@ -55,7 +56,7 @@ function routeData(p: FreeTripMapProps): GeoJSON.FeatureCollection {
   return fc(
     p.segments.map((s) => ({
       type: "Feature",
-      properties: { color: cssVar(GRADE_VAR[s.grade]), dashed: 0 },
+      properties: { color: cssVar(GRADE_VAR[s.grade], scope), dashed: 0 },
       geometry: { type: "LineString", coordinates: s.coords },
     })),
   );
@@ -84,10 +85,11 @@ export default function FreeTripMap(props: FreeTripMapProps) {
 
   // Create the map (again when the theme changes, since the base style changes).
   useEffect(() => {
-    if (!container.current) return;
+    const mapContainer = container.current;
+    if (!mapContainer) return;
     const p = latest.current;
     const map = new maplibregl.Map({
-      container: container.current,
+      container: mapContainer,
       style: CFG.styles[theme],
       center: p.car,
       zoom: CFG.camera.zoom,
@@ -139,7 +141,7 @@ export default function FreeTripMap(props: FreeTripMapProps) {
       map.setTerrain({ source: "dem", exaggeration: CFG.terrain.exaggeration });
 
       const cur = latest.current;
-      map.addSource("route", { type: "geojson", data: routeData(cur) });
+      map.addSource("route", { type: "geojson", data: routeData(cur, mapContainer) });
       map.addSource("stops", { type: "geojson", data: fc(cur.stops.map((c) => point(c))) });
       map.addSource("missed", { type: "geojson", data: fc([]) });
       map.addSource("car", { type: "geojson", data: fc([point(cur.car)]) });
@@ -152,13 +154,13 @@ export default function FreeTripMap(props: FreeTripMapProps) {
         paint: { "line-color": ["get", "color"], "line-width": L.width, "line-dasharray": [...L.dash] } });
       const M = CFG.markers;
       map.addLayer({ id: "stops", type: "circle", source: "stops",
-        paint: { "circle-radius": M.stopRadius, "circle-color": cssVar("--text-2"), "circle-stroke-color": cssVar("--bg"), "circle-stroke-width": 2 } });
+        paint: { "circle-radius": M.stopRadius, "circle-color": cssVar("--text-2", mapContainer), "circle-stroke-color": cssVar("--bg", mapContainer), "circle-stroke-width": 2 } });
       map.addLayer({ id: "missed", type: "circle", source: "missed",
-        paint: { "circle-radius": M.missedRadius, "circle-color": "rgba(0,0,0,0)", "circle-stroke-color": cssVar("--seg-bad"), "circle-stroke-width": 2.5 } });
+        paint: { "circle-radius": M.missedRadius, "circle-color": "rgba(0,0,0,0)", "circle-stroke-color": cssVar("--seg-bad", mapContainer), "circle-stroke-width": 2.5 } });
       map.addLayer({ id: "car-halo", type: "circle", source: "car",
-        paint: { "circle-radius": M.carHaloRadius, "circle-color": cssVar("--accent"), "circle-opacity": 0.25 } });
+        paint: { "circle-radius": M.carHaloRadius, "circle-color": cssVar("--accent", mapContainer), "circle-opacity": 0.25 } });
       map.addLayer({ id: "car", type: "circle", source: "car",
-        paint: { "circle-radius": M.carRadius, "circle-color": cssVar("--accent"), "circle-stroke-color": cssVar("--text"), "circle-stroke-width": 2.5 } });
+        paint: { "circle-radius": M.carRadius, "circle-color": cssVar("--accent", mapContainer), "circle-stroke-color": cssVar("--text", mapContainer), "circle-stroke-width": 2.5 } });
 
       map.on("click", "missed", (e) => {
         const i = e.features?.[0]?.properties?.i;
@@ -185,7 +187,7 @@ export default function FreeTripMap(props: FreeTripMapProps) {
   useEffect(() => {
     const map = mapRef.current;
     if (!ready || !map) return;
-    geo(map, "route")?.setData(routeData(props));
+    geo(map, "route")?.setData(routeData(props, container.current));
     geo(map, "stops")?.setData(fc(props.stops.map((c) => point(c))));
     geo(map, "missed")?.setData(
       fc(props.missed.map((e, i) => point([e.lon, e.lat], { i }))),

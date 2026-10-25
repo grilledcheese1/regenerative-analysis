@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import RouteMap from "@/components/RouteMap";
 import RouteSvg from "@/components/RouteSvg";
+import FreeTripMapClient from "@/components/map/FreeTripMapClient";
+import { FREE_MAP_CONFIG } from "@/components/map/config";
 import TripMapClient from "@/components/map/TripMapClient";
 import Timeline from "@/components/Timeline";
 import { AxisCards, ComparePanel, SavingsCard, ScoreHero, Terminal } from "@/components/Panels";
 import { env } from "@/lib/env";
-import { SURFACES, type Condition, type DriverProfileName } from "@/lib/model/config";
+import { type Condition, type DriverProfileName } from "@/lib/model/config";
 import { analyzeTrip, estimateSavings, type MissedEvent } from "@/lib/model/score";
 import { simulateTrip } from "@/lib/model/simulate";
 import { ROUTES, stopCoords } from "@/lib/routes";
@@ -15,7 +16,6 @@ import { buildSegments, CAUSE_LABEL } from "@/lib/segments";
 import { toContractTrip } from "@/lib/trip/adapt";
 
 const DRIVERS: DriverProfileName[] = ["smooth", "mixed", "aggressive"];
-const CONDITIONS = Object.keys(SURFACES) as Condition[];
 const END = Number.MAX_SAFE_INTEGER;
 
 interface DrivesViewProps {
@@ -32,13 +32,41 @@ export default function DrivesView({ initialRouteId, vehicleName, hybrid }: Driv
   const stops = useMemo(() => stopCoords(route), [route]);
   const [driver, setDriver] = useState<DriverProfileName>("mixed");
   const [condition, setCondition] = useState<Condition>("dry");
+  const [weatherNote, setWeatherNote] = useState("Auto-detecting weather…");
   const [rawCursor, setCursor] = useState(END);
   const [playing, setPlaying] = useState(false);
   const [gasPrice, setGasPrice] = useState(env.defaultGasPrice);
   const [tripsPerDay, setTripsPerDay] = useState(env.defaultTripsPerDay);
   const [selected, setSelected] = useState<MissedEvent | null>(null);
 
-  // Changing route, driving style or conditions re-scores instantly and jumps to the end of the replay.
+  useEffect(() => {
+    let cancelled = false;
+    const center = route.points[Math.floor(route.points.length / 2)];
+
+    fetch(`/api/conditions?route=${encodeURIComponent(route.id)}&lat=${center.lat.toFixed(2)}&lon=${center.lon.toFixed(2)}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (cancelled || !data || typeof data.condition !== "string") {
+          setCondition("dry");
+          setWeatherNote("Weather unavailable — using dry default");
+          return;
+        }
+        setCondition(data.condition as Condition);
+        setWeatherNote(`${data.place ?? "City / region"} · ${data.condition} · ${data.reason}`);
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setCondition("dry");
+          setWeatherNote("Weather unavailable — using dry default");
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [route]);
+
+  // Changing route or driving style re-scores instantly and jumps to the end of the replay.
   const rescore = (fn: () => void) => {
     fn();
     setCursor(END);
@@ -90,6 +118,7 @@ export default function DrivesView({ initialRouteId, vehicleName, hybrid }: Driv
   }, [playing, last]);
 
   const cur = trip.samples[cursor];
+  const ahead = trip.samples[Math.min(last, cursor + FREE_MAP_CONFIG.camera.lookAheadSamples)];
   const savings = estimateSavings(a, gasPrice, tripsPerDay);
   const gapDollars = (sims.aggressive.fuelGallons - sims.smooth.fuelGallons) * gasPrice * tripsPerDay * 365;
   const visibleMissed = a.missed.filter((e) => e.t <= cursor);
@@ -108,7 +137,7 @@ export default function DrivesView({ initialRouteId, vehicleName, hybrid }: Driv
             : `Your ${vehicleName} is gasoline and recovers no braking energy. This replay models a Camry Hybrid on the same route for comparison.`}
         </p>
         <div className="toolbar">
-          <select id="drive-route" name="drive-route" value={routeId} onChange={(e) => rescore(() => setRouteId(e.target.value))} aria-label="Route">
+          <select id="drive-route" name="drive-route" value={routeId} onChange={(e) => rescore(() => setRouteId(e.target.value))} aria-label="City or region">
             {ROUTES.map((r) => (
               <option key={r.id} value={r.id}>
                 {r.name} · {(r.points[r.points.length - 1].s / 1609.34).toFixed(1)} mi
@@ -122,13 +151,9 @@ export default function DrivesView({ initialRouteId, vehicleName, hybrid }: Driv
               </button>
             ))}
           </div>
-          <select id="drive-condition" name="drive-condition" value={condition} onChange={(e) => rescore(() => setCondition(e.target.value as Condition))} aria-label="Road condition">
-            {CONDITIONS.map((c) => (
-              <option key={c} value={c}>
-                {c} · μ {SURFACES[c].mu}
-              </option>
-            ))}
-          </select>
+          <div className="tag" aria-live="polite" title={weatherNote} style={{ whiteSpace: "nowrap" }}>
+            Auto weather · {condition}
+          </div>
         </div>
         <div className="grid-map">
           <div className="card map-wrap">
@@ -140,17 +165,20 @@ export default function DrivesView({ initialRouteId, vehicleName, hybrid }: Driv
                 fallback={<RouteSvg segments={segments} stops={stops} missed={visibleMissed} car={[cur.lon, cur.lat]} onSelectMissed={setSelected} />}
               />
             ) : (
-              <RouteMap
-                routeId={route.id}
-                theme="dark"
+              <FreeTripMapClient
+                theme="bright"
                 segments={segments}
+                surfaces={[]}
+                colorBy="regen"
                 stops={stops}
                 missed={visibleMissed}
                 car={[cur.lon, cur.lat]}
+                ahead={[ahead.lon, ahead.lat]}
+                follow={playing}
+                weather={condition}
                 onSelectMissed={setSelected}
               />
             )}
-            {!env.mapboxToken && <p className="muted small">Map tiles unavailable (no Mapbox token configured). Showing a static route preview.</p>}
             <div className="legend">
               <span><i style={{ background: "var(--seg-good)" }} />captured</span>
               <span><i style={{ background: "var(--seg-mid)" }} />partial</span>
@@ -184,7 +212,7 @@ export default function DrivesView({ initialRouteId, vehicleName, hybrid }: Driv
         </div>
       </section>
 
-      <section className="section">
+      <section className="section analytics-showcase">
         <div className="section-head">
           <span className="label">Modeled recovery</span>
           <h2>Where the braking energy went</h2>

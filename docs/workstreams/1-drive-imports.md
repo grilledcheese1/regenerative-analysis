@@ -461,7 +461,7 @@ Every file has `<metadata><desc>Synthetic sample generated from a cached Austin 
 
 **Layout** (a card above the Regen replay, which keeps its "modeled" banner):
 
-1. Header "Your drives", with tag **"Imported trips · observed"** or **"Sample trips · synthetic"**.
+1. Header "Your Trips", with tag **"Imported trips · observed"** or **"Sample trips · synthetic"**.
 2. Actions:
    - **Import a drive**: a file input, `accept=".gpx,.csv"`, with a visible label.
    - **Try a sample drive**: a small menu of the six samples. It fetches `/samples/<file>` and posts it as a `File` with `sample=1`.
