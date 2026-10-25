@@ -17,6 +17,7 @@ The Next Move vertical slice works end to end with fixture banking:
 - **Fixtures:** `src/fixtures/{personas,catalog,banking}.ts`, with the three personas Maria, Devon and Kai.
 - **Nessie adapter:** `src/server/providers/nessie.ts` (server-only fetch, sandbox reads) and `nessie-normalize.ts` (zod schemas and normalization).
 - **API:** `GET /api/demo/customers` and `POST /api/banking/nessie/sync` (`{ personaId, mode: "fixture" | "sandbox" }`). The older `POST /api/coach` is still used by the Drives coaching panel in `src/components/Panels.tsx`.
+- **Routes:** Next Move is its own page at **`/next-move`** (`src/app/next-move/page.tsx`). **`/` stays the team's Regen Coach dashboard** (`src/app/page.tsx` → `src/components/Dashboard.tsx`). Keep them separate: don't link, redirect or restyle `/` from Next Move work.
 - **UI:** `src/components/next-move/NextMoveApp.tsx` is the shell (persona picker, tabs, sync bar, scenario state). `screens.tsx` holds Home, Money, Compare and Next Move. `Evidence.tsx` provides `EvidenceList` and `SourceChip`. `src/components/DrivesView.tsx` is the Regen replay on the cached Austin routes in `src/data/routes.json`.
 - **Checks:** 29 Vitest tests pass across `tests/{finance,budget,compare,braking}.test.ts`. `tsc`, `eslint` and `next build` are clean.
 - **Demo scenarios already true:** Maria's buyout leads but needs a quote, and adding $300/mo of spending changes her result. Devon keeps the car. Kai has no feasible option. `tests/compare.test.ts` enforces all of these, so **do not break them.**
@@ -64,7 +65,7 @@ Facts that differ from older Next.js:
 | `src/domain/driving/**`, `src/contracts/driving.ts`, `src/app/api/imports/**`, `src/app/api/drives/**`, `src/server/imports/**`, `src/components/next-move/import/**`, `public/samples/**`, `scripts/make-sample-drives.mjs`, `tests/driving/**` | **A** |
 | `src/server/providers/nessie*.ts`, `src/fixtures/banking.ts`, `src/app/api/banking/**`, `src/app/api/dev/**`, `src/server/providers/serpapi.ts`, `src/app/api/market/**`, `src/contracts/{banking-sync,market}.ts`, `src/fixtures/market-cache.json`, `src/components/next-move/banking/**`, `src/components/next-move/market/**`, `tests/banking/**`, `tests/market/**` | **B** |
 | `src/server/{session,store,http}.ts`, `src/server/explain/**`, `src/app/api/options/**`, `src/app/api/recommendations/**`, `src/app/api/consents/**`, `src/app/api/me/**`, `src/contracts/index.ts` (existing types), `src/contracts/explain.ts`, `src/domain/recommendations/**`, `src/domain/finance/**`, `src/components/next-move/explain/**`, `tests/{finance,budget,compare}.test.ts`, `tests/server/**`, `tests/explain/**` | **C** |
-| `src/components/next-move/{NextMoveApp,screens,Evidence}.tsx`, new `Settings` screen, `src/app/**` pages/layout/icon, `src/app/globals.css`, `src/components/{DrivesView,Panels,RouteMap,RouteSvg,Timeline}.tsx`, `scripts/fetch-demo-routes.mjs` (writes `src/data/routes.json`), `package.json` scripts, `.env.example`, `README.md`, `playwright.config.ts`, `e2e/**`, deployment, demo script | **D** |
+| `src/components/next-move/{NextMoveApp,screens,Evidence}.tsx`, new `Settings` screen, `src/app/next-move/**`, the Next Move section of `src/app/globals.css` (after `/* ---------- Next Move shell ---------- */`), `src/components/{DrivesView,Panels,RouteMap,RouteSvg,Timeline}.tsx`, `scripts/fetch-demo-routes.mjs` (writes `src/data/routes.json`), `package.json` scripts, `.env.example`, `README.md`, `playwright.config.ts`, `e2e/**`, deployment, demo script | **D** |
 
 Shared append-only exceptions:
 
@@ -161,12 +162,15 @@ Merge = rebase on `vishruth`, `npm run lint && npm run typecheck && npm test && 
 
 ### 0.11 Relationship to the team `AGENTS.md` (Regen Coach Streams 1–4)
 
-`AGENTS.md` on `main` defines four **Regen Coach** streams (1 Physics and Scoring, 2 Data and API, 3 Map and Charts, 4 UI, Theme and Pitch) and their file ownership. Those rules still govern the Regen replay that now lives on the Drives tab. These Next Move workstreams (A–D) **do not edit** Regen Coach files:
+`AGENTS.md` on `main` defines four **Regen Coach** streams (1 Physics and Scoring, 2 Data and API, 3 Map and Charts, 4 UI, Theme and Pitch) and their file ownership. Those rules still govern the Regen Coach dashboard at `/`, including `src/app/page.tsx`, `src/app/layout.tsx` and `src/components/Dashboard.tsx`. The Next Move Drives tab reuses its replay components. These Next Move workstreams (A–D) **do not edit** Regen Coach files:
 
 - `src/lib/physics/**`, `src/config/regen.config.ts`, `src/lib/trip/**`
 - `src/components/map/**`, `src/components/charts/**`
 - `data/**`, `simulated_user_data/**`, `scripts/fetch-routes.mjs`
 - the existing routes `src/app/api/{routes,trips,compare}/**`
+- the root page and layout `src/app/{page,layout}.tsx`, and `src/components/Dashboard.tsx`
+
+`Panels`, `RouteMap`, `RouteSvg` and `Timeline` are used by both `/` and the Drives tab. Any change to them must keep `/` working; check both pages.
 
 Next Move uses its own paths (`/api/drives`, `/api/options/compare`, …), so nothing collides. If a Next Move feature needs a change there, ask that Regen stream's owner. Stream D coordinates the two sets of owners at each integration window.
 

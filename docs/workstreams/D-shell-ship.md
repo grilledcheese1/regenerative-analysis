@@ -25,6 +25,7 @@ The Next Move vertical slice works end to end with fixture banking:
 - **Fixtures:** `src/fixtures/{personas,catalog,banking}.ts`, with the three personas Maria, Devon and Kai.
 - **Nessie adapter:** `src/server/providers/nessie.ts` (server-only fetch, sandbox reads) and `nessie-normalize.ts` (zod schemas and normalization).
 - **API:** `GET /api/demo/customers` and `POST /api/banking/nessie/sync` (`{ personaId, mode: "fixture" | "sandbox" }`). The older `POST /api/coach` is still used by the Drives coaching panel in `src/components/Panels.tsx`.
+- **Routes:** Next Move is its own page at **`/next-move`** (`src/app/next-move/page.tsx`). **`/` stays the team's Regen Coach dashboard** (`src/app/page.tsx` → `src/components/Dashboard.tsx`). Keep them separate: don't link, redirect or restyle `/` from Next Move work.
 - **UI:** `src/components/next-move/NextMoveApp.tsx` is the shell (persona picker, tabs, sync bar, scenario state). `screens.tsx` holds Home, Money, Compare and Next Move. `Evidence.tsx` provides `EvidenceList` and `SourceChip`. `src/components/DrivesView.tsx` is the Regen replay on the cached Austin routes in `src/data/routes.json`.
 - **Checks:** 29 Vitest tests pass across `tests/{finance,budget,compare,braking}.test.ts`. `tsc`, `eslint` and `next build` are clean.
 - **Demo scenarios already true:** Maria's buyout leads but needs a quote, and adding $300/mo of spending changes her result. Devon keeps the car. Kai has no feasible option. `tests/compare.test.ts` enforces all of these, so **do not break them.**
@@ -72,7 +73,7 @@ Facts that differ from older Next.js:
 | `src/domain/driving/**`, `src/contracts/driving.ts`, `src/app/api/imports/**`, `src/app/api/drives/**`, `src/server/imports/**`, `src/components/next-move/import/**`, `public/samples/**`, `scripts/make-sample-drives.mjs`, `tests/driving/**` | **A** |
 | `src/server/providers/nessie*.ts`, `src/fixtures/banking.ts`, `src/app/api/banking/**`, `src/app/api/dev/**`, `src/server/providers/serpapi.ts`, `src/app/api/market/**`, `src/contracts/{banking-sync,market}.ts`, `src/fixtures/market-cache.json`, `src/components/next-move/banking/**`, `src/components/next-move/market/**`, `tests/banking/**`, `tests/market/**` | **B** |
 | `src/server/{session,store,http}.ts`, `src/server/explain/**`, `src/app/api/options/**`, `src/app/api/recommendations/**`, `src/app/api/consents/**`, `src/app/api/me/**`, `src/contracts/index.ts` (existing types), `src/contracts/explain.ts`, `src/domain/recommendations/**`, `src/domain/finance/**`, `src/components/next-move/explain/**`, `tests/{finance,budget,compare}.test.ts`, `tests/server/**`, `tests/explain/**` | **C** |
-| `src/components/next-move/{NextMoveApp,screens,Evidence}.tsx`, new `Settings` screen, `src/app/**` pages/layout/icon, `src/app/globals.css`, `src/components/{DrivesView,Panels,RouteMap,RouteSvg,Timeline}.tsx`, `scripts/fetch-demo-routes.mjs` (writes `src/data/routes.json`), `package.json` scripts, `.env.example`, `README.md`, `playwright.config.ts`, `e2e/**`, deployment, demo script | **D** |
+| `src/components/next-move/{NextMoveApp,screens,Evidence}.tsx`, new `Settings` screen, `src/app/next-move/**`, the Next Move section of `src/app/globals.css` (after `/* ---------- Next Move shell ---------- */`), `src/components/{DrivesView,Panels,RouteMap,RouteSvg,Timeline}.tsx`, `scripts/fetch-demo-routes.mjs` (writes `src/data/routes.json`), `package.json` scripts, `.env.example`, `README.md`, `playwright.config.ts`, `e2e/**`, deployment, demo script | **D** |
 
 Shared append-only exceptions:
 
@@ -169,12 +170,15 @@ Merge = rebase on `vishruth`, `npm run lint && npm run typecheck && npm test && 
 
 ### 0.11 Relationship to the team `AGENTS.md` (Regen Coach Streams 1–4)
 
-`AGENTS.md` on `main` defines four **Regen Coach** streams (1 Physics and Scoring, 2 Data and API, 3 Map and Charts, 4 UI, Theme and Pitch) and their file ownership. Those rules still govern the Regen replay that now lives on the Drives tab. These Next Move workstreams (A–D) **do not edit** Regen Coach files:
+`AGENTS.md` on `main` defines four **Regen Coach** streams (1 Physics and Scoring, 2 Data and API, 3 Map and Charts, 4 UI, Theme and Pitch) and their file ownership. Those rules still govern the Regen Coach dashboard at `/`, including `src/app/page.tsx`, `src/app/layout.tsx` and `src/components/Dashboard.tsx`. The Next Move Drives tab reuses its replay components. These Next Move workstreams (A–D) **do not edit** Regen Coach files:
 
 - `src/lib/physics/**`, `src/config/regen.config.ts`, `src/lib/trip/**`
 - `src/components/map/**`, `src/components/charts/**`
 - `data/**`, `simulated_user_data/**`, `scripts/fetch-routes.mjs`
 - the existing routes `src/app/api/{routes,trips,compare}/**`
+- the root page and layout `src/app/{page,layout}.tsx`, and `src/components/Dashboard.tsx`
+
+`Panels`, `RouteMap`, `RouteSvg` and `Timeline` are used by both `/` and the Drives tab. Any change to them must keep `/` working; check both pages.
 
 Next Move uses its own paths (`/api/drives`, `/api/options/compare`, …), so nothing collides. If a Next Move feature needs a change there, ask that Regen stream's owner. Stream D coordinates the two sets of owners at each integration window.
 
@@ -245,7 +249,7 @@ Add `"settings"` to `TABS` and put `SettingsScreen` in `screens.tsx` or a new `s
 
 | # | Issue | Fix |
 |---|---|---|
-| Q1 | `GET /favicon.ico` 404 | Add `src/app/icon.svg` (a teal dot, matching `.wordmark .dot`). Check the Next 16 metadata docs: `node_modules/next/dist/docs/01-app/01-getting-started/14-metadata-and-og-images.md` |
+| Q1 | `GET /favicon.ico` 404 | The root icon is shared with `/`, so agree it with Regen Stream 4. Add `src/app/icon.svg` (a teal dot, matching `.wordmark .dot`). Check the Next 16 metadata docs: `node_modules/next/dist/docs/01-app/01-getting-started/14-metadata-and-og-images.md` |
 | Q2 | Console issue "A form field element should have an id or name attribute" | Add `id="persona"` and `name="persona"` to the persona `<select>`; audit the other inputs (sliders, checkbox) |
 | Q3 | The Drives map now uses the team's `TripMapClient` (3D terrain; it renders correctly, verified after the merge) with a `RouteSvg` fallback, and `RouteMap` when there is no token | Verify in real Chrome and Safari and on a phone. Confirm the fallback appears when the map errors (`map.on("error")`) or the token is blank, as the plan requires ("a static route preview if map tiles fail"). Coordinate any `src/components/map/**` change with Regen Stream 3 |
 | Q4 | `/api/coach` returns 500 with no explanation when there is no key, and has no timeout | In `Panels.tsx`, show "Coaching tip unavailable (no AI key configured)". In the route, add an 8 s timeout and return `503 { error: { code: "provider_not_configured", … } }` |
@@ -283,11 +287,12 @@ Walk this matrix after windows 2 and 3. Record a screenshot of each in `docs/dem
 - Tests run with **no provider keys** by default, using fixture, template and saved results, so they are deterministic. Put live-provider checks in `e2e/live.spec.ts`, skipped unless `E2E_LIVE=1`.
 - Exclude `e2e/` from Vitest (`vitest.config.ts` `exclude`) and from `tsc` if needed.
 
-**Use roles and text, not CSS classes:** `page.getByRole("button", { name: "Next Move" })` and `getByLabel("Demo customer")`.
+**Every Next Move spec starts at `/next-move`.** **Use roles and text, not CSS classes:** `page.getByRole("button", { name: "Next Move" })` and `getByLabel("Demo customer")`.
 
 | # | Spec | Steps → assertions |
 |---|---|---|
-| E1 | Main journey (Maria) | Load `/` → "Banking loaded (fixture)" → Money: the "Vehicle budget" row reads `$900` → check "Income estimate … looks right" → the notice disappears → Compare: 3 option cards, first is "LEADING" → Next Move: heading "Leading option: Buy out the 2024 Camry Hybrid LE", status "NEEDS INFORMATION", the link "Open Toyota Financial Services lease-end options" has `target=_blank` and an `https://www.toyotafinancial.com/` href |
+| E0 | Pages stay separate | `/` renders the Regen Coach dashboard (no Next Move header); `/next-move` renders Next Move with the title "Next Move" |
+| E1 | Main journey (Maria) | Load `/next-move` → "Banking loaded (fixture)" → Money: the "Vehicle budget" row reads `$900` → check "Income estimate … looks right" → the notice disappears → Compare: 3 option cards, first is "LEADING" → Next Move: heading "Leading option: Buy out the 2024 Camry Hybrid LE", status "NEEDS INFORMATION", the link "Open Toyota Financial Services lease-end options" has `target=_blank` and an `https://www.toyotafinancial.com/` href |
 | E2 | Changed input changes the result (Maria) | Money: move "New monthly expense" to $300 → Home "Vehicle budget" `$600` → Next Move headline or next step differs from E1's (assert against the value `tests/compare.test.ts` expects) |
 | E3 | Keep preferred (Devon) | Select Devon → Next Move: keep recommended (`keep_current_plan`), with the CTA "Keep the current car" |
 | E4 | No feasible option (Kai) | Select Kai → Next Move heading "No option fits these constraints", step "Review the budget" |
@@ -351,7 +356,7 @@ Then add these sections:
 
 - [ ] `npm run check` and `npm run test:e2e` green on `vishruth` HEAD.
 - [ ] The Vercel env has every needed variable. `NESSIE_SEED_ALLOW` is **absent**. The Mapbox token is URL-restricted.
-- [ ] The production URL loads on a phone. All six tabs × three personas click through.
+- [ ] The production URL loads on a phone: `/next-move` for Next Move, with `/` still the Regen Coach dashboard. All six tabs × three personas click through.
 - [ ] §5 failure matrix verified on the deployed URL (as far as env allows).
 - [ ] No secrets in the client bundle: `grep -r "sk-ant\|NESSIE_API_KEY\|SERPAPI" .next/static` is empty.
 - [ ] The rollback path is known: Vercel "Promote previous deployment".

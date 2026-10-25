@@ -1,5 +1,5 @@
-import NextMoveApp from "@/components/next-move/NextMoveApp";
+import Dashboard from "@/components/Dashboard";
 
 export default function Home() {
-  return <NextMoveApp />;
+  return <Dashboard />;
 }
