@@ -2,12 +2,14 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRef, useSyncExternalStore } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 import AuthDialog, { type AuthDialogHandle } from "@/components/auth/AuthDialog";
 import CaseStudyPicker from "@/components/auth/CaseStudyPicker";
 import IdentityControl from "@/components/auth/IdentityControl";
 import { useCaseStudyId } from "@/components/auth/caseStudy";
 import { useAccount } from "@/components/auth/useAccount";
+import { useMyProfile } from "@/components/onboarding/useMyProfile";
 import { PEOPLE, persona } from "@/fixtures/personas";
 import { StaggerItem, StaggerList, MotionProvider } from "./motion";
 import Story from "./Story";
@@ -15,13 +17,24 @@ import Story from "./Story";
 const noop = () => () => {};
 const useHydrated = () => useSyncExternalStore(noop, () => true, () => false);
 
-/** /: create an account, sign in, or explore a case study; then the scroll story. `?as=<id>` opens a case study directly. */
+/**
+ * /: create an account, sign in, or explore a case study; then the scroll story. An open case study
+ * (or `?as=<id>`) wins; a signed-in user sees their own story, or onboarding if they have no profile.
+ */
 export default function NextMoveEntry({ as }: { as?: string }) {
   const caseStudyId = useCaseStudyId();
   const { account } = useAccount();
   const hydrated = useHydrated();
   const auth = useRef<AuthDialogHandle>(null);
-  const id = [as, caseStudyId].find((x) => x && persona(x)) ?? null;
+  const router = useRouter();
+  const mine = useMyProfile();
+  const caseId = [as, caseStudyId].find((x) => x && persona(x)) ?? null;
+  const shown = caseId ? persona(caseId)! : mine.status === "ready" ? mine.persona : null;
+  const id = shown?.id ?? null;
+
+  useEffect(() => {
+    if (hydrated && !caseId && mine.status === "none") router.replace("/onboarding");
+  }, [hydrated, caseId, mine.status, router]);
 
   return (
     <>
@@ -36,8 +49,8 @@ export default function NextMoveEntry({ as }: { as?: string }) {
         </nav>
       </header>
       <main className={id ? "story-page" : undefined}>
-        {!hydrated ? null : id ? (
-          <Story key={id} personaId={id} />
+        {!hydrated || (account && !caseId && mine.status !== "ready") ? null : id ? (
+          <Story key={id} persona={shown!} initialBankingMode={caseId ? "fixture" : (mine.profile?.banking.mode ?? "fixture")} />
         ) : (
           <MotionProvider>
             <StaggerList className="home">

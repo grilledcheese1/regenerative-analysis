@@ -13,7 +13,7 @@ import { ScrollProgress } from "@/components/story/SectionRail";
 import type { CompareRequest, DrivingProfile, ScenarioInputs, SourceKind } from "@/contracts";
 import { runScenario } from "@/domain/recommendations/scenario";
 import { catalogVehicle } from "@/fixtures/catalog";
-import { PEOPLE, persona as findPersona } from "@/fixtures/personas";
+import type { Persona, UserBanking } from "@/contracts";
 import BankingSyncBar from "./banking/BankingSyncBar";
 import { useBankingSync } from "./banking/useBankingSync";
 import ImportDrive from "./import/ImportDrive";
@@ -32,19 +32,21 @@ const TABS = ["home", "drives", "money", "compare", "next", "settings"] as const
 type Tab = (typeof TABS)[number];
 const TAB_LABEL: Record<Tab, string> = { home: "Home", drives: "Drives", money: "Cost", compare: "Compare", next: "Next Step", settings: "Settings" };
 
-export default function NextMoveApp({ initialPersonaId }: { initialPersonaId?: string }) {
-  const [personaId, setPersonaId] = useState(initialPersonaId && findPersona(initialPersonaId) ? initialPersonaId : PEOPLE[0].id);
-  const persona = findPersona(personaId)!;
+/** The tabbed screens over `people`: every case study, or just the signed-in user's own profile. */
+export default function NextMoveApp({ people, initialPersonaId, userBanking = null }: { people: Persona[]; initialPersonaId?: string; userBanking?: UserBanking | null }) {
+  const findPersona = (id: string) => people.find((p) => p.id === id);
+  const [personaId, setPersonaId] = useState(initialPersonaId && findPersona(initialPersonaId) ? initialPersonaId : people[0].id);
+  const persona = findPersona(personaId) ?? people[0];
   const { account } = useAccount();
   const caseStudyId = useCaseStudyId();
   // One identity at a time: the case-study picker shows only when browsing case studies.
-  const showPicker = !account || Boolean(caseStudyId);
+  const showPicker = people.length > 1 && (!account || Boolean(caseStudyId));
   const vehicle = catalogVehicle(persona.vehicle.catalogId);
   const [nav, setNav] = useState<{ tab: Tab; dir: 1 | -1 }>({ tab: "home", dir: 1 });
   const tab = nav.tab;
   // Slide direction follows tab order: later tabs enter from the right, earlier ones from the left.
   const setTab = useCallback((t: Tab) => setNav((n) => ({ tab: t, dir: TABS.indexOf(t) < TABS.indexOf(n.tab) ? -1 : 1 })), []);
-  const banking = useBankingSync(personaId);
+  const banking = useBankingSync(persona.id, userBanking?.mode ?? "fixture");
   const { bank } = banking;
   const [dataKey, setDataKey] = useState(0); // bumped by "Delete my demo data" to remount data-holding children
 
@@ -121,7 +123,7 @@ export default function NextMoveApp({ initialPersonaId }: { initialPersonaId?: s
             }}
             aria-label="Demo customer"
           >
-            {PEOPLE.map((p) => (
+            {people.map((p) => (
               <option key={p.id} value={p.id}>
                 {p.summary}
               </option>
@@ -147,6 +149,7 @@ export default function NextMoveApp({ initialPersonaId }: { initialPersonaId?: s
           <SettingsScreen
             persona={persona}
             banking={banking}
+            userBanking={persona.id.startsWith("u_") ? userBanking : null}
             onDeleted={() => {
               onProfile(null);
               setDataKey((k) => k + 1);

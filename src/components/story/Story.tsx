@@ -1,10 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { CompareRequest, ScenarioInputs } from "@/contracts";
+import type { CompareRequest, Persona, ScenarioInputs } from "@/contracts";
 import { runScenario } from "@/domain/recommendations/scenario";
 import { catalogVehicle } from "@/fixtures/catalog";
-import { persona as findPersona } from "@/fixtures/personas";
 import BankingSyncBar from "../next-move/banking/BankingSyncBar";
 import { useBankingSync } from "../next-move/banking/useBankingSync";
 import Commute from "./Commute";
@@ -25,10 +24,10 @@ const SECTIONS = [
 ];
 
 /** The scroll story for one simulated person. Gas price, miles and income confirmation are shared by every slide. */
-export default function Story({ personaId }: { personaId: string }) {
-  const persona = findPersona(personaId)!;
+export default function Story({ persona, initialBankingMode = "fixture" }: { persona: Persona; initialBankingMode?: "fixture" | "sandbox" }) {
+  const personaId = persona.id;
   const vehicle = catalogVehicle(persona.vehicle.catalogId);
-  const banking = useBankingSync(personaId);
+  const banking = useBankingSync(personaId, initialBankingMode);
   const { bank } = banking;
   const drive = useDrive(persona);
 

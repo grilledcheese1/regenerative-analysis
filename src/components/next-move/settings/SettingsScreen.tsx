@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { BankingSyncState, ConsentPurpose, ConsentState, Maybe, Persona, SourceKind } from "@/contracts";
+import Link from "next/link";
+import type { BankingSyncState, ConsentPurpose, ConsentState, Maybe, Persona, SourceKind, UserBanking } from "@/contracts";
 import { usd } from "@/domain/format";
 import { SourceChip } from "../Evidence";
 
@@ -25,9 +26,11 @@ function Row({ k, v, source }: { k: string; v: string; source?: SourceKind }) {
   );
 }
 
-function VehicleCard({ persona }: { persona: Persona }) {
+function VehicleCard({ persona, userBanking }: { persona: Persona; userBanking: UserBanking | null }) {
   const v = persona.vehicle;
   const c = persona.contract;
+  const mine = persona.id.startsWith("u_");
+  const src = mine ? "user_reported" : "synthetic";
   return (
     <div className="card">
       <span className="label">Vehicle and contract</span>
@@ -36,24 +39,37 @@ function VehicleCard({ persona }: { persona: Persona }) {
         <Row k="Estimated value" v={maybeText(v.estimatedValueCents, (n) => usd(n))} source={v.valuationSource} />
         {c.type === "lease" && (
           <>
-            <Row k="Lease maturity" v={c.maturityDate} source="synthetic" />
-            <Row k="Allowed miles" v={c.totalAllowedMiles.toLocaleString()} source="synthetic" />
-            <Row k="Excess mileage rate" v={`${usd(c.excessCentsPerMile, 2)}/mi`} source="synthetic" />
-            <Row k="Purchase option" v={maybeText(c.purchaseOptionCents, (n) => usd(n))} source="synthetic" />
+            <Row k="Lease maturity" v={c.maturityDate} source={src} />
+            <Row k="Allowed miles" v={c.totalAllowedMiles.toLocaleString()} source={src} />
+            <Row k="Excess mileage rate" v={`${usd(c.excessCentsPerMile, 2)}/mi`} source={src} />
+            <Row k="Purchase option" v={maybeText(c.purchaseOptionCents, (n) => usd(n))} source={src} />
             <Row k="Buyout quote" v={c.buyoutQuote.known ? usd(c.buyoutQuote.value.amountCents) : `unknown — ${c.buyoutQuote.reason}`} />
           </>
         )}
         {c.type === "loan" && (
           <>
-            <Row k="Payoff" v={`${usd(c.payoffCents)} (${c.payoffDate})`} source="synthetic" />
-            <Row k="APR" v={`${(c.aprBps / 100).toFixed(2)}%`} source="synthetic" />
-            <Row k="Payment" v={`${usd(c.paymentCents)}/mo`} source="synthetic" />
-            <Row k="Remaining months" v={String(c.remainingMonths)} source="synthetic" />
+            <Row k="Payoff" v={`${usd(c.payoffCents)} (${c.payoffDate})`} source={src} />
+            <Row k="APR" v={`${(c.aprBps / 100).toFixed(2)}%`} source={src} />
+            <Row k="Payment" v={`${usd(c.paymentCents)}/mo`} source={src} />
+            <Row k="Remaining months" v={String(c.remainingMonths)} source={src} />
           </>
         )}
-        {c.type === "owned" && <Row k="Contract" v="Owned outright" source="synthetic" />}
+        {c.type === "owned" && <Row k="Contract" v="Owned outright" source={src} />}
       </ul>
-      <p className="muted small">Editing vehicle and contract details is planned. The demo uses synthetic contracts.</p>
+      {mine ? (
+        <>
+          {userBanking && (
+            <p className="muted small">
+              Banking:{" "}
+              {userBanking.mode === "sandbox" ? `Nessie sandbox · customer ${userBanking.nessieCustomerId}` : "local copy of the history built from your answers"}
+              {userBanking.note ? ` (${userBanking.note})` : ""}
+            </p>
+          )}
+          <Link href="/onboarding?edit=1" className="linkish">Edit my answers</Link>
+        </>
+      ) : (
+        <p className="muted small">Editing vehicle and contract details is planned. The demo uses synthetic contracts.</p>
+      )}
     </div>
   );
 }
@@ -62,10 +78,12 @@ export function SettingsScreen({
   persona,
   banking,
   onDeleted,
+  userBanking = null,
 }: {
   persona: Persona;
   banking: BankingSyncState;
   onDeleted: () => void;
+  userBanking?: UserBanking | null;
 }) {
   const { bank, loading } = banking;
   const [consent, setConsent] = useState<ConsentState | null>(null);
@@ -131,7 +149,7 @@ export function SettingsScreen({
         <h2>What this demo knows and what it may use</h2>
       </div>
       <div className="grid-2">
-        <VehicleCard persona={persona} />
+        <VehicleCard persona={persona} userBanking={userBanking} />
         <div className="card">
           <span className="label">Connections</span>
           <ul className="plain">

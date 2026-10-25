@@ -4,10 +4,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { BankingSnapshot, BankingSyncMode, BankingSyncState } from "@/contracts";
 
 /**
- * Banking data for one demo customer. Loads the fixture when the customer changes; a failed
- * read keeps the earlier data and says so. Never switches modes on its own.
+ * Banking data for one demo customer. Loads `initialMode` (the fixture unless the customer connected
+ * a Nessie sandbox account during onboarding) when the customer changes; a failed read keeps the
+ * earlier data and says so. Never switches modes on its own.
  */
-export function useBankingSync(personaId: string): BankingSyncState {
+export function useBankingSync(personaId: string, initialMode: BankingSyncMode = "fixture"): BankingSyncState {
   const [sandboxIds, setSandboxIds] = useState<string[]>([]);
   // Keyed by persona so switching customers never shows the previous customer's data.
   const [loaded, setLoaded] = useState<{ personaId: string; snapshot: BankingSnapshot; mode: BankingSyncMode; stale: boolean; staleSince?: string } | null>(null);
@@ -55,8 +56,8 @@ export function useBankingSync(personaId: string): BankingSyncState {
   useEffect(() => {
     // Fetch on persona change; the setState calls happen after the request resolves.
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    void syncFor(personaId, "fixture");
-  }, [personaId, syncFor]);
+    void syncFor(personaId, initialMode);
+  }, [personaId, initialMode, syncFor]);
 
   const current = loaded?.personaId === personaId ? loaded : null;
   return {
