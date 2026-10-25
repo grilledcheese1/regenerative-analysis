@@ -69,6 +69,14 @@ export default function DrivesView({ initialRouteId, vehicleName, hybrid }: Driv
 
   useEffect(() => {
     if (!playing) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      // No auto-animation: jump to the end of the replay instead.
+      /* eslint-disable react-hooks/set-state-in-effect */
+      setCursor(last);
+      setPlaying(false);
+      /* eslint-enable react-hooks/set-state-in-effect */
+      return;
+    }
     const id = setInterval(() => {
       setCursor((c) => {
         if (c >= last) {
@@ -142,6 +150,7 @@ export default function DrivesView({ initialRouteId, vehicleName, hybrid }: Driv
                 onSelectMissed={setSelected}
               />
             )}
+            {!env.mapboxToken && <p className="muted small">Map tiles unavailable (no Mapbox token configured). Showing a static route preview.</p>}
             <div className="legend">
               <span><i style={{ background: "var(--seg-good)" }} />captured</span>
               <span><i style={{ background: "var(--seg-mid)" }} />partial</span>

@@ -8,10 +8,11 @@ import { compareOptions } from "@/domain/recommendations/compare";
 import { catalogVehicle, CATALOG } from "@/fixtures/catalog";
 import { DEMO_AS_OF, PERSONAS } from "@/fixtures/personas";
 import { CompareScreen, HomeScreen, MoneyScreen, NextMoveScreen } from "./screens";
+import { SettingsScreen } from "./settings";
 
-const TABS = ["home", "drives", "money", "compare", "next"] as const;
+const TABS = ["home", "drives", "money", "compare", "next", "settings"] as const;
 type Tab = (typeof TABS)[number];
-const TAB_LABEL: Record<Tab, string> = { home: "Home", drives: "Drives", money: "Money", compare: "Compare", next: "Next Move" };
+const TAB_LABEL: Record<Tab, string> = { home: "Home", drives: "Drives", money: "Money", compare: "Compare", next: "Next Move", settings: "Settings" };
 
 interface SyncError {
   code: string;
@@ -29,6 +30,7 @@ export default function NextMoveApp() {
   const [bank, setBank] = useState<BankingSnapshot | null>(null);
   const [syncError, setSyncError] = useState<SyncError | null>(null);
   const [loading, setLoading] = useState(false);
+  const [dataKey, setDataKey] = useState(0); // bumped by "Delete my demo data" to remount data-holding children
 
   // Scenario controls. Reset with the persona by keying them on it below.
   const [extraSpendingCents, setExtraSpendingCents] = useState(0);
@@ -111,7 +113,7 @@ export default function NextMoveApp() {
           <span className="dot" />
           Next<em>Move</em>
         </div>
-        <select value={personaId} onChange={(e) => selectPersona(e.target.value)} aria-label="Demo customer">
+        <select id="persona" name="persona" value={personaId} onChange={(e) => selectPersona(e.target.value)} aria-label="Demo customer">
           {PERSONAS.map((p) => (
             <option key={p.id} value={p.id}>
               {p.summary}
@@ -153,7 +155,19 @@ export default function NextMoveApp() {
             </span>
           )}
         </div>
-        {!budget || !comparison || !bank ? (
+        {tab === "settings" ? (
+          <SettingsScreen
+            persona={persona}
+            bank={bank}
+            loading={loading}
+            onSync={() => sync(personaId, mode)}
+            onDeleted={() => {
+              setBank(null);
+              setDataKey((k) => k + 1);
+              void sync(personaId, "fixture");
+            }}
+          />
+        ) : !budget || !comparison || !bank ? (
           <p className="lede">Load banking data to calculate the budget and options.</p>
         ) : (
           <>
@@ -167,7 +181,7 @@ export default function NextMoveApp() {
               <HomeScreen persona={persona} vehicle={vehicle} budget={budget} comparison={comparison} onReview={() => setTab("next")} />
             )}
             {tab === "drives" && (
-              <DrivesView key={persona.id} initialRouteId={persona.usage.routeId} vehicleName={`${vehicle.modelYear} ${vehicle.model}`} hybrid={vehicle.powertrain === "hybrid"} />
+              <DrivesView key={`${persona.id}-${dataKey}`} initialRouteId={persona.usage.routeId} vehicleName={`${vehicle.modelYear} ${vehicle.model}`} hybrid={vehicle.powertrain === "hybrid"} />
             )}
             {tab === "money" && (
               <MoneyScreen

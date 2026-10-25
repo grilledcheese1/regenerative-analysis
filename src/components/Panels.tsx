@@ -154,6 +154,7 @@ export function SavingsCard({ savings: s, gapDollars, gasPrice, tripsPerDay, set
 export function CoachTip({ a, driver, condition }: { a: TripAnalysis; driver: DriverProfileName; condition: Condition }) {
   const [state, setState] = useState<{ tip: string; source: "claude" | "rules" } | null>(null);
   const [loading, setLoading] = useState(false);
+  const [unavailable, setUnavailable] = useState<string | null>(null);
 
   const summary = {
     driver,
@@ -171,7 +172,15 @@ export function CoachTip({ a, driver, condition }: { a: TripAnalysis; driver: Dr
     try {
       const res = await fetch("/api/coach", { method: "POST", body: JSON.stringify(summary) });
       const json = await res.json();
-      if (!res.ok || !json.tip) throw new Error(json.error);
+      if (!res.ok || !json.tip) {
+        setUnavailable(
+          json.error?.code === "provider_not_configured"
+            ? "Coaching tip unavailable (no AI key configured)"
+            : "Coaching tip unavailable (AI provider error)",
+        );
+        throw new Error(json.error?.message);
+      }
+      setUnavailable(null);
       setState({ tip: json.tip, source: "claude" });
     } catch {
       setState({ tip: ruleTip(a, condition), source: "rules" });
@@ -192,7 +201,7 @@ export function CoachTip({ a, driver, condition }: { a: TripAnalysis; driver: Dr
         </button>
         {state && (
           <span className="credit">
-            {state.source === "claude" ? "Written by Claude from the evidence" : "Rule-based fallback · no API key"}
+            {state.source === "claude" ? "Written by Claude from the evidence" : `Rule-based fallback · ${unavailable ?? "AI unavailable"}`}
           </span>
         )}
       </div>

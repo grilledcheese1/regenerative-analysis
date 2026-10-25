@@ -949,3 +949,73 @@ ul.why {
   .kv-grid { grid-template-columns: 1fr 1fr; }
   .toolbar .slider { min-width: 0; width: 100%; }
 }
+
+/* ---------- Next Move: settings, focus, motion, phone width ---------- */
+.confirm {
+  background: var(--card, var(--bg));
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.25rem;
+  max-width: min(28rem, calc(100vw - 2rem));
+}
+
+.confirm::backdrop {
+  background: rgb(0 0 0 / 0.6);
+}
+
+.tabs button:focus-visible,
+.btn:focus-visible,
+.linkish:focus-visible,
+a:focus-visible,
+select:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--accent-text);
+  outline-offset: 2px;
+}
+
+@media (max-width: 640px) {
+  .header {
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  .header select {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .tabs {
+    padding: 0 1rem;
+    scroll-snap-type: x proximity;
+  }
+
+  .tabs button {
+    scroll-snap-align: start;
+  }
+
+  .options,
+  .grid-2 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .toolbar .slider {
+    min-width: 0;
+    width: 100%;
+  }
+
+  main {
+    overflow-x: hidden;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
