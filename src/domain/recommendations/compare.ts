@@ -59,6 +59,7 @@ interface Draft {
   avgMonthlyCostCents?: Cents; // leases: over the picked term; others are derived from the horizon
   lease?: OptionResult["lease"];
   warranty?: string;
+  switchMath?: Omit<NonNullable<OptionResult["switchMath"]>, "savingsPerMonthCents">;
 }
 
 const WARRANTY_NOTE = "Repairs after 3 years or 36,000 miles aren't covered by Toyota's basic warranty.";
@@ -127,8 +128,9 @@ export function compareOptions({ persona, budget, catalog, asOf, overrides = {},
 
   const candidateDraft = (
     c: CandidateTerms,
-    base: { upfront: Cents; startingEquity: Cents; saleReceipt: Cents; principalCredit: Cents; label: string; missing: string[] },
+    base: { upfront: Cents; startingEquity: Cents; saleReceipt: Cents; principalCredit: Cents; label: string; missing: string[]; equityApplied?: Cents },
   ): Draft => {
+    const switching = base.label === "switch";
     const v = byId(c.catalogId);
     const monthlyRunning = running(v, c.insuranceMonthlyCents, c.maintenanceMonthlyCents);
     const name = `${v.modelYear} ${v.model}`;
@@ -155,7 +157,7 @@ export function compareOptions({ persona, budget, catalog, asOf, overrides = {},
           monthlyRunningCents: monthlyRunning,
           monthlyMiles: miles,
           dispositionFeeCents: LEASE_TERMS.dispositionFeeCents,
-          equityAppliedCents: 0,
+          equityAppliedCents: base.equityApplied ?? 0,
           extraUpfrontCents: base.upfront,
           budgetCents: budget.vehicleBudgetCents,
           availableUpfrontCents: budget.availableUpfrontCashCents,
@@ -166,14 +168,14 @@ export function compareOptions({ persona, budget, catalog, asOf, overrides = {},
       const decision = uw(leaseApp(offers.find((o) => o.termMonths === chosen.termMonths)!, pay));
       return {
         optionId: `${base.label}_lease_${c.catalogId}`,
-        label: `${base.label === "return" ? "Return and lease" : "Lease"} ${name}`,
-        kind: "lease_new",
+        label: `${switching ? "Switch now: lease" : base.label === "return" ? "Return and lease" : "Lease"} ${name}`,
+        kind: switching ? "switch_now" : "lease_new",
         catalogId: c.catalogId,
-        upfrontCashCents: base.upfront + chosen.dueAtSigningCents,
+        upfrontCashCents: base.upfront + Math.max(0, chosen.dueAtSigningCents - (base.equityApplied ?? 0)),
         monthlyPaymentCents: pay,
         paymentsTotalCents: pay * Math.min(H, chosen.termMonths),
         monthlyRunningCents: monthlyRunning,
-        saleReceiptCents: base.saleReceipt,
+        saleReceiptCents: base.saleReceipt + Math.max(0, (base.equityApplied ?? 0) - chosen.dueAtSigningCents),
         startingEquityCents: base.startingEquity,
         endingDebtCents: 0,
         endingValueCents: c.endValueCents,
@@ -188,8 +190,8 @@ export function compareOptions({ persona, budget, catalog, asOf, overrides = {},
     if (c.acquisition === "cash") {
       return {
         optionId: `${base.label}_cash_${c.catalogId}`,
-        label: `${base.label === "sell" ? "Sell and buy" : "Buy"} ${name} with cash`,
-        kind: base.label === "sell" ? "sell_replace" : "purchase_new",
+        label: `${switching ? "Switch now: buy" : base.label === "sell" ? "Sell and buy" : "Buy"} ${name} with cash`,
+        kind: switching ? "switch_now" : base.label === "sell" ? "sell_replace" : "purchase_new",
         catalogId: c.catalogId,
         upfrontCashCents: base.upfront + c.priceCents - base.saleReceipt,
         monthlyPaymentCents: 0,
@@ -208,8 +210,8 @@ export function compareOptions({ persona, budget, catalog, asOf, overrides = {},
     const loan = amortize(principal, aprOf(decision, scenario.financeAprBps), scenario.financeTermMonths, H);
     return {
       optionId: `${base.label}_finance_${c.catalogId}`,
-      label: `${base.label === "sell" ? "Sell and finance" : base.label === "return" ? "Return and finance" : "Finance"} ${name}`,
-      kind: base.label === "sell" ? "sell_replace" : "purchase_new",
+      label: `${switching ? "Switch now: finance" : base.label === "sell" ? "Sell and finance" : base.label === "return" ? "Return and finance" : "Finance"} ${name}`,
+      kind: switching ? "switch_now" : base.label === "sell" ? "sell_replace" : "purchase_new",
       catalogId: c.catalogId,
       upfrontCashCents: base.upfront + c.dueAtSigningCents,
       monthlyPaymentCents: loan.paymentCents,
@@ -225,7 +227,80 @@ export function compareOptions({ persona, budget, catalog, asOf, overrides = {},
     };
   };
 
-  if (contract.type === "lease") {
+  if (contract.type === "lease" && contract.earlyPayoffCents !== undefined && contract.tradeInValueCents !== undefined) {
+    // Mid-lease: continue to maturity, or trade the car in today and put any equity toward the next car.
+    const monthsLeft = Math.max(1, monthsBetween(asOf, contract.maturityDate));
+    const mileage = projectLeaseMileage(vehicle.odometerMiles, miles * monthsLeft, contract.totalAllowedMiles, contract.excessCentsPerMile);
+    const disposition = contract.dispositionFeeCents.known ? contract.dispositionFeeCents.value : 0;
+    const continueAvg = Math.round(((contract.paymentCents + currentRunning) * monthsLeft + disposition + mileage.overageCents) / monthsLeft);
+    const payoff = contract.earlyPayoffCents;
+    const tradeIn = contract.tradeInValueCents;
+    const equity = tradeIn - payoff;
+    evidence.push(
+      { id: "lease_end_date", label: "Lease ends", display: niceDate(contract.maturityDate), source: "synthetic" },
+      { id: "early_payoff", label: "Early payoff to end the lease today", display: usd(payoff), source: "synthetic" },
+      { id: "trade_in_value", label: "Trade-in value today", display: usd(tradeIn), source: "synthetic" },
+      { id: "trade_in_equity", label: "Trade-in equity", display: usd(equity), source: "derived", formula: "trade-in value − early payoff" },
+      {
+        id: "continue_lease_avg",
+        label: "Continuing the lease, per month",
+        display: `${usd(continueAvg)}/mo`,
+        source: "derived",
+        formula: "(payments + running costs) × months left + turn-in fee + mileage charge, ÷ months left",
+      },
+      {
+        id: "projected_mileage",
+        label: "Projected miles at lease end",
+        display: `${mileage.projectedEndMiles.toLocaleString()} of ${contract.totalAllowedMiles.toLocaleString()} allowed`,
+        source: "derived",
+        formula: "odometer + monthly miles × months left",
+      },
+    );
+    drafts.push({
+      optionId: "continue_lease",
+      label: `Continue the lease to ${niceDate(contract.maturityDate)}`,
+      kind: "keep",
+      catalogId: current.catalogId,
+      upfrontCashCents: 0,
+      monthlyPaymentCents: contract.paymentCents,
+      paymentsTotalCents: contract.paymentCents * Math.min(H, monthsLeft),
+      monthlyRunningCents: currentRunning,
+      saleReceiptCents: 0,
+      startingEquityCents: 0,
+      endingDebtCents: 0,
+      endingValueCents: 0,
+      missingInputs: [],
+      tradeoff: `No paperwork now, but the current rate stays until ${niceDate(contract.maturityDate)}.`,
+      avgMonthlyCostCents: continueAvg,
+    });
+    for (const c of scenario.candidates) {
+      const d = candidateDraft(c, {
+        upfront: Math.max(0, -equity), // negative equity is paid in cash, never rolled into the new deal
+        startingEquity: 0,
+        saleReceipt: c.acquisition === "cash" ? Math.max(0, equity) : 0,
+        principalCredit: c.acquisition === "finance" ? Math.max(0, equity) : 0,
+        equityApplied: c.acquisition === "lease" ? Math.max(0, equity) : 0,
+        label: "switch",
+        missing: ["payoff_statement", "confirmed_trade_in_offer"],
+      });
+      const chosen = d.lease ? d.lease.terms.find((t) => t.termMonths === d.lease!.chosenTermMonths)! : null;
+      const applied = Math.max(0, equity);
+      d.switchMath = {
+        earlyPayoffCents: payoff,
+        tradeInValueCents: tradeIn,
+        equityCents: equity,
+        dueAtSigningAfterEquityCents: chosen ? Math.max(0, chosen.dueAtSigningCents - applied) : c.dueAtSigningCents,
+        cashBackCents: chosen ? Math.max(0, applied - chosen.dueAtSigningCents) : 0,
+        continueAvgMonthlyCents: continueAvg,
+      };
+      d.tradeoff =
+        equity >= 0
+          ? `Trading in today frees ${usd(equity)} of equity toward the next car.`
+          : `The car is worth ${usd(-equity)} less than the early payoff; that gap is paid in cash.`;
+      drafts.push(d);
+    }
+    notConsidered.push({ label: "Buy out the lease today", reason: "An early buyout needs a payoff statement and isn't compared here" });
+  } else if (contract.type === "lease") {
     const monthsLeft = monthsBetween(asOf, contract.maturityDate);
     const mileage = projectLeaseMileage(vehicle.odometerMiles, miles * monthsLeft, contract.totalAllowedMiles, contract.excessCentsPerMile);
     preparation = {
@@ -467,6 +542,7 @@ export function compareOptions({ persona, budget, catalog, asOf, overrides = {},
       ...(d.lease && { lease: d.lease }),
       ...(d.catalogId && { reliability: reliabilityFor(d.catalogId) }),
       ...(warranty && { warranty }),
+      ...(d.switchMath && { switchMath: { ...d.switchMath, savingsPerMonthCents: d.switchMath.continueAvgMonthlyCents - (d.avgMonthlyCostCents ?? Math.round(economicCostCents / H)) } }),
     };
   });
 
@@ -504,7 +580,7 @@ export function compareOptions({ persona, budget, catalog, asOf, overrides = {},
     schemaVersion: SCHEMA_VERSION,
     modelVersion: MODEL_VERSION,
     personaId: persona.id,
-    actionDate: contract.type === "lease" ? contract.maturityDate : scenario.actionDate,
+    actionDate: contract.type === "lease" && contract.earlyPayoffCents === undefined ? contract.maturityDate : scenario.actionDate,
     horizonMonths: H,
     preparation,
     options,

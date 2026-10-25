@@ -4,7 +4,7 @@ Next Move helps a driver decide what to do about their car: keep it, buy out a l
 builds an affordable monthly budget from banking data, compares every option over the same horizon, and explains the
 leading one with the evidence behind each number. The Drives tab replays modeled hybrid drives on real Austin routes.
 
-- `/` create a demo account, sign in, or explore one of 29 simulated case studies; then the scroll story (where you stand,
+- `/` create a demo account, sign in, or explore one of 30 simulated case studies; then the scroll story (where you stand,
   commute, options, hybrid value, next move)
 - `/onboarding` a new account's setup: car, how you pay, insurance, driving, goals and banking; `?edit=1` changes answers
 - `/home` the tabbed screens (Home, Drives, Cost, Compare, Next Step, Settings) for your own profile or an open case

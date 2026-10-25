@@ -108,6 +108,30 @@ const CURATED_SPECS: Record<string, BankingSpec> = {
     },
     credit: { score: 618, loans: [{ type: "auto", status: "approved", amount: 21400, monthly_payment: 582, description: "2021 RAV4 AWD loan" }] },
   },
+  jordan: {
+    checking: 4200,
+    savings: 7800,
+    cardBalance: 280,
+    monthly: {
+      income: [2600, 2600],
+      bills: [
+        ["Mueller Flats rent", 1600, 1],
+        ["Austin Energy electric", 110, 12],
+        ["Internet service", 65, 14],
+        ["Auto lease payment", 612, 24],
+        ["Auto insurance premium", 175, 5],
+      ],
+      purchases: [
+        ["Grocery market", 220, 6],
+        ["Grocery market", 220, 20],
+        ["Taco restaurant", 120, 9],
+        ["Gas station", 80, 16],
+      ],
+      card: [["Online order store", 300, 18]],
+      savingsTransfer: 400,
+    },
+    credit: { score: 735, loans: [{ type: "auto lease", status: "approved", amount: 27400, monthly_payment: 612, description: "2025 RAV4 Hybrid AWD lease" }] },
+  },
 };
 
 // Bank histories for the generated people live beside them (scripts/build-people.ts).

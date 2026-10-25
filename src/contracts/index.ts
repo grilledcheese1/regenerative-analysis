@@ -75,6 +75,9 @@ export type OwnershipContract =
       dispositionFeeCents: Maybe<Cents>;
       purchaseOptionCents: Maybe<Cents>; // contract residual, not an out-the-door buyout quote
       buyoutQuote: Maybe<Quote>;
+      /** Mid-lease only: what ending the lease today costs, and what the car would trade in for. Both present → switch options. */
+      earlyPayoffCents?: Cents;
+      tradeInValueCents?: Cents;
     };
 
 // ---------- Banking (normalized) ----------
@@ -223,7 +226,7 @@ export interface EvidenceFact {
 export interface OptionResult {
   optionId: string;
   label: string;
-  kind: "keep" | "buyout" | "lease_new" | "purchase_new" | "refinance" | "sell_replace";
+  kind: "keep" | "buyout" | "lease_new" | "purchase_new" | "refinance" | "sell_replace" | "switch_now";
   catalogId?: string;
   upfrontCashCents: Cents;
   monthlyPaymentCents: Cents;
@@ -247,6 +250,16 @@ export interface OptionResult {
   lease?: { chosenTermMonths: number; terms: LeaseTermResult[] };
   reliability?: ReliabilityInfo;
   warranty?: string;
+  /** Mid-lease switch options: the trade-in math, line by line. */
+  switchMath?: {
+    earlyPayoffCents: Cents;
+    tradeInValueCents: Cents;
+    equityCents: Cents; // trade-in − early payoff; negative means cash due now
+    dueAtSigningAfterEquityCents: Cents;
+    cashBackCents: Cents;
+    continueAvgMonthlyCents: Cents;
+    savingsPerMonthCents: Cents; // continuing's average − this option's average
+  };
 }
 
 /** NHTSA counts for a catalog car's model year (src/fixtures/reliability.json). */

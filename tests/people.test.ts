@@ -11,11 +11,11 @@ const run = (id: string, over: Partial<{ gasCentsPerGallon: number; monthlyMiles
 };
 
 describe("the 29 people you can sign in as", () => {
-  it("are the 3 curated personas plus 26 generated ones, with unique ids, and only the curated ones are seeded to Nessie", () => {
-    expect(PEOPLE).toHaveLength(29);
+  it("are the 4 curated personas plus 26 generated ones, with unique ids, and only the curated ones are seeded to Nessie", () => {
+    expect(PEOPLE).toHaveLength(30);
     expect(GENERATED_PEOPLE).toHaveLength(26);
-    expect(new Set(PEOPLE.map((p) => p.id)).size).toBe(29);
-    expect(PERSONAS.map((p) => p.id)).toEqual(["maria", "devon", "kai"]);
+    expect(new Set(PEOPLE.map((p) => p.id)).size).toBe(30);
+    expect(PERSONAS.map((p) => p.id)).toEqual(["maria", "devon", "kai", "jordan"]);
     expect(persona("user-004")?.profile.displayName).toBeTruthy();
     expect(persona("maria")).toBe(PERSONAS[0]);
   });
