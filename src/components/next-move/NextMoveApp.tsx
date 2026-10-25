@@ -27,7 +27,7 @@ const SCREEN: Variants = {
 };
 const TABS = ["home", "drives", "money", "compare", "next", "settings"] as const;
 type Tab = (typeof TABS)[number];
-const TAB_LABEL: Record<Tab, string> = { home: "Home", drives: "Drives", money: "Cost", compare: "Compare", next: "Regentic", settings: "Settings" };
+const TAB_LABEL: Record<Tab, string> = { home: "Home", drives: "Drives", money: "Cost", compare: "Compare", next: "Next Step", settings: "Settings" };
 
 export default function NextMoveApp({ initialPersonaId }: { initialPersonaId?: string }) {
   const [personaId, setPersonaId] = useState(initialPersonaId && findPersona(initialPersonaId) ? initialPersonaId : PEOPLE[0].id);
@@ -98,10 +98,10 @@ export default function NextMoveApp({ initialPersonaId }: { initialPersonaId?: s
   return (
     <MotionProvider>
       <header className="header">
-        <div className="wordmark">
+        <button type="button" className="wordmark" onClick={() => setTab("home")} aria-label="Regentic home" style={{ background: "none", border: 0, padding: 0, color: "inherit", cursor: "pointer" }}>
           <Image src="/regentic-logo.png" alt="" width={310} height={286} className="wordmark__logo" priority />
           <span>Regen<em>tic</em></span>
-        </div>
+        </button>
         <select id="persona" name="persona" value={personaId} onChange={(e) => selectPersona(e.target.value)} aria-label="Demo customer">
           {PEOPLE.map((p) => (
             <option key={p.id} value={p.id}>

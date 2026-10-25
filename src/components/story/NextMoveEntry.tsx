@@ -27,7 +27,6 @@ export default function NextMoveEntry({ as }: { as?: string }) {
         </div>
         <nav className="story-nav" aria-label="Views">
           {id && <Link href="/home" className="linkish">Details view</Link>}
-          <Link href="/" className="linkish">Regen Coach</Link>
           {id && <SignIn variant="ghost" />}
         </nav>
       </header>

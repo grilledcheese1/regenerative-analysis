@@ -40,13 +40,23 @@ export const FREE_MAP_CONFIG = {
   terrainTiles: "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png",
   terrainAttribution: "Terrain: Mapzen / AWS Open Data",
   height: 520,
-  camera: { zoom: 14.6, pitch: 62, bearing: -20, followZoom: 16.2, followPitch: 68, turnSmoothing: 0.08, lookAheadSamples: 20 },
+  camera: { zoom: 14.6, pitch: 62, bearing: -20, followZoom: 16.2, followPitch: 68, turnSmoothing: 0.08, lookAheadSamples: 20, followLerp: 0.14, zoomLerp: 0.05 },
+  // The story replay: a camera that circles the car from well back (3D buildings block a close view)
+  replayCamera: { zoom: 15.1, pitch: 50, orbitDegPerSec: 7, brakeOrbitBoostDegPerSec: 18, brakeZoom: 0.5 },
   terrain: { exaggeration: 1.4 },
   hillshade: { exaggeration: 0.5 },
   buildings: { minzoom: 13, defaultHeightM: 6 },
   line: { width: 6, glowWidth: 16, glowBlur: 10, glowOpacity: 0.55, dash: [1.5, 1] },
   markers: { stopRadius: 5, missedRadius: 8, carRadius: 8, carHaloRadius: 18 },
   weather: { rainDrops: 220, snowFlakes: 160, rainSpeed: 700, snowSpeed: 60 },
+} as const;
+
+// The story map's replay: how fast the car moves along the simulated trip (samples are 1 s apart), and when the zoom-follow triggers.
+export const REPLAY_CONFIG = {
+  samplesPerSecond: 16, // laps are 480 to 880 samples, so about 30 to 55 s
+  lookAheadSamples: 6,
+  brakeWindowSamples: 12,
+  fullyInView: { enter: 0.95, leave: 0.4, dwellMs: 400 },
 } as const;
 
 export type MapTheme = "dark" | "bright";

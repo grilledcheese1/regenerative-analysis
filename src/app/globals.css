@@ -1171,6 +1171,18 @@ input:focus-visible {
 .story__map { position: relative; margin-bottom: 0.75rem; border-radius: 14px; overflow: hidden; border: 1px solid var(--border); }
 .story__legend { position: absolute; left: 10px; bottom: 28px; display: flex; gap: 0.75rem; padding: 0.25rem 0.6rem; border-radius: 8px; background: color-mix(in srgb, var(--bg) 80%, transparent); font-size: 0.75rem; color: var(--text-2); }
 .story__legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 0.3rem; }
+.story__replay { position: absolute; left: 10px; top: 10px; z-index: 2; width: 40px; height: 28px; font-size: 0.7rem; color: #000000; background: #ffffff; border: 0; border-radius: 999px; cursor: pointer; }
+.story__map-fallback { display: grid; place-items: center; height: 520px; padding: 1rem; text-align: center; color: var(--text-2); background: var(--panel); }
+.seg-popup { position: absolute; left: 10px; top: 52px; z-index: 5; width: min(300px, calc(100% - 20px)); padding: 0.75rem 0.9rem; border-radius: 12px; border: 1px solid var(--border); background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(8px); box-shadow: 0 8px 24px rgb(0 0 0 / 0.35); color: var(--text); }
+.seg-popup__head { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem; margin-bottom: 0.5rem; }
+.seg-popup__head strong { display: block; font-size: 1rem; }
+.seg-popup__kicker { display: block; color: var(--seg-bad); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+.seg-popup__close { border: 0; background: none; color: var(--text-2); font-size: 1.4rem; line-height: 1; cursor: pointer; padding: 0 0.25rem; }
+.seg-popup__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem 0.8rem; margin: 0; }
+.seg-popup__grid dt { color: var(--muted); font-size: 0.7rem; }
+.seg-popup__grid dd { margin: 0; font-size: 0.9rem; font-variant-numeric: tabular-nums; }
+.seg-popup__note { margin: 0.6rem 0 0; color: var(--muted); font-size: 0.7rem; }
+.seg-popup__close:focus-visible, .story__replay:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 
 .in-row { display: grid; padding: 0.5rem 0; border-top: 1px solid var(--border); }
 .in-row__label { color: var(--muted); font-size: 0.85rem; }

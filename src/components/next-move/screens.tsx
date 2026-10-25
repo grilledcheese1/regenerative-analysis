@@ -388,7 +388,7 @@ export function NextMoveScreen({
   return (
     <section className="section">
       <div className="section-head">
-        <span className="label">Regentic</span>
+        <span className="label" style={{ fontWeight: 700 }}>Next Step</span>
         <h2>{r.headline}</h2>
         <span className={`status status-${r.status}`}>{r.status.replaceAll("_", " ")}</span>
       </div>

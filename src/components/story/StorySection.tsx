@@ -25,8 +25,12 @@ export default function StorySection({
 }) {
   const ref = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();
-  // Progress is 0 while the slide is being read (its bottom edge is still below the screen) and 1 once it has left the top.
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["end end", "end start"] });
+  // Progress is 0 while the slide is being read and 1 once it has left the top. It is gated by two measures so the slide the
+  // reader is on never blurs: the bottom-edge one (0 until the slide's bottom is still below the screen) and the top-edge
+  // one (0 until the slide's top has scrolled past the top of the screen). Whichever is smaller wins.
+  const { scrollYProgress: bottomProgress } = useScroll({ target: ref, offset: ["end end", "end start"] });
+  const { scrollYProgress: topProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
+  const scrollYProgress = useTransform([bottomProgress, topProgress], ([b, t]: number[]) => Math.min(b, t));
   const blurPx = useTransform(scrollYProgress, [0, 0.9], [0, 10]);
   const filter = useMotionTemplate`blur(${blurPx}px)`;
   const opacity = useTransform(scrollYProgress, [0, 0.9], [1, 0.12]);
