@@ -132,13 +132,15 @@ export function MoneyScreen({
             <div className="total"><span>= Vehicle budget</span><span className={budget.vehicleBudgetCents < 0 ? "neg" : undefined}>{usd(budget.vehicleBudgetCents)}</span></div>
           </div>
           <label className="check">
-            <input type="checkbox" checked={incomeConfirmed} onChange={(e) => setIncomeConfirmed(e.target.checked)} />
+            <input type="checkbox" id="income-confirmed" name="income-confirmed" checked={incomeConfirmed} onChange={(e) => setIncomeConfirmed(e.target.checked)} />
             Income estimate from {budget.incomeDeposits} payroll deposits looks right
           </label>
           <div className="slider">
             <span>New monthly expense</span>
             <input
               type="range"
+              id="extra-spending"
+              name="extra-spending"
               min={0}
               max={60000}
               step={5000}
@@ -235,12 +237,12 @@ export function CompareScreen({
       <div className="toolbar">
         <div className="slider">
           <span>Gas price</span>
-          <input type="range" min={200} max={500} step={10} value={gasCents} onChange={(e) => setGasCents(+e.target.value)} aria-label="Gas price" />
+          <input type="range" id="gas-price" name="gas-price" min={200} max={500} step={10} value={gasCents} onChange={(e) => setGasCents(+e.target.value)} aria-label="Gas price" />
           <span className="mono">{usd(gasCents, 2)}</span>
         </div>
         <div className="slider">
           <span>Monthly miles</span>
-          <input type="range" min={200} max={2000} step={25} value={monthlyMiles} onChange={(e) => setMonthlyMiles(+e.target.value)} aria-label="Monthly miles" />
+          <input type="range" id="monthly-miles" name="monthly-miles" min={200} max={2000} step={25} value={monthlyMiles} onChange={(e) => setMonthlyMiles(+e.target.value)} aria-label="Monthly miles" />
           <span className="mono">{monthlyMiles}</span>
         </div>
       </div>

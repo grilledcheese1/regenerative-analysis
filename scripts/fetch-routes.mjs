@@ -5,7 +5,7 @@
 //
 // Writes data/cache/routes/<routeId>.json in the simulator's DemoRoute shape
 // (name, stepM, points[{ s, lat, lon, elevationM, limitMs }], stopsM) plus extra fields:
-// surface and road class per point, weather, and where the data came from.
+// surface, road class and street name per point, weather, a suggested road condition, and data sources.
 // Routing uses Mapbox Directions when NEXT_PUBLIC_MAPBOX_TOKEN is set, otherwise the free OSRM router.
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -194,6 +194,11 @@ function surfaceOf(tag) {
   return "unknown";
 }
 
+// Finer surface kind for the map's surface view: asphalt, concrete, gravel, dirt or unknown.
+function surfaceDetailOf(tag) {
+  return C.concreteSurfaces.includes(tag) ? "concrete" : surfaceOf(tag);
+}
+
 // ---------- Weather (Open-Meteo, no key) ----------
 
 async function fetchWeather([lon, lat]) {
@@ -215,6 +220,18 @@ async function fetchWeather([lon, lat]) {
     snowfallLast24hCm: round(snow, 1),
     fetchedAt: new Date().toISOString(),
   };
+}
+
+// Pick the road condition that matches today's real weather, with a reason the UI can show.
+function suggestCondition(w, unpavedShare) {
+  if (w.precipitationLast24hMm >= C.wetAfterRainMm && unpavedShare >= C.mudUnpavedShare)
+    return { condition: "mud", reason: `${w.precipitationLast24hMm} mm of rain on a route that is ${Math.round(unpavedShare * 100)}% unpaved` };
+  if (w.snowfallLast24hCm >= C.snowAfterSnowCm)
+    return { condition: "snow", reason: `${w.snowfallLast24hCm} cm of snow fell in the last 24 hours` };
+  if (w.temperatureC < 0) return { condition: "snow", reason: `It is ${w.temperatureC}°C, below freezing` };
+  if (w.precipitationLast24hMm >= C.wetAfterRainMm)
+    return { condition: "wet", reason: `${w.precipitationLast24hMm} mm of rain fell in the last 24 hours` };
+  return { condition: "dry", reason: `No rain in the last 24 hours and ${w.temperatureC}°C` };
 }
 
 // ---------- Build one route ----------
@@ -248,7 +265,9 @@ async function buildRoute(r) {
       elevationM: round(elevation[i], 1),
       limitMs: round(limitMs, 1),
       surface: surfaceOf(tags.surface),
+      surfaceDetail: surfaceDetailOf(tags.surface),
       roadClass,
+      street: tags.name ?? tags.ref ?? null,
     };
   });
 
@@ -290,6 +309,7 @@ async function buildRoute(r) {
     stopsM,
     allStops: stops, // every signal and stop sign on the route, including green lights
     weather,
+    suggestedCondition: suggestCondition(weather, points.filter((p) => p.surface === "gravel" || p.surface === "dirt").length / points.length),
     source: `${directions.source}; elevation and weather from Open-Meteo; roads and stops from OpenStreetMap`,
   };
 
@@ -309,7 +329,14 @@ const index = [];
 for (const r of ROUTES) {
   const route = await buildRoute(r);
   writeFileSync(path.join(ROUTES_DIR, `${r.routeId}.json`), JSON.stringify(route));
-  index.push({ routeId: r.routeId, name: route.name, terrain: r.terrain, distanceM: route.points.at(-1).s });
+  index.push({
+    routeId: r.routeId,
+    name: route.name,
+    terrain: r.terrain,
+    distanceM: route.points.at(-1).s,
+    stops: route.stopsM.length - 1,
+    suggestedCondition: route.suggestedCondition,
+  });
 }
 writeFileSync(path.join(ROUTES_DIR, "index.json"), JSON.stringify(index, null, 2) + "\n");
 console.log("\nDone. Route files are in data/cache/routes/.");

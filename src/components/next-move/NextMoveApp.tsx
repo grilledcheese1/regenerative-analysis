@@ -10,10 +10,11 @@ import BankingSyncBar from "./banking/BankingSyncBar";
 import { useBankingSync } from "./banking/useBankingSync";
 import ImportDrive from "./import/ImportDrive";
 import { CompareScreen, HomeScreen, MoneyScreen, NextMoveScreen } from "./screens";
+import { SettingsScreen } from "./settings/SettingsScreen";
 
-const TABS = ["home", "drives", "money", "compare", "next"] as const;
+const TABS = ["home", "drives", "money", "compare", "next", "settings"] as const;
 type Tab = (typeof TABS)[number];
-const TAB_LABEL: Record<Tab, string> = { home: "Home", drives: "Drives", money: "Money", compare: "Compare", next: "Next Move" };
+const TAB_LABEL: Record<Tab, string> = { home: "Home", drives: "Drives", money: "Money", compare: "Compare", next: "Next Move", settings: "Settings" };
 
 export default function NextMoveApp() {
   const [personaId, setPersonaId] = useState(PERSONAS[0].id);
@@ -22,6 +23,7 @@ export default function NextMoveApp() {
   const [tab, setTab] = useState<Tab>("home");
   const banking = useBankingSync(personaId);
   const { bank } = banking;
+  const [dataKey, setDataKey] = useState(0); // bumped by "Delete my demo data" to remount data-holding children
 
   // Scenario controls. Reset with the persona in selectPersona.
   const [extraSpendingCents, setExtraSpendingCents] = useState(0);
@@ -108,7 +110,18 @@ export default function NextMoveApp() {
       </nav>
       <main>
         <BankingSyncBar {...banking} />
-        {!budget || !comparison || !bank ? (
+        {tab === "settings" ? (
+          <SettingsScreen
+            persona={persona}
+            banking={banking}
+            onDeleted={() => {
+              onProfile(null);
+              setDataKey((k) => k + 1);
+              setHighlight([]);
+              void banking.sync("fixture");
+            }}
+          />
+        ) : !budget || !comparison || !bank ? (
           <p className="lede">Load banking data to calculate the budget and options.</p>
         ) : (
           <>
@@ -123,7 +136,7 @@ export default function NextMoveApp() {
             )}
             {tab === "drives" && (
               <>
-                <ImportDrive key={persona.id} personaId={persona.id} vehicleLabel={`${vehicle.modelYear} ${vehicle.model}`} onProfile={onProfile} />
+                <ImportDrive key={`${persona.id}-${dataKey}`} personaId={persona.id} vehicleLabel={`${vehicle.modelYear} ${vehicle.model}`} onProfile={onProfile} />
                 <DrivesView key={`replay-${persona.id}`} initialRouteId={persona.usage.routeId} vehicleName={`${vehicle.modelYear} ${vehicle.model}`} hybrid={vehicle.powertrain === "hybrid"} />
               </>
             )}
